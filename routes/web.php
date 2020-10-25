@@ -14,3 +14,16 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group([
+    'prefix' => 'v1'
+], function ($router) {
+    $router->group([
+        'prefix' => 'auth'
+    ], function ($router) {
+        $router->post('login', 'AuthController@login');
+        $router->post('sair', 'AuthController@sair');
+        $router->post('atualizar', 'AuthController@atualizar');
+        $router->post('perfil', 'AuthController@perfil');
+    });
+});
