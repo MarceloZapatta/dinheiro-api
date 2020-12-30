@@ -22,6 +22,7 @@ $router->group([
         'prefix' => 'auth'
     ], function ($router) {
         $router->post('login', 'AuthController@login');
+        $router->post('cadastrar', 'AuthController@cadastrar');
         $router->post('sair', 'AuthController@sair');
         $router->post('atualizar', 'AuthController@atualizar');
         $router->post('perfil', 'AuthController@perfil');

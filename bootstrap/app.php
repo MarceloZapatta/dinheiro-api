@@ -48,6 +48,17 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->configure('swagger-lume');
+
+$app->configure('mail');
+
+$app->alias('mail.manager', \Illuminate\Mail\MailManager::class);
+$app->alias('mail.manager', \Illuminate\Contracts\Mail\Factory::class);
+
+$app->alias('mailer', \Illuminate\Mail\Mailer::class);
+$app->alias('mailer', \Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', \Illuminate\Contracts\Mail\MailQueue::class);
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -72,10 +83,6 @@ $app->configure('app');
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
-
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
 ]);
@@ -95,7 +102,11 @@ $app->routeMiddleware([
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+$app->register(Illuminate\Mail\MailServiceProvider::class);
+
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+
+$app->register(\SwaggerLume\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -117,5 +128,6 @@ $app->router->group([
 $app->middleware([
     App\Http\Middleware\Cors::class
 ]);
+
 
 return $app;

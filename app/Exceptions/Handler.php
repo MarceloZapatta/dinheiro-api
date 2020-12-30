@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Mensagem;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -49,6 +50,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof ValidationException) {
+            return response()->json(Mensagem::erro('Campos inválidos!', [
+                'erros' => $exception->errors(),
+            ], 422), 422);
+        }
+
         return parent::render($request, $exception);
     }
 }

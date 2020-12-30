@@ -31,6 +31,15 @@ class AuthTest extends TestCase
 
         $this->json('POST', '/v1/auth/login', [
             'email' => 'test@login.com',
+            'senha' => '123456'
+        ])
+            ->seeJson([
+                'sucesso' => false,
+                'status_codigo' => 422
+            ]);
+
+        $this->json('POST', '/v1/auth/login', [
+            'email' => 'test@login.com',
             'password' => 'zzzz',
             'token_type' => 'bearer'
         ])
