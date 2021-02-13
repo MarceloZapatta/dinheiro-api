@@ -62,10 +62,32 @@ class AuthController extends Controller {
         $user = $this->authService->cadastrar($request);
 
         if ($user) {
-            return response()->json(Mensagem::sucesso());
+            return response()->json(Mensagem::sucesso('Sucesso!', [], 201), 201);
         }
 
         return response()->json(Mensagem::erro('Ocorreu um erro ao tentar criar o usuário.'));
+    }
+
+    public function verificarEmail(Request $request) {
+        $messages = [
+            'token.required' => 'O token é inválido, tente novamente.',
+            'token.max' => 'O token é inválido, tente novamente.'
+        ];
+
+        $this->validate($request, [
+            'token' => 'required|max:255',
+        ], $messages);
+
+        $verificacao = $this->authService->verificarEmail($request);
+
+        if ($verificacao) {
+            $verificacaoMensagem = urlencode('O e-mail foi verificado com sucesso! Você já pode acessar sua conta.');
+            return redirect(env('APP_FRONT_URL') . '?sucesso=' . $verificacaoMensagem);
+        }
+        
+        $verificacaoMensagem = urlencode('Não foi possível verificar o token. Tente novamente.');
+
+        return redirect(env('APP_FRONT_URL') . '?erro=' . $verificacaoMensagem);
     }
 
     public function sair()

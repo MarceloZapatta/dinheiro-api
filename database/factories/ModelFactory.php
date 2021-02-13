@@ -2,9 +2,11 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\EmailVerificacaoToken;
 use App\User;
 use Faker\Generator as Faker;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,5 +25,12 @@ $factory->define(User::class, function (Faker $faker) {
         'email' => $faker->email,
         'password' => Hash::make('123456'),
         'ativo' => 1
+    ];
+});
+
+$factory->define(EmailVerificacaoToken::class, function (Faker $faker) {
+    return [
+        'user_id' => factory('App\User')->create()->id,
+        'token' => Hash::make(Str::random(32))
     ];
 });

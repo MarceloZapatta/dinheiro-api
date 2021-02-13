@@ -6,6 +6,7 @@ use App\EmailVerificacaoToken;
 use App\Mail\VerificarEmail;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -43,5 +44,23 @@ class Auths {
         ]);
 
         return config('app.url') . '/verificar-email?token=' . $token;
+    }
+
+    public function verificarEmail(Request $request)
+    {
+        $email = EmailVerificacaoToken::where('token', $request->token)
+            ->first();
+
+        if ($email) {
+            $user = User::select('id', 'email_verificado')
+                ->find($email->user_id);
+
+            $user->email_verificado = 1;
+            $user->save();
+            $email->delete();
+            return true;
+        }
+
+        return false;
     }
 }
