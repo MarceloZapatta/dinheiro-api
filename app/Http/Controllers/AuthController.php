@@ -6,7 +6,8 @@ use App\Mensagem;
 use App\Services\Auths;
 use Illuminate\Http\Request;
 
-class AuthController extends Controller {
+class AuthController extends Controller
+{
 
     /**
      * Auth Service
@@ -28,7 +29,7 @@ class AuthController extends Controller {
 
     /**
      * Recebe o token JWT
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
@@ -68,7 +69,8 @@ class AuthController extends Controller {
         return response()->json(Mensagem::erro('Ocorreu um erro ao tentar criar o usuário.'));
     }
 
-    public function verificarEmail(Request $request) {
+    public function verificarEmail(Request $request)
+    {
         $messages = [
             'token.required' => 'O token é inválido, tente novamente.',
             'token.max' => 'O token é inválido, tente novamente.'

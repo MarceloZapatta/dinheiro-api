@@ -1,0 +1,10 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->exclude(['storage', 'vendor', 'bootstrap', ])
+    ->notPath('src/Symfony/Component/Translation/Tests/fixtures/resources.php')
+    ->in(__DIR__);
+
+$config = new PhpCsFixer\Config();
+
+return $config->setFinder($finder);

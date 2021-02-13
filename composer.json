@@ -52,5 +52,16 @@
         "test": [
             "vendor/bin/phpunit"
         ]
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "echo committing as $(git config user.name)",
+                "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
+            ],
+            "pre-push": [
+                "composer run test"
+            ]
+        }
     }
 }

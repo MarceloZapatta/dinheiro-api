@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-class Auths {
+class Auths
+{
     /**
      * Users service
      *
@@ -19,7 +20,7 @@ class Auths {
      */
     private $usersService;
 
-    function __construct(Users $usersService)
+    public function __construct(Users $usersService)
     {
         $this->usersService = $usersService;
     }
@@ -35,7 +36,8 @@ class Auths {
         return $user;
     }
 
-    private function gerarUrlTokenVerificacaoEmail(User $user): string {
+    private function gerarUrlTokenVerificacaoEmail(User $user): string
+    {
         $token = Hash::make(Str::random(32));
 
         EmailVerificacaoToken::create([

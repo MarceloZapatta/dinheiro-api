@@ -150,8 +150,8 @@ class AuthTest extends TestCase
 
         $request->response
             ->assertRedirect(
-                env('APP_FRONT_URL') . 
-                '?sucesso=' . 
+                env('APP_FRONT_URL') .
+                '?sucesso=' .
                 $verificacaoMensagem
             );
 
@@ -171,8 +171,8 @@ class AuthTest extends TestCase
 
         $request->response
             ->assertRedirect(
-                env('APP_FRONT_URL') . 
-                '?erro=' . 
+                env('APP_FRONT_URL') .
+                '?erro=' .
                 $verificacaoMensagem
             );
     }
