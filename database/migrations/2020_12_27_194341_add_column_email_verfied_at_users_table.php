@@ -13,7 +13,9 @@ class AddColumnEmailVerfiedAtUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table(
+            'users',
+            function (Blueprint $table) {
                 $table->string('email_verified_at')->nullable()->default(null)->after('password');
             }
         );
@@ -26,8 +28,11 @@ class AddColumnEmailVerfiedAtUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('email_verified_at');
-        });
+        Schema::table(
+            'users',
+            function (Blueprint $table) {
+                $table->dropColumn('email_verified_at');
+            }
+        );
     }
 }

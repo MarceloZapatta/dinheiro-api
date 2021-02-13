@@ -14,7 +14,6 @@
         "laravel-lang/lang": "~7.0",
         "laravel/lumen-framework": "^7.0",
         "overtrue/laravel-lang": "~3.0",
-        "squizlabs/php_codesniffer": "^3.5",
         "tymon/jwt-auth": "^1.0",
         "zircote/swagger-php": "3.*"
     },
@@ -51,13 +50,16 @@
         ],
         "test": [
             "vendor/bin/phpunit"
+        ],
+        "fix": [
+            "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
         ]
     },
     "extra": {
         "hooks": {
             "pre-commit": [
                 "echo committing as $(git config user.name)",
-                "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
+                "composer run fix"
             ],
             "pre-push": [
                 "composer run test"

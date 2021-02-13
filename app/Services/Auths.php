@@ -6,7 +6,6 @@ use App\EmailVerificacaoToken;
 use App\Mail\VerificarEmail;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
 class Auths
 {
     /**
-     * Users service
+     * Users service.
      *
      * @var \App\Services\Users
      */
@@ -40,10 +39,12 @@ class Auths
     {
         $token = Hash::make(Str::random(32));
 
-        EmailVerificacaoToken::create([
-            'user_id' => $user->id,
-            'token' => $token
-        ]);
+        EmailVerificacaoToken::create(
+            array(
+                'user_id' => $user->id,
+                'token' => $token,
+            )
+        );
 
         return config('app.url') . '/verificar-email?token=' . $token;
     }
@@ -60,6 +61,7 @@ class Auths
             $user->email_verificado = 1;
             $user->save();
             $email->delete();
+
             return true;
         }
 

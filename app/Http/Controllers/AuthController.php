@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-
     /**
-     * Auth Service
+     * Auth Service.
      *
      * @var \App\Services\Auths
      */
@@ -28,25 +27,30 @@ class AuthController extends Controller
     }
 
     /**
-     * Recebe o token JWT
+     * Recebe o token JWT.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
-            'email' => 'required|email|max:255',
-            'senha' => 'required|max:255'
-        ]);
-        
-        $request->merge([
-            'password' => $request->senha
-        ]);
+        $this->validate(
+            $request,
+            array(
+                'email' => 'required|email|max:255',
+                'senha' => 'required|max:255',
+            )
+        );
 
-        $credentials = request(['email', 'password']);
+        $request->merge(
+            array(
+                'password' => $request->senha,
+            )
+        );
 
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(Mensagem::erro('Login ou senha inválidos', [], 401), 401);
+        $credentials = request(array('email', 'password'));
+
+        if (! $token = auth('api')->attempt($credentials)) {
+            return response()->json(Mensagem::erro('Login ou senha inválidos', array(), 401), 401);
         }
 
         return $this->respondWithToken($token);
@@ -54,16 +58,19 @@ class AuthController extends Controller
 
     public function cadastrar(Request $request)
     {
-        $this->validate($request, [
-            'nome' => 'required|max:255',
-            'email' => 'required|email|unique:users,email|max:255',
-            'senha' => 'required|max:255'
-        ]);
+        $this->validate(
+            $request,
+            array(
+                'nome' => 'required|max:255',
+                'email' => 'required|email|unique:users,email|max:255',
+                'senha' => 'required|max:255',
+            )
+        );
 
         $user = $this->authService->cadastrar($request);
 
         if ($user) {
-            return response()->json(Mensagem::sucesso('Sucesso!', [], 201), 201);
+            return response()->json(Mensagem::sucesso('Sucesso!', array(), 201), 201);
         }
 
         return response()->json(Mensagem::erro('Ocorreu um erro ao tentar criar o usuário.'));
@@ -71,22 +78,27 @@ class AuthController extends Controller
 
     public function verificarEmail(Request $request)
     {
-        $messages = [
+        $messages = array(
             'token.required' => 'O token é inválido, tente novamente.',
-            'token.max' => 'O token é inválido, tente novamente.'
-        ];
+            'token.max' => 'O token é inválido, tente novamente.',
+        );
 
-        $this->validate($request, [
-            'token' => 'required|max:255',
-        ], $messages);
+        $this->validate(
+            $request,
+            array(
+                'token' => 'required|max:255',
+            ),
+            $messages
+        );
 
         $verificacao = $this->authService->verificarEmail($request);
 
         if ($verificacao) {
             $verificacaoMensagem = urlencode('O e-mail foi verificado com sucesso! Você já pode acessar sua conta.');
+
             return redirect(env('APP_FRONT_URL') . '?sucesso=' . $verificacaoMensagem);
         }
-        
+
         $verificacaoMensagem = urlencode('Não foi possível verificar o token. Tente novamente.');
 
         return redirect(env('APP_FRONT_URL') . '?erro=' . $verificacaoMensagem);
@@ -112,18 +124,23 @@ class AuthController extends Controller
     /**
      * Get the token array structure.
      *
-     * @param  string $token
+     * @param string $token
      *
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithToken($token)
     {
-        return response()->json(Mensagem::sucesso('Sucesso!', [
-            'sucesso' => true,
-            'status_codigo' => 200,
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]));
+        return response()->json(
+            Mensagem::sucesso(
+                'Sucesso!',
+                array(
+                    'sucesso' => true,
+                    'status_codigo' => 200,
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => auth()->factory()->getTTL() * 60,
+                )
+            )
+        );
     }
 }

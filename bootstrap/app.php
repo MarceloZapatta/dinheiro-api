@@ -83,9 +83,11 @@ $app->configure('app');
 |
 */
 
-$app->routeMiddleware([
+$app->routeMiddleware(
+    [
     'auth' => App\Http\Middleware\Authenticate::class,
-]);
+    ]
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -119,15 +121,19 @@ $app->register(\SwaggerLume\ServiceProvider::class);
 |
 */
 
-$app->router->group([
+$app->router->group(
+    [
     'namespace' => 'App\Http\Controllers',
-], function ($router) {
-    require __DIR__.'/../routes/web.php';
-});
+    ], function ($router) {
+        include __DIR__.'/../routes/web.php';
+    }
+);
 
-$app->middleware([
+$app->middleware(
+    [
     App\Http\Middleware\Cors::class
-]);
+    ]
+);
 
 
 return $app;

@@ -13,12 +13,15 @@ class CreateEmailVerificacaoTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create('email_verificacao_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->string('token');
-            $table->timestamps();
-        });
+        Schema::create(
+            'email_verificacao_tokens',
+            function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained();
+                $table->string('token');
+                $table->timestamps();
+            }
+        );
     }
 
     /**

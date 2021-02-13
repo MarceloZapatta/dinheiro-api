@@ -11,25 +11,26 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
-    use Authenticatable, Authorizable;
+    use Authenticatable;
+    use Authorizable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'nome', 'email', 'ativo', 'password'
-    ];
+    protected $fillable = array(
+        'nome', 'email', 'ativo', 'password',
+    );
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = [
+    protected $hidden = array(
         'password',
-    ];
+    );
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -48,6 +49,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return array();
     }
 }

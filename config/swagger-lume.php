@@ -1,16 +1,16 @@
 <?php
 
-return [
-    'api' => [
+return array(
+    'api' => array(
         /*
         |--------------------------------------------------------------------------
         | Edit to set the api's title
         |--------------------------------------------------------------------------
          */
         'title' => 'Swagger Lume API',
-    ],
+    ),
 
-    'routes' => [
+    'routes' => array(
         /*
         |--------------------------------------------------------------------------
         | Route for accessing api documentation interface
@@ -44,15 +44,15 @@ return [
         | Middleware allows to prevent unexpected access to API documentation
         |--------------------------------------------------------------------------
          */
-        'middleware' => [
-            'api' => [],
-            'asset' => [],
-            'docs' => [],
-            'oauth2_callback' => [],
-        ],
-    ],
+        'middleware' => array(
+            'api' => array(),
+            'asset' => array(),
+            'docs' => array(),
+            'oauth2_callback' => array(),
+        ),
+    ),
 
-    'paths' => [
+    'paths' => array(
         /*
         |--------------------------------------------------------------------------
         | Absolute path to location where parsed swagger annotations will be stored
@@ -79,7 +79,7 @@ return [
         | Absolute path to directories that you would like to exclude from swagger generation
         |--------------------------------------------------------------------------
          */
-        'excludes' => [],
+        'excludes' => array(),
 
         /*
         |--------------------------------------------------------------------------
@@ -94,14 +94,14 @@ return [
         |--------------------------------------------------------------------------
          */
         'views' => base_path('resources/views/vendor/swagger-lume'),
-    ],
+    ),
 
     /*
     |--------------------------------------------------------------------------
     | API security definitions. Will be generated into documentation file.
     |--------------------------------------------------------------------------
     */
-    'security' => [
+    'security' => array(
         /*
         |--------------------------------------------------------------------------
         | Examples of Security definitions
@@ -142,7 +142,7 @@ return [
             ],
         ],
         */
-    ],
+    ),
 
     /*
     |--------------------------------------------------------------------------
@@ -198,7 +198,7 @@ return [
     | Uncomment to add constants which can be used in anotations
     |--------------------------------------------------------------------------
      */
-    'constants' => [
+    'constants' => array(
         // 'SWAGGER_LUME_CONST_HOST' => env('SWAGGER_LUME_CONST_HOST', 'http://my-default-host.com'),
-    ],
-];
+    ),
+);

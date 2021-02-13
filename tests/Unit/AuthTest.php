@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\EmailVerificacaoToken;
 use TestCase;
 use App\Traits\TokenHeader;
 use App\User;
@@ -11,7 +10,8 @@ use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class AuthTest extends TestCase
 {
-    use TokenHeader, DatabaseTransactions;
+    use TokenHeader;
+    use DatabaseTransactions;
 
     /**
      * A basic test example.
@@ -20,117 +20,153 @@ class AuthTest extends TestCase
      */
     public function testLoginTest()
     {
-        factory('App\User')->create([
-            'email' => 'test@login.com',
-            'password' => Hash::make('123456')
-        ]);
+        factory('App\User')->create(
+            array(
+                'email' => 'test@login.com',
+                'password' => Hash::make('123456'),
+            )
+        );
 
-        $this->json('POST', '/v1/auth/login', [
-            'email' => 'test@login.com',
-            'senha' => '123456'
-        ])
-            ->seeJson([
-                'sucesso' => true,
-                'status_codigo' => 200,
-            ])
+        $this->json(
+            'POST',
+            '/v1/auth/login',
+            array(
+                'email' => 'test@login.com',
+                'senha' => '123456',
+            )
+        )
+            ->seeJson(
+                array(
+                    'sucesso' => true,
+                    'status_codigo' => 200,
+                )
+            )
             ->assertResponseStatus(200);
 
-        $this->json('POST', '/v1/auth/login', [
-            'email' => 'test@login.com',
-            'password' => '123456'
-        ])
-            ->seeJson([
-                'sucesso' => false,
-                'status_codigo' => 422
-            ])
+        $this->json(
+            'POST',
+            '/v1/auth/login',
+            array(
+                'email' => 'test@login.com',
+                'password' => '123456',
+            )
+        )
+            ->seeJson(
+                array(
+                    'sucesso' => false,
+                    'status_codigo' => 422,
+                )
+            )
             ->assertResponseStatus(422);
 
-        $this->json('POST', '/v1/auth/login', [
-            'email' => 'test@login.com',
-            'senha' => 'zzzz',
-            'token_type' => 'bearer'
-        ])
-            ->seeJson([
-                'sucesso' => false,
-                'status_codigo' => 401,
-                'mensagem' => 'Login ou senha inválidos'
-            ])
+        $this->json(
+            'POST',
+            '/v1/auth/login',
+            array(
+                'email' => 'test@login.com',
+                'senha' => 'zzzz',
+                'token_type' => 'bearer',
+            )
+        )
+            ->seeJson(
+                array(
+                    'sucesso' => false,
+                    'status_codigo' => 401,
+                    'mensagem' => 'Login ou senha inválidos',
+                )
+            )
             ->assertResponseStatus(401);
     }
 
     public function testLogoutTest()
     {
-        $data = [];
+        $data = array();
 
-        $user = factory('App\User')->create([
-            'email' => 'test@login.com',
-            'password' => Hash::make('123456')
-        ]);
+        $user = factory('App\User')->create(
+            array(
+                'email' => 'test@login.com',
+                'password' => Hash::make('123456'),
+            )
+        );
 
         $this->post('/v1/auth/sair', $data, $this->tokenHeader($user))
-            ->seeJson([
-                'sucesso' => true,
-                'status_codigo' => 200,
-                'mensagem' => 'Sucesso ao sair!'
-            ])
+            ->seeJson(
+                array(
+                    'sucesso' => true,
+                    'status_codigo' => 200,
+                    'mensagem' => 'Sucesso ao sair!',
+                )
+            )
             ->assertResponseStatus(200);
     }
 
     public function testAtualizarTest()
     {
-        $data = [];
+        $data = array();
 
         $this->post('/v1/auth/atualizar', $data, $this->tokenHeader())
-            ->seeJson([
-                'sucesso' => true,
-                'status_codigo' => 200,
-                'token_type' => 'bearer'
-            ])
+            ->seeJson(
+                array(
+                    'sucesso' => true,
+                    'status_codigo' => 200,
+                    'token_type' => 'bearer',
+                )
+            )
             ->assertResponseStatus(200);
     }
 
     public function testPerfil()
     {
-        $data = [];
-        
+        $data = array();
+
         $user = factory('App\User')->create();
 
         $this->post('/v1/auth/perfil', $data, $this->tokenHeader($user))
-            ->seeJson([
-                'nome' => $user->nome,
-                'email' => $user->email,
-                'ativo' => $user->ativo,
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at
-            ])
+            ->seeJson(
+                array(
+                    'nome' => $user->nome,
+                    'email' => $user->email,
+                    'ativo' => $user->ativo,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                )
+            )
             ->assertResponseStatus(200);
     }
 
     public function testCadastrar()
     {
-        $data = [
+        $data = array(
             'nome' => 'Marcelo Zapatta',
             'email' => 'emailteste@email.com',
-            'senha' => '123456'
-        ];
+            'senha' => '123456',
+        );
 
         $this->post('/v1/auth/cadastrar', $data)
-            ->seeJson([
-                'sucesso' => true,
-                'status_codigo' => 201,
-            ])
+            ->seeJson(
+                array(
+                    'sucesso' => true,
+                    'status_codigo' => 201,
+                )
+            )
             ->assertResponseStatus(201);
 
-        $this->seeInDatabase('users', [
-            'nome' => 'Marcelo Zapatta',
-            'email' => 'emailteste@email.com'
-        ]);
+        $this->seeInDatabase(
+            'users',
+            array(
+                'nome' => 'Marcelo Zapatta',
+                'email' => 'emailteste@email.com',
+            )
+        );
 
         $user = User::where('email', 'emailteste@email.com')->first();
 
-        $this->seeInDatabase('email_verificacao_tokens', [
-            'user_id' => $user->id
-        ]);
+        $this->seeInDatabase(
+            'email_verificacao_tokens',
+            array(
+                'user_id' => $user->id,
+            )
+        );
     }
 
     public function testValidarTokenCadastrar()
@@ -138,9 +174,9 @@ class AuthTest extends TestCase
         $emailVerificacaoToken = factory('App\EmailVerificacaoToken')
             ->create();
 
-        $data = [
-            'token' => $emailVerificacaoToken->token
-        ];
+        $data = array(
+            'token' => $emailVerificacaoToken->token,
+        );
 
         $request = $this->post('/v1/auth/verificar-email', $data);
 
@@ -155,13 +191,16 @@ class AuthTest extends TestCase
                 $verificacaoMensagem
             );
 
-        $this->notSeeInDatabase('email_verificacao_tokens', [
-            'id' => $emailVerificacaoToken->id
-        ]);
+        $this->notSeeInDatabase(
+            'email_verificacao_tokens',
+            array(
+                'id' => $emailVerificacaoToken->id,
+            )
+        );
 
-        $data = [
-            'token' => 'token-fake'
-        ];
+        $data = array(
+            'token' => 'token-fake',
+        );
 
         $request = $this->post('/v1/auth/verificar-email', $data);
 

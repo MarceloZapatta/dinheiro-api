@@ -1,6 +1,8 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/**
+ * @var \Illuminate\Database\Eloquent\Factory $factory
+ */
 
 use App\EmailVerificacaoToken;
 use App\User;
@@ -19,18 +21,24 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
-    return [
-        'nome' => $faker->name,
-        'email' => $faker->email,
-        'password' => Hash::make('123456'),
-        'ativo' => 1
-    ];
-});
+$factory->define(
+    User::class,
+    function (Faker $faker) {
+        return array(
+            'nome' => $faker->name,
+            'email' => $faker->email,
+            'password' => Hash::make('123456'),
+            'ativo' => 1,
+        );
+    }
+);
 
-$factory->define(EmailVerificacaoToken::class, function (Faker $faker) {
-    return [
-        'user_id' => factory('App\User')->create()->id,
-        'token' => Hash::make(Str::random(32))
-    ];
-});
+$factory->define(
+    EmailVerificacaoToken::class,
+    function (Faker $faker) {
+        return array(
+            'user_id' => factory('App\User')->create()->id,
+            'token' => Hash::make(Str::random(32)),
+        );
+    }
+);

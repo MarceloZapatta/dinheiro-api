@@ -17,19 +17,19 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
-    protected $dontReport = [
+    protected $dontReport = array(
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
-    ];
+    );
 
     /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Throwable  $exception
+     * @param  \Throwable $exception
      * @return void
      *
      * @throws \Exception
@@ -42,8 +42,8 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Throwable               $exception
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      *
      * @throws \Throwable
@@ -51,9 +51,16 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof ValidationException) {
-            return response()->json(Mensagem::erro('Campos inválidos!', [
-                'erros' => $exception->errors(),
-            ], 422), 422);
+            return response()->json(
+                Mensagem::erro(
+                    'Campos inválidos!',
+                    array(
+                        'erros' => $exception->errors(),
+                    ),
+                    422
+                ),
+                422
+            );
         }
 
         return parent::render($request, $exception);

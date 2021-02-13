@@ -10,13 +10,13 @@ trait TokenHeader
     // Retorna o token JWT de um user criado
     public function tokenHeader(User $user = null)
     {
-        if (!$user) {
+        if (! $user) {
             $user = factory('App\User')->create();
         }
-        
-        $headers = [
-            'Authorization' => 'Bearer ' . JWTAuth::fromUser($user)
-        ];
+
+        $headers = array(
+            'Authorization' => 'Bearer ' . JWTAuth::fromUser($user),
+        );
 
         return $headers;
     }
