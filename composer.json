@@ -1,7 +1,11 @@
 {
     "name": "laravel/lumen",
     "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
+    "keywords": [
+        "framework",
+        "laravel",
+        "lumen"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -54,7 +58,8 @@
         ],
         "fix": [
             "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
-        ]
+        ],
+        "cghooks": "vendor/bin/cghooks"
     },
     "extra": {
         "hooks": {
