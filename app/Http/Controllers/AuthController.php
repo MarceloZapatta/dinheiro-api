@@ -104,6 +104,11 @@ class AuthController extends Controller
         return redirect(env('APP_FRONT_URL') . '?erro=' . $verificacaoMensagem);
     }
 
+    /**
+     * Desloga o usuário
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function sair()
     {
         auth('api')->logout();

@@ -24,7 +24,13 @@ class Auths
         $this->usersService = $usersService;
     }
 
-    public function cadastrar(Request $request)
+    /**
+     * Realiza um novo cadastro
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \App\User
+     */
+    public function cadastrar(Request $request): User
     {
         $user = $this->usersService->store($request->nome, $request->email, $request->senha);
         $url = $this->gerarUrlTokenVerificacaoEmail($user);
@@ -35,6 +41,12 @@ class Auths
         return $user;
     }
 
+    /**
+     * Gera a URL Token para verificação do e-mail
+     *
+     * @param User $user
+     * @return string
+     */
     private function gerarUrlTokenVerificacaoEmail(User $user): string
     {
         $token = Hash::make(Str::random(32));
@@ -46,10 +58,16 @@ class Auths
             )
         );
 
-        return config('app.url') . '/verificar-email?token=' . $token;
+        return config('app.url') . '/verificacao-email?token=' . $token;
     }
 
-    public function verificarEmail(Request $request)
+    /**
+     * Verificar se o token passado é válido
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function verificarEmail(Request $request): bool
     {
         $email = EmailVerificacaoToken::where('token', $request->token)
             ->first();
