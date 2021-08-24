@@ -6,6 +6,7 @@ use App\EmailVerificacaoToken;
 use App\Mail\VerificarEmail;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -19,9 +20,17 @@ class Auths
      */
     private $usersService;
 
-    public function __construct(Users $usersService)
+    /**
+     * Organizações service.
+     *
+     * @var \App\Services\OrganizacoesService
+     */
+    private $organizacoesService;
+
+    public function __construct(Users $usersService, OrganizacoesService $organizacoesService)
     {
         $this->usersService = $usersService;
+        $this->organizacoesService = $organizacoesService;
     }
 
     /**
@@ -32,8 +41,13 @@ class Auths
      */
     public function cadastrar(Request $request): User
     {
+        DB::beginTransaction();
+        
         $user = $this->usersService->store($request->nome, $request->email, $request->senha);
+        $this->organizacoesService->store($user, $request->nome, $request->organizacao_tipo_id);
         $url = $this->gerarUrlTokenVerificacaoEmail($user);
+        
+        DB::commit();
 
         Mail::to($user)
             ->send(new VerificarEmail($user->nome, $url));

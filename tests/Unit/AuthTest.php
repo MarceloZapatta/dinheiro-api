@@ -20,7 +20,7 @@ class AuthTest extends TestCase
      */
     public function testLoginTest()
     {
-        factory('App\User')->create(
+        $user = factory('App\User')->create(
             array(
                 'email' => 'test@login.com',
                 'password' => Hash::make('123456'),
@@ -136,10 +136,13 @@ class AuthTest extends TestCase
 
     public function testCadastrar()
     {
+        $organizacaoTipoPessoaFisica = 1;
+
         $data = array(
             'nome' => 'Marcelo Zapatta',
             'email' => 'emailteste@email.com',
             'senha' => '123456',
+            'organizacao_tipo_id' => $organizacaoTipoPessoaFisica
         );
 
         $this->post('/v1/auth/cadastrar', $data)
@@ -160,6 +163,10 @@ class AuthTest extends TestCase
         );
 
         $user = User::where('email', 'emailteste@email.com')->first();
+
+        $this->seeInDatabase('organizacoes', [
+            'user_id' => $user->id
+        ]);
 
         $this->seeInDatabase(
             'email_verificacao_tokens',

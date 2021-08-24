@@ -37,7 +37,7 @@ class AuthController extends Controller
             $request,
             array(
                 'email' => 'required|email|max:255',
-                'senha' => 'required|max:255',
+                'senha' => 'required|max:255'
             )
         );
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         $credentials = request(array('email', 'password'));
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(Mensagem::erro('Login ou senha inválidos', array(), 401), 401);
         }
 
@@ -62,6 +62,8 @@ class AuthController extends Controller
             $request,
             array(
                 'nome' => 'required|max:255',
+                'documento' => 'required',
+                'organizacao_tipo_id' => 'required',
                 'email' => 'required|email|unique:users,email|max:255',
                 'senha' => 'required|max:255',
             )
