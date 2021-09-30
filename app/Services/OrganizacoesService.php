@@ -16,7 +16,7 @@ class OrganizacoesService {
     {
         return Organizacao::create([
             'nome' => $nome,
-            'user_id' => $user->id,
+            'usuario_id' => $user->id,
             'organizacao_tipo_id' => $organizacaoTipoId
         ]);
     }

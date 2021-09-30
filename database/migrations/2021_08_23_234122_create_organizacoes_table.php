@@ -17,7 +17,8 @@ class CreateOrganizacoesTable extends Migration
             $table->id();
             $table->string('nome');
             $table->string('documento');
-            $table->foreignId('user_id')->comment('Usuário responsável pela organização.');
+            $table->unsignedBigInteger('pessoa_responsavel_id');
+            $table->foreign('pessoa_responsavel_id')->references('id')->on('pessoas')->comment('Pessoa responsável pela organização.');
             $table->boolean('ativo')->default(1);
             $table->unique('documento');
             $table->timestamps();

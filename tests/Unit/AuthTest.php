@@ -165,13 +165,13 @@ class AuthTest extends TestCase
         $user = User::where('email', 'emailteste@email.com')->first();
 
         $this->seeInDatabase('organizacoes', [
-            'user_id' => $user->id
+            'usuario_id' => $user->id
         ]);
 
         $this->seeInDatabase(
             'email_verificacao_tokens',
             array(
-                'user_id' => $user->id,
+                'usuario_id' => $user->id,
             )
         );
     }

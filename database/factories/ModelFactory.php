@@ -37,7 +37,7 @@ $factory->define(
     EmailVerificacaoToken::class,
     function (Faker $faker) {
         return array(
-            'user_id' => factory('App\User')->create()->id,
+            'usuario_id' => factory('App\User')->create()->id,
             'token' => Hash::make(Str::random(32)),
         );
     }

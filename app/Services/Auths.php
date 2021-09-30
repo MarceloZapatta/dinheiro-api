@@ -67,7 +67,7 @@ class Auths
 
         EmailVerificacaoToken::create(
             array(
-                'user_id' => $user->id,
+                'usuario_id' => $user->id,
                 'token' => $token,
             )
         );
@@ -88,7 +88,7 @@ class Auths
 
         if ($email) {
             $user = User::select('id', 'email_verificado')
-                ->find($email->user_id);
+                ->find($email->usuario_id);
 
             $user->email_verificado = 1;
             $user->save();
