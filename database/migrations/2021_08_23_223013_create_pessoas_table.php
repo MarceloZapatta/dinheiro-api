@@ -16,6 +16,7 @@ class CreatePessoasTable extends Migration
         Schema::create('pessoas', function (Blueprint $table) {
             $table->id();
             $table->string('documento', 14);
+            $table->string('nome_mae')->nullable()->default(NULL);
             $table->foreignId('usuario_id')->constrained();
             $table->foreignId('tipo_pessoa_id')->constrained();
             $table->timestamps();
