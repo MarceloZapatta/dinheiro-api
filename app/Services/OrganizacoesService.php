@@ -8,16 +8,18 @@ class OrganizacoesService {
     /**
      * Grava a organização
      *
-     * @param \App\User $user
+     * @param \App\Pessoa $pessoa
      * @param integer $organizacaoTipoId
      * @return void
      */
-    public function store(\App\User $user, string $nome, int $organizacaoTipoId): \App\Organizacao
+    public function store(\App\Pessoa $pessoa, string $nome, int $organizacaoTipoId, string $documento = null): \App\Organizacao
     {
         return Organizacao::create([
             'nome' => $nome,
-            'usuario_id' => $user->id,
-            'organizacao_tipo_id' => $organizacaoTipoId
+            'pessoa_responsavel_id' => $pessoa->id,
+            'organizacao_tipo_id' => $organizacaoTipoId,
+            'documento' => $documento,
+            'email' => $pessoa->user->email,
         ]);
     }
 }

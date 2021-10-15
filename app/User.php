@@ -11,6 +11,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
+    protected $table = 'usuarios';
+
     use Authenticatable;
     use Authorizable;
 
@@ -20,7 +22,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = array(
-        'nome', 'email', 'ativo', 'password',
+        'nome', 'email', 'ativo', 'senha',
     );
 
     /**
@@ -29,7 +31,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = array(
-        'password',
+        'senha',
     );
 
     /**
@@ -50,5 +52,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getJWTCustomClaims()
     {
         return array();
+    }
+
+    public function getAuthPassword(){  
+        return $this->senha;
     }
 }

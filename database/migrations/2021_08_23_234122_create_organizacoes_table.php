@@ -15,15 +15,17 @@ class CreateOrganizacoesTable extends Migration
     {
         Schema::create('organizacoes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('organizacao_tipo_id')->constrained();
             $table->string('nome');
-            $table->string('documento', 14);
+            $table->string('razao_social')->nullable()->default(NULL);
+            $table->string('documento', 14)->nullable()->default(NULL);
             $table->string('email')->nullable()->default(NULL);
             $table->string('telefone')->nullable()->default(NULL);
             $table->string('rua')->nullable()->default(NULL);
             $table->string('numero')->nullable()->default(NULL);
             $table->string('complemento')->nullable()->default(NULL);
             $table->string('cidade')->nullable()->default(NULL);
-            $table->foreignId('uf_id')->constrained()->nullable()->default(NULL);
+            $table->foreignId('uf_id')->nullable()->default(NULL)->constrained();
             $table->string('cep')->nullable()->default(NULL);
             $table->unsignedBigInteger('pessoa_responsavel_id');
             $table->foreign('pessoa_responsavel_id')->references('id')->on('pessoas')->comment('Pessoa responsável pela organização.');
