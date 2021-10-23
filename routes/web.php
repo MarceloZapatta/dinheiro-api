@@ -1,5 +1,8 @@
 <?php
 
+use Andyabih\LaravelToUML\Http\Controllers\LaravelToUMLController;
+use App\Http\Controllers\OrganizacoesController;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -36,5 +39,23 @@ $router->group(
                 $router->post('perfil', 'AuthController@perfil');
             }
         );
+
+        $router->group(['middleware' => 'auth:api'], function ($router) {
+            $router->get('organizacoes', 'OrganizacoesController@index');
+    
+            $router->group(
+                [
+                    'prefix' => 'contas',
+                    'middleware' => 'organizacao'
+                ],
+                function ($router) {
+                    $router->get('/', 'ContasController@index');
+                    $router->post('/', 'ContasController@store');
+                    $router->get('/{id}', 'ContasController@show');
+                    $router->put('/{id}', 'ContasController@update');
+                    $router->delete('/{id}', 'ContasController@destroy');
+                }
+            );
+        });
     }
 );

@@ -57,4 +57,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getAuthPassword(){  
         return $this->senha;
     }
+
+    public function pessoa()
+    {
+        return $this->hasOne(Pessoa::class, 'usuario_id');
+    }
 }

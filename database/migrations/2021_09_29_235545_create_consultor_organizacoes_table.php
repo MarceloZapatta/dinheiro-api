@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoriasTable extends Migration
+class CreateConsultorOrganizacoesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateCategoriasTable extends Migration
      */
     public function up()
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('consultor_organizacoes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('organizacao_id');
             $table->foreign('organizacao_id')->references('id')->on('organizacoes');
-            $table->string('nome')->unique();
-            $table->unsignedBigInteger('cor_id');
-            $table->foreign('cor_id')->references('id')->on('cores');
-            $table->string('icone');
+            $table->unsignedBigInteger('consultor_id');
+            $table->foreign('consultor_id')->references('id')->on('consultores');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateCategoriasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('consultor_organizacoes');
     }
 }

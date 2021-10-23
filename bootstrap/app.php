@@ -87,6 +87,7 @@ $app->configure('apidoc');
 $app->routeMiddleware(
     [
     'auth' => App\Http\Middleware\Authenticate::class,
+    'organizacao' => App\Http\Middleware\OrganizacaoMiddleware::class
     ]
 );
 

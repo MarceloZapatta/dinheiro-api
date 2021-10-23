@@ -33,18 +33,23 @@ class AuthController extends Controller
     }
 
     /**
-     * Recebe o token JWT.
+     * Login
      * 
      * @bodyParam email string required O e-mail do usuário. Example: email@usuario.com
      * @bodyParam senha string required Senha do usuário Example: senha123
      * 
-     * 
      * @response 200 {
-     *  "sucesso": true,
-     *  "status_codigo": 200,
-     *  "access_token": "BEARER_TOKEN",
-     *  "token_type": "bearer",
-     *  "expires_in": 3600
+     *   "sucesso": true,
+     *   "status_codigo": 200,
+     *   "access_token": "BEARER_TOKEN",
+     *   "token_type": "bearer",
+     *   "expires_in": 3600
+     * }
+     * 
+     * @response 401 {
+     *   "sucesso": false,
+     *   "mensagem": "Login ou senha inválidos",
+     *   "status_codigo": 401
      * }
      * 
      * @return \Illuminate\Http\JsonResponse
@@ -71,11 +76,18 @@ class AuthController extends Controller
             return response()->json(Mensagem::erro('Login ou senha inválidos', [], 401), 401);
         }
 
+        $usuario = auth('api')->user();
+
+        if (!$usuario->email_verificado) {
+            auth('api')->invalidate();
+            return response()->json(Mensagem::erro('O e-mail não foi verificado', [], 401), 401);
+        }
+
         return $this->respondWithToken($token);
     }
 
     /**
-     * Realiza o cadastro no sistema
+     * Registro
      *
      * @bodyParam nome string required Nome da pessoa
      * @bodyParam documento string obrigatório se Pessoa Júridica Example: Formato: XX.XXX.XXX/XXXX-XX
@@ -117,6 +129,14 @@ class AuthController extends Controller
         return response()->json(Mensagem::erro('Ocorreu um erro ao tentar criar o usuário.'));
     }
 
+    /**
+     * Verificar token de e-mail
+     *
+     * @bodyParam token string required Token recebido via e-mail 
+     * 
+     * @param Request $request
+     * @return void
+     */
     public function verificarEmail(Request $request)
     {
         $messages = array(

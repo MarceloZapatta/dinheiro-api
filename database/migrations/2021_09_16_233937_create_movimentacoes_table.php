@@ -17,6 +17,8 @@ class CreateMovimentacoesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('organizacao_id');
             $table->foreign('organizacao_id')->references('id')->on('organizacoes');
+            $table->unsignedBigInteger('importacao_movimentacao_id')->nullable()->default(NULL);
+            $table->foreign('importacao_movimentacao_id')->references('id')->on('movimentacao_importacoes');
             $table->string('descricao');
             $table->string('observacoes', 300);
             $table->decimal('valor');

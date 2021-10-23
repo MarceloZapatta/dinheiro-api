@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateConsultorPessoasTable extends Migration
+class CreateOrganizacaoConvitesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateConsultorPessoasTable extends Migration
      */
     public function up()
     {
-        Schema::create('consultor_pessoas', function (Blueprint $table) {
+        Schema::create('organizacao_convites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pessoa_id')->constrained();
-            $table->unsignedBigInteger('consultor_id');
-            $table->foreign('consultor_id')->references('id')->on('consultores');
+            $table->string('token');
+            $table->unsignedBigInteger('organizacao_id');
+            $table->foreign('organizacao_id')->references('id')->on('organizacoes');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateConsultorPessoasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('consultor_pessoas');
+        Schema::dropIfExists('organizacao_convites');
     }
 }

@@ -15,6 +15,8 @@ class CreateContasTable extends Migration
     {
         Schema::create('contas', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('organizacao_id');
+            $table->foreign('organizacao_id')->references('id')->on('organizacoes');
             $table->string('nome')->unique();
             $table->string('icone');
             $table->unsignedBigInteger('cor_id');

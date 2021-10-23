@@ -75,7 +75,7 @@ class AuthsService
             $this->organizacoesService->store(
                 $pessoa,
                 (int) $request->organizacao_tipo_id === 1 ?
-                    $request->nome : $request->nome_fantasia,
+                    'Pessoal' : $request->nome_fantasia,
                 $request->organizacao_tipo_id,
                 $request->documento
             );
