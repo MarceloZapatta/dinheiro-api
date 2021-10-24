@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Organizacao extends Model
 {
@@ -17,5 +18,12 @@ class Organizacao extends Model
     public function organizacaoTipo()
     {
         return $this->belongsTo(OrganizacaoTipo::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function (Organizacao $organizacao) {
+            $organizacao->hash = Str::uuid();
+        });
     }
 }

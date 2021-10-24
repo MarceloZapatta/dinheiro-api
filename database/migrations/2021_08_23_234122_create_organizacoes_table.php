@@ -16,6 +16,7 @@ class CreateOrganizacoesTable extends Migration
         Schema::create('organizacoes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organizacao_tipo_id')->constrained();
+            $table->uuid('hash');
             $table->string('nome');
             $table->string('razao_social')->nullable()->default(NULL);
             $table->string('documento', 14)->nullable()->default(NULL);

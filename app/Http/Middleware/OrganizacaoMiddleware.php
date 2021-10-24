@@ -16,8 +16,6 @@ class OrganizacaoMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-
         $organizacaoHash = $request->header('X-Organizacao-Hash');
 
         if (!$organizacaoHash) {
@@ -33,7 +31,6 @@ class OrganizacaoMiddleware
         }
 
         $request->request->add(['organizacao_id' => $organizacao->id]);
-
-        return $response;
+        return $next($request);
     }
 }

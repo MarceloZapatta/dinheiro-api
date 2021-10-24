@@ -202,9 +202,11 @@ class AuthController extends Controller
                 [
                     'sucesso' => true,
                     'status_codigo' => 200,
-                    'access_token' => $token,
-                    'token_type' => 'bearer',
-                    'expires_in' => auth()->factory()->getTTL() * 60,
+                    'data' => [
+                        'access_token' => $token,
+                        'token_type' => 'bearer',
+                        'expires_in' => auth()->factory()->getTTL() * 60,
+                    ]
                 ]
             )
         );

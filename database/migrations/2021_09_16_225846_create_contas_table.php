@@ -21,6 +21,8 @@ class CreateContasTable extends Migration
             $table->string('icone');
             $table->unsignedBigInteger('cor_id');
             $table->foreign('cor_id')->references('id')->on('cores');
+            $table->decimal('saldo')->default(0);
+            $table->decimal('saldo_inicial')->default(0);
             $table->timestamps();
         });
     }

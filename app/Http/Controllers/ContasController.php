@@ -54,7 +54,9 @@ class ContasController extends Controller
         $this->validate($request, [
             'nome' => 'required',
             'icone' => 'required',
-            'cod_id' => 'required|exists:cores,id'
+            'cor_id' => 'required|exists:cores,id',
+            'saldo' => 'required|numeric',
+            'saldo_inicial' => 'required|numeric'
         ]);
 
         $conta = $this->contasService->store($request);
@@ -98,7 +100,7 @@ class ContasController extends Controller
         $this->validate($request, [
             'nome' => 'nullable',
             'icone' => 'nullable',
-            'cod_id' => 'nullable|exists:cores,id'
+            'cor_id' => 'nullable|exists:cores,id'
         ]);
 
         $conta = $this->contasService->update($request, $id);

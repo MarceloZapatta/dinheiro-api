@@ -13,11 +13,17 @@ class ContasService {
 
     public function store(Request $request)
     {
-        return Conta::where('organizacao_id', $request->organizacao_id)
-            ->create($request->only([
+        $request->merge([
+            'organizacao_id' => $request->organizacao_id
+        ]);
+
+        return Conta::create($request->only([
+                'organizacao_id',
                 'nome',
                 'icone',
-                'cor_id'
+                'cor_id',
+                'saldo',
+                'saldo_inicial'
             ]));
     }
 

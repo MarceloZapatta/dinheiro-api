@@ -15,7 +15,7 @@ class OrganizacaoResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'hash' => $this->hash,
             'nome' => $this->nome,
             'tipo' => $this->organizacaoTipo
         ];
