@@ -14,7 +14,8 @@ class ContasService {
     public function store(Request $request)
     {
         $request->merge([
-            'organizacao_id' => $request->organizacao_id
+            'organizacao_id' => $request->organizacao_id,
+            'saldo' => $request->saldo_inicial
         ]);
 
         return Conta::create($request->only([

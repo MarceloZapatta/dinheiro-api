@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ContaResource;
+use App\Http\Resources\ContaResourceCollection;
 use App\Mensagem;
 use App\Services\ContasService;
 use Illuminate\Http\Request;
@@ -27,16 +29,7 @@ class ContasController extends Controller
      */
     public function index()
     {
-        return response()->json(
-            Mensagem::sucesso(
-                'Sucesso!',
-                [
-                    'sucesso' => true,
-                    'status_codigo' => 200,
-                    'data' => $this->contasService->get()
-                ]
-            )
-        );
+        return new ContaResourceCollection($this->contasService->get());
     }
 
     /**
@@ -45,6 +38,7 @@ class ContasController extends Controller
      * @bodyParam nome string required Nome da conta
      * @bodyParam icone string required Ícone da conta
      * @bodyParam cor_id int required ID Cor da conta
+     * @bodyParam saldo_inicial float required Saldo inicial da conta
      * 
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -55,7 +49,6 @@ class ContasController extends Controller
             'nome' => 'required',
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id',
-            'saldo' => 'required|numeric',
             'saldo_inicial' => 'required|numeric'
         ]);
 
@@ -78,9 +71,7 @@ class ContasController extends Controller
     {
         $conta = $this->contasService->find($id);
 
-        return response()->json(Mensagem::sucesso('Sucesso!', [
-            'data' => $conta
-        ]));
+        return new ContaResource($conta);
     }
 
     /**

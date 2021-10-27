@@ -42,20 +42,22 @@ $router->group(
 
         $router->group(['middleware' => 'auth:api'], function ($router) {
             $router->get('organizacoes', 'OrganizacoesController@index');
-    
-            $router->group(
-                [
-                    'prefix' => 'contas',
-                    'middleware' => 'organizacao'
-                ],
-                function ($router) {
-                    $router->get('/', 'ContasController@index');
-                    $router->post('/', 'ContasController@store');
-                    $router->get('/{id}', 'ContasController@show');
-                    $router->put('/{id}', 'ContasController@update');
-                    $router->delete('/{id}', 'ContasController@destroy');
-                }
-            );
+
+            $router->group(['middleware' => 'organizacao'], function ($router) {
+                $router->get('cores', 'CoresController@index');
+                $router->group(
+                    [
+                        'prefix' => 'contas'
+                    ],
+                    function ($router) {
+                        $router->get('/', 'ContasController@index');
+                        $router->post('/', 'ContasController@store');
+                        $router->get('/{id}', 'ContasController@show');
+                        $router->put('/{id}', 'ContasController@update');
+                        $router->delete('/{id}', 'ContasController@destroy');
+                    }
+                );
+            });
         });
     }
 );
