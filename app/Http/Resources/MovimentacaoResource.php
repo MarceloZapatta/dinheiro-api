@@ -31,6 +31,7 @@ class MovimentacaoResource extends JsonResource
                 'cor' => $this->categoria->cor
             ],
             'data_transacao' => Carbon::parse($this->data_transacao)->format('d/m'),
+            'valor' => $this->valor
         ];
     }
 }
