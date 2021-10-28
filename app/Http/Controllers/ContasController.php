@@ -7,6 +7,7 @@ use App\Http\Resources\ContaResourceCollection;
 use App\Mensagem;
 use App\Services\ContasService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @group Contas
@@ -47,6 +48,7 @@ class ContasController extends Controller
     {
         $this->validate($request, [
             'nome' => 'required',
+            'nome' => ['required', Rule::unique('contas', 'nome')],
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id',
             'saldo_inicial' => 'required|numeric'
@@ -89,9 +91,11 @@ class ContasController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'nome' => 'nullable',
-            'icone' => 'nullable',
-            'cor_id' => 'nullable|exists:cores,id'
+            'nome' => [
+                'required', Rule::unique('contas', 'nome')->ignore($id)
+            ],
+            'icone' => 'required',
+            'cor_id' => 'required|exists:cores,id'
         ]);
 
         $conta = $this->contasService->update($request, $id);
