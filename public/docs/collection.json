@@ -2,7 +2,7 @@
     "variables": [],
     "info": {
         "name": "Poupis API",
-        "_postman_id": "7212793a-52f8-4eb9-9eba-bba63b19c359",
+        "_postman_id": "c48eb1a7-6456-49ab-a36c-016bb69147d3",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.0.0\/collection.json"
     },
@@ -61,7 +61,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"et\",\n    \"documento\": \"Formato: XX.XXX.XXX\\\/XXXX-XX\",\n    \"organizacao_tipo_id\": 144.806,\n    \"email\": \"quam\",\n    \"senha\": \"tempora\",\n    \"nome_fantasia\": \"tempore\",\n    \"consultor\": true,\n    \"consultor_resumo\": \"aut\"\n}"
+                            "raw": "{\n    \"nome\": \"consequatur\",\n    \"documento\": \"Formato: XX.XXX.XXX\\\/XXXX-XX\",\n    \"organizacao_tipo_id\": 498439479.9718,\n    \"email\": \"est\",\n    \"senha\": \"ipsa\",\n    \"nome_fantasia\": \"fugit\",\n    \"consultor\": false,\n    \"consultor_resumo\": \"mollitia\"\n}"
                         },
                         "description": "",
                         "response": []
@@ -89,7 +89,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"token\": \"quis\"\n}"
+                            "raw": "{\n    \"token\": \"omnis\"\n}"
                         },
                         "description": "",
                         "response": []
@@ -235,7 +235,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"adipisci\",\n    \"icone\": \"et\",\n    \"cor_id\": 6\n}"
+                            "raw": "{\n    \"nome\": \"ipsam\",\n    \"icone\": \"in\",\n    \"cor_id\": 16\n}"
                         },
                         "description": "",
                         "response": []
@@ -291,7 +291,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"sint\",\n    \"icone\": \"sint\",\n    \"cor_id\": 19\n}"
+                            "raw": "{\n    \"nome\": \"molestiae\",\n    \"icone\": \"asperiores\",\n    \"cor_id\": 14\n}"
                         },
                         "description": "",
                         "response": []
@@ -381,7 +381,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"omnis\",\n    \"icone\": \"tempore\",\n    \"cor_id\": 13,\n    \"saldo_inicial\": 61594.7981\n}"
+                            "raw": "{\n    \"nome\": \"dolores\",\n    \"icone\": \"sit\",\n    \"cor_id\": 7,\n    \"saldo_inicial\": 42396918.41353864\n}"
                         },
                         "description": "",
                         "response": []
@@ -437,7 +437,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"rerum\",\n    \"icone\": \"excepturi\",\n    \"cor_id\": 8\n}"
+                            "raw": "{\n    \"nome\": \"provident\",\n    \"icone\": \"est\",\n    \"cor_id\": 6\n}"
                         },
                         "description": "",
                         "response": []
@@ -487,6 +487,152 @@
                             "query": []
                         },
                         "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Movimenta\u00e7\u00f5es",
+            "description": "\nMovimenta\u00e7\u00f5es",
+            "item": [
+                {
+                    "name": "Listagem",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/movimentacoes",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Gravar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/movimentacoes",
+                            "query": []
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"descricao\": \"totam\",\n    \"observacoes\": \"rem\",\n    \"data_transacao\": \"autem\",\n    \"categoria_id\": 19,\n    \"conta_id\": 20,\n    \"valor\": 4712.198\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Visualizar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/movimentacoes\/:id",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Atualizar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/movimentacoes\/:id",
+                            "query": []
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"descricao\": \"dolore\",\n    \"observacoes\": \"qui\",\n    \"data_transacao\": \"aut\",\n    \"categoria_id\": 8,\n    \"conta_id\": 6,\n    \"valor\": 2018.77312\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Excluir",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/movimentacoes\/:id",
+                            "query": []
+                        },
+                        "method": "DELETE",
                         "header": [
                             {
                                 "key": "Content-Type",

@@ -69,6 +69,18 @@ $router->group(
                         $router->delete('/{id}', 'CategoriasController@destroy');
                     }
                 );
+                $router->group(
+                    [
+                        'prefix' => 'movimentacoes'
+                    ],
+                    function ($router) {
+                        $router->get('/', 'MovimentacoesController@index');
+                        $router->post('/', 'MovimentacoesController@store');
+                        $router->get('/{id}', 'MovimentacoesController@show');
+                        $router->put('/{id}', 'MovimentacoesController@update');
+                        $router->delete('/{id}', 'MovimentacoesController@destroy');
+                    }
+                );
             });
         });
     }

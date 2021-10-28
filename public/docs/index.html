@@ -137,7 +137,7 @@ fetch(url, {
     "http://127.0.0.1:8000/v1/auth/cadastrar" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"et","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":144.806,"email":"quam","senha":"tempora","nome_fantasia":"tempore","consultor":true,"consultor_resumo":"aut"}'
+    -d '{"nome":"consequatur","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":498439479.9718,"email":"est","senha":"ipsa","nome_fantasia":"fugit","consultor":false,"consultor_resumo":"mollitia"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/auth/cadastrar"
@@ -149,14 +149,14 @@ let headers = {
 };
 
 let body = {
-    "nome": "et",
+    "nome": "consequatur",
     "documento": "Formato: XX.XXX.XXX\/XXXX-XX",
-    "organizacao_tipo_id": 144.806,
-    "email": "quam",
-    "senha": "tempora",
-    "nome_fantasia": "tempore",
-    "consultor": true,
-    "consultor_resumo": "aut"
+    "organizacao_tipo_id": 498439479.9718,
+    "email": "est",
+    "senha": "ipsa",
+    "nome_fantasia": "fugit",
+    "consultor": false,
+    "consultor_resumo": "mollitia"
 }
 
 fetch(url, {
@@ -239,7 +239,7 @@ fetch(url, {
     -G "http://127.0.0.1:8000/v1/auth/verificar-email" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"token":"quis"}'
+    -d '{"token":"omnis"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/auth/verificar-email"
@@ -251,7 +251,7 @@ let headers = {
 };
 
 let body = {
-    "token": "quis"
+    "token": "omnis"
 }
 
 fetch(url, {
@@ -419,7 +419,7 @@ fetch(url, {
     "http://127.0.0.1:8000/v1/categorias" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"adipisci","icone":"et","cor_id":6}'
+    -d '{"nome":"ipsam","icone":"in","cor_id":16}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/categorias"
@@ -431,9 +431,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "adipisci",
-    "icone": "et",
-    "cor_id": 6
+    "nome": "ipsam",
+    "icone": "in",
+    "cor_id": 16
 }
 
 fetch(url, {
@@ -517,7 +517,7 @@ fetch(url, {
     "http://127.0.0.1:8000/v1/categorias/1" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"sint","icone":"sint","cor_id":19}'
+    -d '{"nome":"molestiae","icone":"asperiores","cor_id":14}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/categorias/1"
@@ -529,9 +529,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "sint",
-    "icone": "sint",
-    "cor_id": 19
+    "nome": "molestiae",
+    "icone": "asperiores",
+    "cor_id": 14
 }
 
 fetch(url, {
@@ -644,7 +644,7 @@ fetch(url, {
     "http://127.0.0.1:8000/v1/contas" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"omnis","icone":"tempore","cor_id":13,"saldo_inicial":61594.7981}'
+    -d '{"nome":"dolores","icone":"sit","cor_id":7,"saldo_inicial":42396918.41353864}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/contas"
@@ -656,10 +656,10 @@ let headers = {
 };
 
 let body = {
-    "nome": "omnis",
-    "icone": "tempore",
-    "cor_id": 13,
-    "saldo_inicial": 61594.7981
+    "nome": "dolores",
+    "icone": "sit",
+    "cor_id": 7,
+    "saldo_inicial": 42396918.41353864
 }
 
 fetch(url, {
@@ -749,7 +749,7 @@ fetch(url, {
     "http://127.0.0.1:8000/v1/contas/1" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"rerum","icone":"excepturi","cor_id":8}'
+    -d '{"nome":"provident","icone":"est","cor_id":6}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL(
     "http://127.0.0.1:8000/v1/contas/1"
@@ -761,9 +761,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "rerum",
-    "icone": "excepturi",
-    "cor_id": 8
+    "nome": "provident",
+    "icone": "est",
+    "cor_id": 6
 }
 
 fetch(url, {
@@ -867,6 +867,273 @@ fetch(url, {
 <h3>HTTP Request</h3>
 <p><code>GET v1/cores</code></p>
 <!-- END_3e8a2cac5c9047b04721bbe977966bdc -->
+<h1>Movimentações</h1>
+<p>Movimentações</p>
+<!-- START_feae8727a1034f99ba3c3f62a267e358 -->
+<h2>Listagem</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET \
+    -G "http://127.0.0.1:8000/v1/movimentacoes" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">null</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET v1/movimentacoes</code></p>
+<!-- END_feae8727a1034f99ba3c3f62a267e358 -->
+<!-- START_0b3a36a0c1545f90f1ac597ee9d67197 -->
+<h2>Gravar</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST \
+    "http://127.0.0.1:8000/v1/movimentacoes" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"descricao":"totam","observacoes":"rem","data_transacao":"autem","categoria_id":19,"conta_id":20,"valor":4712.198}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "descricao": "totam",
+    "observacoes": "rem",
+    "data_transacao": "autem",
+    "categoria_id": 19,
+    "conta_id": 20,
+    "valor": 4712.198
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST v1/movimentacoes</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>descricao</code></td>
+<td>string</td>
+<td>required</td>
+<td>Descricao da movimentacao</td>
+</tr>
+<tr>
+<td><code>observacoes</code></td>
+<td>string</td>
+<td>optional</td>
+<td>optional Observações da movimentação</td>
+</tr>
+<tr>
+<td><code>data_transacao</code></td>
+<td>string</td>
+<td>required</td>
+<td>DAta em que ocorreu a movimentacao</td>
+</tr>
+<tr>
+<td><code>categoria_id</code></td>
+<td>integer</td>
+<td>required</td>
+<td>ID Categoria da movimentacao</td>
+</tr>
+<tr>
+<td><code>conta_id</code></td>
+<td>integer</td>
+<td>required</td>
+<td>ID Conta da movimentacao</td>
+</tr>
+<tr>
+<td><code>valor</code></td>
+<td>float</td>
+<td>required</td>
+<td>Valor da movimentacao</td>
+</tr>
+</tbody>
+</table>
+<!-- END_0b3a36a0c1545f90f1ac597ee9d67197 -->
+<!-- START_e502c34149708c406bd6590560ab69d6 -->
+<h2>Visualizar</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET \
+    -G "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">null</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET v1/movimentacoes/{id}</code></p>
+<!-- END_e502c34149708c406bd6590560ab69d6 -->
+<!-- START_109d7bf5c3f5c705f2f54f54134804e1 -->
+<h2>Atualizar</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT \
+    "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"descricao":"dolore","observacoes":"qui","data_transacao":"aut","categoria_id":8,"conta_id":6,"valor":2018.77312}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "descricao": "dolore",
+    "observacoes": "qui",
+    "data_transacao": "aut",
+    "categoria_id": 8,
+    "conta_id": 6,
+    "valor": 2018.77312
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT v1/movimentacoes/{id}</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>descricao</code></td>
+<td>string</td>
+<td>required</td>
+<td>Descricao da movimentacao</td>
+</tr>
+<tr>
+<td><code>observacoes</code></td>
+<td>string</td>
+<td>optional</td>
+<td>optional Observações da movimentação</td>
+</tr>
+<tr>
+<td><code>data_transacao</code></td>
+<td>string</td>
+<td>required</td>
+<td>Data em que ocorreu a movimentacao</td>
+</tr>
+<tr>
+<td><code>categoria_id</code></td>
+<td>integer</td>
+<td>required</td>
+<td>ID Categoria da movimentacao</td>
+</tr>
+<tr>
+<td><code>conta_id</code></td>
+<td>integer</td>
+<td>required</td>
+<td>ID Conta da movimentacao</td>
+</tr>
+<tr>
+<td><code>valor</code></td>
+<td>float</td>
+<td>required</td>
+<td>Valor da movimentacao</td>
+</tr>
+</tbody>
+</table>
+<!-- END_109d7bf5c3f5c705f2f54f54134804e1 -->
+<!-- START_1c330e59db8d716675f8c0b1c3c715ee -->
+<h2>Excluir</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE \
+    "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE v1/movimentacoes/{id}</code></p>
+<!-- END_1c330e59db8d716675f8c0b1c3c715ee -->
 <h1>Organizações</h1>
 <p>Organizações são entidades que podem ser vinculadas as Pessoas.</p>
 <!-- START_a6b3852da31d727152512049d74d4461 -->

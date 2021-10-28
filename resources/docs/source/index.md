@@ -105,7 +105,7 @@ curl -X POST \
     "http://127.0.0.1:8000/v1/auth/cadastrar" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"et","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":144.806,"email":"quam","senha":"tempora","nome_fantasia":"tempore","consultor":true,"consultor_resumo":"aut"}'
+    -d '{"nome":"consequatur","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":498439479.9718,"email":"est","senha":"ipsa","nome_fantasia":"fugit","consultor":false,"consultor_resumo":"mollitia"}'
 
 ```
 
@@ -120,14 +120,14 @@ let headers = {
 };
 
 let body = {
-    "nome": "et",
+    "nome": "consequatur",
     "documento": "Formato: XX.XXX.XXX\/XXXX-XX",
-    "organizacao_tipo_id": 144.806,
-    "email": "quam",
-    "senha": "tempora",
-    "nome_fantasia": "tempore",
-    "consultor": true,
-    "consultor_resumo": "aut"
+    "organizacao_tipo_id": 498439479.9718,
+    "email": "est",
+    "senha": "ipsa",
+    "nome_fantasia": "fugit",
+    "consultor": false,
+    "consultor_resumo": "mollitia"
 }
 
 fetch(url, {
@@ -168,7 +168,7 @@ curl -X GET \
     -G "http://127.0.0.1:8000/v1/auth/verificar-email" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"token":"quis"}'
+    -d '{"token":"omnis"}'
 
 ```
 
@@ -183,7 +183,7 @@ let headers = {
 };
 
 let body = {
-    "token": "quis"
+    "token": "omnis"
 }
 
 fetch(url, {
@@ -390,7 +390,7 @@ curl -X POST \
     "http://127.0.0.1:8000/v1/categorias" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"adipisci","icone":"et","cor_id":6}'
+    -d '{"nome":"ipsam","icone":"in","cor_id":16}'
 
 ```
 
@@ -405,9 +405,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "adipisci",
-    "icone": "et",
-    "cor_id": 6
+    "nome": "ipsam",
+    "icone": "in",
+    "cor_id": 16
 }
 
 fetch(url, {
@@ -486,7 +486,7 @@ curl -X PUT \
     "http://127.0.0.1:8000/v1/categorias/1" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"sint","icone":"sint","cor_id":19}'
+    -d '{"nome":"molestiae","icone":"asperiores","cor_id":14}'
 
 ```
 
@@ -501,9 +501,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "sint",
-    "icone": "sint",
-    "cor_id": 19
+    "nome": "molestiae",
+    "icone": "asperiores",
+    "cor_id": 14
 }
 
 fetch(url, {
@@ -624,7 +624,7 @@ curl -X POST \
     "http://127.0.0.1:8000/v1/contas" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"omnis","icone":"tempore","cor_id":13,"saldo_inicial":61594.7981}'
+    -d '{"nome":"dolores","icone":"sit","cor_id":7,"saldo_inicial":42396918.41353864}'
 
 ```
 
@@ -639,10 +639,10 @@ let headers = {
 };
 
 let body = {
-    "nome": "omnis",
-    "icone": "tempore",
-    "cor_id": 13,
-    "saldo_inicial": 61594.7981
+    "nome": "dolores",
+    "icone": "sit",
+    "cor_id": 7,
+    "saldo_inicial": 42396918.41353864
 }
 
 fetch(url, {
@@ -722,7 +722,7 @@ curl -X PUT \
     "http://127.0.0.1:8000/v1/contas/1" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"rerum","icone":"excepturi","cor_id":8}'
+    -d '{"nome":"provident","icone":"est","cor_id":6}'
 
 ```
 
@@ -737,9 +737,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "rerum",
-    "icone": "excepturi",
-    "cor_id": 8
+    "nome": "provident",
+    "icone": "est",
+    "cor_id": 6
 }
 
 fetch(url, {
@@ -849,6 +849,252 @@ null
 
 
 <!-- END_3e8a2cac5c9047b04721bbe977966bdc -->
+
+#Movimentações
+
+
+Movimentações
+<!-- START_feae8727a1034f99ba3c3f62a267e358 -->
+## Listagem
+
+> Example request:
+
+```bash
+curl -X GET \
+    -G "http://127.0.0.1:8000/v1/movimentacoes" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+> Example response (401):
+
+```json
+null
+```
+
+### HTTP Request
+`GET v1/movimentacoes`
+
+
+<!-- END_feae8727a1034f99ba3c3f62a267e358 -->
+
+<!-- START_0b3a36a0c1545f90f1ac597ee9d67197 -->
+## Gravar
+
+> Example request:
+
+```bash
+curl -X POST \
+    "http://127.0.0.1:8000/v1/movimentacoes" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"descricao":"totam","observacoes":"rem","data_transacao":"autem","categoria_id":19,"conta_id":20,"valor":4712.198}'
+
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "descricao": "totam",
+    "observacoes": "rem",
+    "data_transacao": "autem",
+    "categoria_id": 19,
+    "conta_id": 20,
+    "valor": 4712.198
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`POST v1/movimentacoes`
+
+#### Body Parameters
+Parameter | Type | Status | Description
+--------- | ------- | ------- | ------- | -----------
+    `descricao` | string |  required  | Descricao da movimentacao
+        `observacoes` | string |  optional  | optional Observações da movimentação
+        `data_transacao` | string |  required  | DAta em que ocorreu a movimentacao
+        `categoria_id` | integer |  required  | ID Categoria da movimentacao
+        `conta_id` | integer |  required  | ID Conta da movimentacao
+        `valor` | float |  required  | Valor da movimentacao
+    
+<!-- END_0b3a36a0c1545f90f1ac597ee9d67197 -->
+
+<!-- START_e502c34149708c406bd6590560ab69d6 -->
+## Visualizar
+
+> Example request:
+
+```bash
+curl -X GET \
+    -G "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+> Example response (401):
+
+```json
+null
+```
+
+### HTTP Request
+`GET v1/movimentacoes/{id}`
+
+
+<!-- END_e502c34149708c406bd6590560ab69d6 -->
+
+<!-- START_109d7bf5c3f5c705f2f54f54134804e1 -->
+## Atualizar
+
+> Example request:
+
+```bash
+curl -X PUT \
+    "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"descricao":"dolore","observacoes":"qui","data_transacao":"aut","categoria_id":8,"conta_id":6,"valor":2018.77312}'
+
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "descricao": "dolore",
+    "observacoes": "qui",
+    "data_transacao": "aut",
+    "categoria_id": 8,
+    "conta_id": 6,
+    "valor": 2018.77312
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`PUT v1/movimentacoes/{id}`
+
+#### Body Parameters
+Parameter | Type | Status | Description
+--------- | ------- | ------- | ------- | -----------
+    `descricao` | string |  required  | Descricao da movimentacao
+        `observacoes` | string |  optional  | optional Observações da movimentação
+        `data_transacao` | string |  required  | Data em que ocorreu a movimentacao
+        `categoria_id` | integer |  required  | ID Categoria da movimentacao
+        `conta_id` | integer |  required  | ID Conta da movimentacao
+        `valor` | float |  required  | Valor da movimentacao
+    
+<!-- END_109d7bf5c3f5c705f2f54f54134804e1 -->
+
+<!-- START_1c330e59db8d716675f8c0b1c3c715ee -->
+## Excluir
+
+> Example request:
+
+```bash
+curl -X DELETE \
+    "http://127.0.0.1:8000/v1/movimentacoes/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/movimentacoes/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`DELETE v1/movimentacoes/{id}`
+
+
+<!-- END_1c330e59db8d716675f8c0b1c3c715ee -->
 
 #Organizações
 
