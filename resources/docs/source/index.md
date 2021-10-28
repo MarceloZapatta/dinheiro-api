@@ -105,7 +105,7 @@ curl -X POST \
     "http://127.0.0.1:8000/v1/auth/cadastrar" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"et","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":29.263233,"email":"sit","senha":"hic","nome_fantasia":"ducimus","consultor":false,"consultor_resumo":"at"}'
+    -d '{"nome":"et","documento":"Formato: XX.XXX.XXX\/XXXX-XX","organizacao_tipo_id":144.806,"email":"quam","senha":"tempora","nome_fantasia":"tempore","consultor":true,"consultor_resumo":"aut"}'
 
 ```
 
@@ -122,12 +122,12 @@ let headers = {
 let body = {
     "nome": "et",
     "documento": "Formato: XX.XXX.XXX\/XXXX-XX",
-    "organizacao_tipo_id": 29.263233,
-    "email": "sit",
-    "senha": "hic",
-    "nome_fantasia": "ducimus",
-    "consultor": false,
-    "consultor_resumo": "at"
+    "organizacao_tipo_id": 144.806,
+    "email": "quam",
+    "senha": "tempora",
+    "nome_fantasia": "tempore",
+    "consultor": true,
+    "consultor_resumo": "aut"
 }
 
 fetch(url, {
@@ -168,7 +168,7 @@ curl -X GET \
     -G "http://127.0.0.1:8000/v1/auth/verificar-email" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"token":"ut"}'
+    -d '{"token":"quis"}'
 
 ```
 
@@ -183,7 +183,7 @@ let headers = {
 };
 
 let body = {
-    "token": "ut"
+    "token": "quis"
 }
 
 fetch(url, {
@@ -333,6 +333,240 @@ fetch(url, {
 
 <!-- END_e100403a484df32714df676195d59a67 -->
 
+#Categorias
+
+
+Categorias
+<!-- START_175bf203b9df603cc006247707c11a68 -->
+## Listagem
+
+> Example request:
+
+```bash
+curl -X GET \
+    -G "http://127.0.0.1:8000/v1/categorias" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/categorias"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+> Example response (401):
+
+```json
+null
+```
+
+### HTTP Request
+`GET v1/categorias`
+
+
+<!-- END_175bf203b9df603cc006247707c11a68 -->
+
+<!-- START_ecff4ac91e0d21e82b198a77f6460e0c -->
+## Gravar
+
+> Example request:
+
+```bash
+curl -X POST \
+    "http://127.0.0.1:8000/v1/categorias" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"nome":"adipisci","icone":"et","cor_id":6}'
+
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/categorias"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "nome": "adipisci",
+    "icone": "et",
+    "cor_id": 6
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`POST v1/categorias`
+
+#### Body Parameters
+Parameter | Type | Status | Description
+--------- | ------- | ------- | ------- | -----------
+    `nome` | string |  required  | Nome da categoria
+        `icone` | string |  required  | Ícone da categoria
+        `cor_id` | integer |  required  | ID Cor da categoria
+    
+<!-- END_ecff4ac91e0d21e82b198a77f6460e0c -->
+
+<!-- START_0b5ec410dad95f6fbdb559f106384452 -->
+## Visualizar
+
+> Example request:
+
+```bash
+curl -X GET \
+    -G "http://127.0.0.1:8000/v1/categorias/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/categorias/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+> Example response (401):
+
+```json
+null
+```
+
+### HTTP Request
+`GET v1/categorias/{id}`
+
+
+<!-- END_0b5ec410dad95f6fbdb559f106384452 -->
+
+<!-- START_08e8862177a9afb29f16f27072813143 -->
+## Atualizar
+
+> Example request:
+
+```bash
+curl -X PUT \
+    "http://127.0.0.1:8000/v1/categorias/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"nome":"sint","icone":"sint","cor_id":19}'
+
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/categorias/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "nome": "sint",
+    "icone": "sint",
+    "cor_id": 19
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`PUT v1/categorias/{id}`
+
+#### Body Parameters
+Parameter | Type | Status | Description
+--------- | ------- | ------- | ------- | -----------
+    `nome` | string |  optional  | optional Nome da categoria
+        `icone` | string |  optional  | optional Ícone da categoria
+        `cor_id` | integer |  optional  | optional ID Cor da categoria
+    
+<!-- END_08e8862177a9afb29f16f27072813143 -->
+
+<!-- START_cabeb235aade0fba1ed1e866614530fd -->
+## Excluir
+
+> Example request:
+
+```bash
+curl -X DELETE \
+    "http://127.0.0.1:8000/v1/categorias/1" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/categorias/1"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+
+### HTTP Request
+`DELETE v1/categorias/{id}`
+
+
+<!-- END_cabeb235aade0fba1ed1e866614530fd -->
+
 #Contas
 
 
@@ -390,7 +624,7 @@ curl -X POST \
     "http://127.0.0.1:8000/v1/contas" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"quisquam","icone":"consectetur","cor_id":6}'
+    -d '{"nome":"omnis","icone":"tempore","cor_id":13,"saldo_inicial":61594.7981}'
 
 ```
 
@@ -405,9 +639,10 @@ let headers = {
 };
 
 let body = {
-    "nome": "quisquam",
-    "icone": "consectetur",
-    "cor_id": 6
+    "nome": "omnis",
+    "icone": "tempore",
+    "cor_id": 13,
+    "saldo_inicial": 61594.7981
 }
 
 fetch(url, {
@@ -430,6 +665,7 @@ Parameter | Type | Status | Description
     `nome` | string |  required  | Nome da conta
         `icone` | string |  required  | Ícone da conta
         `cor_id` | integer |  required  | ID Cor da conta
+        `saldo_inicial` | float |  required  | Saldo inicial da conta
     
 <!-- END_2efa06b6ab0c4f7dac2ef31b835bd75b -->
 
@@ -486,7 +722,7 @@ curl -X PUT \
     "http://127.0.0.1:8000/v1/contas/1" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d '{"nome":"et","icone":"officiis","cor_id":9}'
+    -d '{"nome":"rerum","icone":"excepturi","cor_id":8}'
 
 ```
 
@@ -501,9 +737,9 @@ let headers = {
 };
 
 let body = {
-    "nome": "et",
-    "icone": "officiis",
-    "cor_id": 9
+    "nome": "rerum",
+    "icone": "excepturi",
+    "cor_id": 8
 }
 
 fetch(url, {
@@ -566,6 +802,53 @@ fetch(url, {
 
 
 <!-- END_89873943f399de5dcdc5ffd4a8715835 -->
+
+#Cores
+
+
+Cores
+<!-- START_3e8a2cac5c9047b04721bbe977966bdc -->
+## Listagem
+
+> Example request:
+
+```bash
+curl -X GET \
+    -G "http://127.0.0.1:8000/v1/cores" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"
+```
+
+```javascript
+const url = new URL(
+    "http://127.0.0.1:8000/v1/cores"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response => response.json())
+    .then(json => console.log(json));
+```
+
+
+> Example response (401):
+
+```json
+null
+```
+
+### HTTP Request
+`GET v1/cores`
+
+
+<!-- END_3e8a2cac5c9047b04721bbe977966bdc -->
 
 #Organizações
 

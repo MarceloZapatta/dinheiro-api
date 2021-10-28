@@ -2,7 +2,7 @@
     "variables": [],
     "info": {
         "name": "Poupis API",
-        "_postman_id": "93cf660a-b150-476e-a2eb-1eaa13273dd0",
+        "_postman_id": "7212793a-52f8-4eb9-9eba-bba63b19c359",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.0.0\/collection.json"
     },
@@ -61,7 +61,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"et\",\n    \"documento\": \"Formato: XX.XXX.XXX\\\/XXXX-XX\",\n    \"organizacao_tipo_id\": 29.263233,\n    \"email\": \"sit\",\n    \"senha\": \"hic\",\n    \"nome_fantasia\": \"ducimus\",\n    \"consultor\": false,\n    \"consultor_resumo\": \"at\"\n}"
+                            "raw": "{\n    \"nome\": \"et\",\n    \"documento\": \"Formato: XX.XXX.XXX\\\/XXXX-XX\",\n    \"organizacao_tipo_id\": 144.806,\n    \"email\": \"quam\",\n    \"senha\": \"tempora\",\n    \"nome_fantasia\": \"tempore\",\n    \"consultor\": true,\n    \"consultor_resumo\": \"aut\"\n}"
                         },
                         "description": "",
                         "response": []
@@ -89,7 +89,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"token\": \"ut\"\n}"
+                            "raw": "{\n    \"token\": \"quis\"\n}"
                         },
                         "description": "",
                         "response": []
@@ -182,6 +182,152 @@
             ]
         },
         {
+            "name": "Categorias",
+            "description": "\nCategorias",
+            "item": [
+                {
+                    "name": "Listagem",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/categorias",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Gravar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/categorias",
+                            "query": []
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nome\": \"adipisci\",\n    \"icone\": \"et\",\n    \"cor_id\": 6\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Visualizar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/categorias\/:id",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Atualizar",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/categorias\/:id",
+                            "query": []
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nome\": \"sint\",\n    \"icone\": \"sint\",\n    \"cor_id\": 19\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Excluir",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/categorias\/:id",
+                            "query": []
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                }
+            ]
+        },
+        {
             "name": "Contas",
             "description": "\nContas",
             "item": [
@@ -235,7 +381,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"quisquam\",\n    \"icone\": \"consectetur\",\n    \"cor_id\": 6\n}"
+                            "raw": "{\n    \"nome\": \"omnis\",\n    \"icone\": \"tempore\",\n    \"cor_id\": 13,\n    \"saldo_inicial\": 61594.7981\n}"
                         },
                         "description": "",
                         "response": []
@@ -291,7 +437,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"nome\": \"et\",\n    \"icone\": \"officiis\",\n    \"cor_id\": 9\n}"
+                            "raw": "{\n    \"nome\": \"rerum\",\n    \"icone\": \"excepturi\",\n    \"cor_id\": 8\n}"
                         },
                         "description": "",
                         "response": []
@@ -307,6 +453,40 @@
                             "query": []
                         },
                         "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Cores",
+            "description": "\nCores",
+            "item": [
+                {
+                    "name": "Listagem",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "127.0.0.1:8000",
+                            "path": "v1\/cores",
+                            "query": []
+                        },
+                        "method": "GET",
                         "header": [
                             {
                                 "key": "Content-Type",

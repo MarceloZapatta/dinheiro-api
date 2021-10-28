@@ -57,6 +57,18 @@ $router->group(
                         $router->delete('/{id}', 'ContasController@destroy');
                     }
                 );
+                $router->group(
+                    [
+                        'prefix' => 'categorias'
+                    ],
+                    function ($router) {
+                        $router->get('/', 'CategoriasController@index');
+                        $router->post('/', 'CategoriasController@store');
+                        $router->get('/{id}', 'CategoriasController@show');
+                        $router->put('/{id}', 'CategoriasController@update');
+                        $router->delete('/{id}', 'CategoriasController@destroy');
+                    }
+                );
             });
         });
     }
