@@ -50,7 +50,7 @@ class MovimentacoesController extends Controller
     {
         $this->validate($request, [
             'descricao' => 'required|max:255',
-            'observacoes' => 'required|max:255',
+            'observacoes' => 'nullable|max:255',
             'valor' => 'required|numeric',
             'data_transacao' => 'required|date_format:d/m/Y',
             'conta_id' => 'required|numeric|conta_organizacao',
@@ -100,7 +100,7 @@ class MovimentacoesController extends Controller
     {
         $this->validate($request, [
             'descricao' => 'required|max:255',
-            'observacoes' => 'required|max:255',
+            'observacoes' => 'nullable|max:255',
             'valor' => 'required|numeric',
             'data_transacao' => 'required|date_format:d/m/Y',
             'conta_id' => 'required|numeric|conta_organizacao',
