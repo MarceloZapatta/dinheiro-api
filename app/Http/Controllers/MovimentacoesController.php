@@ -28,9 +28,14 @@ class MovimentacoesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new MovimentacaoResourceCollection($this->movimentacoesService->get());
+        $this->validate($request, [
+            'data_inicio' => 'nullable|date_format:d/m/Y',
+            'data_fim' => 'nullable|date_format:d/m/Y'
+        ]);
+
+        return new MovimentacaoResourceCollection($this->movimentacoesService->get($request));
     }
 
     /**

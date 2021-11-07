@@ -49,8 +49,8 @@ $app->singleton(
 );
 
 $app->configure('swagger-lume');
-
 $app->configure('mail');
+$app->configure('jwt');
 
 $app->alias('mail.manager', \Illuminate\Mail\MailManager::class);
 $app->alias('mail.manager', \Illuminate\Contracts\Mail\Factory::class);

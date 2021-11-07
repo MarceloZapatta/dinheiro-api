@@ -6,10 +6,29 @@ use App\Movimentacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class MovimentacoesService {
-    public function get()
+class MovimentacoesService
+{
+    public function get(Request $request)
     {
-        return Movimentacao::get();
+        $movimentacoes = Movimentacao::orderBy('data_transacao');
+
+        if ($request->data_inicio) {
+            $movimentacoes->where('data_transacao', '>=', Carbon::createFromFormat('d/m/Y', $request->data_inicio));
+        }
+
+        if ($request->data_fim) {
+            $movimentacoes->where('data_transacao', '<=', Carbon::createFromFormat('d/m/Y', $request->data_fim));
+        }
+
+        if (!empty($request->categorias)) {
+            $movimentacoes->whereIn('categoria_id', $request->categorias);
+        }
+
+        if (!empty($request->contas)) {
+            $movimentacoes->whereIn('conta_id', $request->contas);
+        }
+
+        return $movimentacoes->get();
     }
 
     public function store(Request $request)
@@ -21,14 +40,14 @@ class MovimentacoesService {
         ]);
 
         return Movimentacao::create($request->only([
-                'organizacao_id',
-                'descricao',
-                'observacoes',
-                'valor',
-                'data_transacao',
-                'conta_id',
-                'categoria_id'
-            ]));
+            'organizacao_id',
+            'descricao',
+            'observacoes',
+            'valor',
+            'data_transacao',
+            'conta_id',
+            'categoria_id'
+        ]));
     }
 
     public function update(Request $request, $id)
@@ -38,7 +57,7 @@ class MovimentacoesService {
 
         $request->merge([
             'data_transacao' => Carbon::createFromFormat('d/m/Y', $request->data_transacao)->format('Y-m-d'),
-        ]);        
+        ]);
 
         $movimentacao->update($request->only([
             'descricao',
