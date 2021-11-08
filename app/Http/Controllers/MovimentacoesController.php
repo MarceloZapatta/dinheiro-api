@@ -35,7 +35,11 @@ class MovimentacoesController extends Controller
             'data_fim' => 'nullable|date_format:d/m/Y'
         ]);
 
-        return new MovimentacaoResourceCollection($this->movimentacoesService->get($request));
+        return new MovimentacaoResourceCollection(
+            $this->movimentacoesService->get($request), 
+            $this->movimentacoesService->getSaldo($request), 
+            $this->movimentacoesService->getSaldoPrevisto($request)
+        );
     }
 
     /**

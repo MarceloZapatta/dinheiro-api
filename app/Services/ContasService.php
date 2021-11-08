@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Conta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ContasService {
     public function get()
@@ -13,11 +14,11 @@ class ContasService {
 
     public function store(Request $request)
     {
+        Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
         $request->merge([
             'organizacao_id' => $request->organizacao_id,
             'saldo' => $request->saldo_inicial
         ]);
-
         return Conta::create($request->only([
                 'organizacao_id',
                 'nome',
@@ -30,6 +31,7 @@ class ContasService {
 
     public function update(Request $request, $id)
     {
+        Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
         $conta = Conta::where('organizacao_id', $request->organizacao_id)
             ->findOrFail($id);
         $conta->update($request->only([
@@ -41,6 +43,7 @@ class ContasService {
 
     public function delete($id)
     {
+        Cache::forget('contas.saldos_iniciais.' . request()->organizacao_id);
         return Conta::where('organizacao_id', request()->organizacao_id)
             ->where('id', $id)->delete();
     }
@@ -49,5 +52,18 @@ class ContasService {
     {
         return Conta::where('organizacao_id', request()->organizacao_id)
             ->findOrFail($id);
+    }
+
+    /**
+     * Calcula o saldo inicial das contas
+     *
+     * @return float
+     */
+    public function calcularSaldosIniciais(): float
+    {
+        return Cache::rememberForever('contas.saldos_iniciais.' . request()->organizacao_id, function () {
+            return Conta::where('organizacao_id', request()->organizacao_id)
+                ->sum('saldo_inicial');
+        });
     }
 }
