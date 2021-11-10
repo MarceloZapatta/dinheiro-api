@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
     dirname(__DIR__)
@@ -86,8 +86,9 @@ $app->configure('apidoc');
 
 $app->routeMiddleware(
     [
-    'auth' => App\Http\Middleware\Authenticate::class,
-    'organizacao' => App\Http\Middleware\OrganizacaoMiddleware::class
+        'auth' => App\Http\Middleware\Authenticate::class,
+        'organizacao' => App\Http\Middleware\OrganizacaoMiddleware::class,
+        'organizacaoResponsavel' => App\Http\Middleware\OrganizacaoResponsavelMiddleware::class
     ]
 );
 
@@ -125,15 +126,16 @@ $app->register(\Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class);
 
 $app->router->group(
     [
-    'namespace' => 'App\Http\Controllers',
-    ], function ($router) {
-        include __DIR__.'/../routes/web.php';
+        'namespace' => 'App\Http\Controllers',
+    ],
+    function ($router) {
+        include __DIR__ . '/../routes/web.php';
     }
 );
 
 $app->middleware(
     [
-    App\Http\Middleware\Cors::class
+        App\Http\Middleware\Cors::class
     ]
 );
 

@@ -42,6 +42,7 @@ $router->group(
 
         $router->group(['middleware' => 'auth:api'], function ($router) {
             $router->get('organizacoes', 'OrganizacoesController@index');
+            $router->post('organizacoes/convite', 'OrganizacoesController@aceitarConvite');
 
             $router->group(['middleware' => 'organizacao'], function ($router) {
                 $router->get('cores', 'CoresController@index');
@@ -79,6 +80,25 @@ $router->group(
                         $router->get('/{id}', 'MovimentacoesController@show');
                         $router->put('/{id}', 'MovimentacoesController@update');
                         $router->delete('/{id}', 'MovimentacoesController@destroy');
+                    }
+                );
+                $router->group(
+                    [
+                        'prefix' => 'organizacoes'
+                    ],
+                    function ($router) {
+                        $router->get('/dados', 'OrganizacoesController@show');
+                        $router->post('/', 'OrganizacoesController@store');
+                        $router->put('/', 'OrganizacoesController@update');
+                        $router->group(
+                            [
+                                'middleware' => 'organizacaoResponsavel'
+                            ],
+                            function ($router) {
+                                $router->delete('/pessoas/{id}', 'OrganizacoesController@destroyPessoa');
+                                $router->delete('/convites/{id}', 'OrganizacoesController@destroyConvite');
+                            });
+                        $router->delete('/{id}', 'OrganizacoesController@destroy');
                     }
                 );
             });

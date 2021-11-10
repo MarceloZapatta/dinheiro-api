@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrganizacaoResource;
 use App\Http\Resources\OrganizacaoResourceCollection;
+use App\Mensagem;
 use App\Services\OrganizacoesService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -34,5 +37,53 @@ class OrganizacoesController extends Controller
     {
         $user = Auth::user();
         return new OrganizacaoResourceCollection($this->organizacoesService->getPorUsuario($user));
+    }
+
+    /**
+     * Mostra a organização
+     */
+    public function show(): \App\Http\Resources\OrganizacaoResource
+    {
+        return new OrganizacaoResource($this->organizacoesService->findPorHeader());
+    }
+
+    public function update(Request $request)
+    {
+        $this->organizacoesService->update($request);
+        return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
+    public function aceitarConvite(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required'
+        ]);
+
+        $this->organizacoesService->aceitarConvite($request->token);
+        return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
+    /**
+     * Apaga a pessoa vincualada
+     *
+     * @param string $id
+     * @return void
+     */
+    public function destroyPessoa($id)
+    {
+        $this->organizacoesService->deletePessoa($id);
+        return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
+    /**
+     * Apaga o convite pendete
+     *
+     * @param string $id
+     * @return void
+     */
+    public function destroyConvite($id)
+    {
+        $this->organizacoesService->deleteConvite($id);
+        return response()->json(Mensagem::sucesso('Sucesso!'));
     }
 }

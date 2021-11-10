@@ -2,11 +2,21 @@
 
 namespace App\Services;
 
+use App\Mail\ConviteOrganizacao;
 use App\Organizacao;
+use App\OrganizacaoConvite;
 use App\OrganizacaoPessoa;
+use App\Rules\Cep;
+use App\Rules\CpfCnpj;
+use App\Rules\Telefone;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class OrganizacoesService {
     /**
@@ -50,5 +60,137 @@ class OrganizacoesService {
             return $query->where('pessoa_id', $user->pessoa->id);
         })
             ->get();
+    }
+
+    /**
+     * Retorna a organização por hash
+     *
+     * @return \App\Organizacao
+     */
+    public function findPorHeader()
+    {
+        return Organizacao::where('id', request()->organizacao_id)
+            ->first();
+    }
+
+    public function update(Request $request)
+    {
+        $organizacao = Organizacao::findOrFail(request()->organizacao_id);
+
+        $organizacaoTipoPessoaJuridica = 2;
+
+        if ($organizacao->organizacao_tipo_id === $organizacaoTipoPessoaJuridica) {
+            $validationRules = [
+                'nome' => 'required|max:255',
+            ];
+        } else {
+            $validationRules = [
+                'nome' => 'required|max:255',
+                'email' => 'required|max:255',
+                'documento' => ['nullable', new CpfCnpj], 
+                'email' => 'nullable|email',
+                'razao_social' => 'nullable|max:255',
+                'telefone' => ['nullable', new Telefone],
+                'rua' => 'nullable|max:255',
+                'numero' => 'nullable|max:255',
+                'complemento' => 'nullable|max:255',
+                'cidade' => 'nullable|max:255',
+                'uf_id' => 'nullable|exists:ufs,id',
+                'cep' => ['nullable', new Cep]
+            ];
+        }
+
+        $validator = Validator::make($request->all(), $validationRules);
+        $validator->validate();
+
+        $organizacao = null;
+
+        DB::transaction(function () use ($request, &$organizacao) {
+            $organizacao = Organizacao::where('id', request()->organizacao_id)
+                ->update($request->only([
+                    'nome',
+                    'email',
+                    'documento', 
+                    'nome', 
+                    'email',
+                    'razao_social',
+                    'telefone',
+                    'rua',
+                    'numero',
+                    'complemento',
+                    'cidade',
+                    'uf_id',
+                    'cep'
+                ]));
+            
+            if ($request->convite_novos) {
+                foreach ($request->convite_novos as $conviteNovo) {
+                    $token = Hash::make(Str::random(10));
+                    OrganizacaoConvite::create([
+                        'organizacao_id' => request()->organizacao_id,
+                        'email' => $conviteNovo,
+                        'token' => $token
+                    ]);
+                    Mail::to($conviteNovo)
+                        ->send(new ConviteOrganizacao($token));
+                }
+            }
+        });
+
+        return $organizacao;
+    }
+
+    /**
+     * Aceita o convite
+     *
+     * @param string $token
+     * @return void
+     */
+    public function aceitarConvite(string $token)
+    {
+        DB::transaction(function () use ($token) {
+            $user = auth('api')->user();
+            $convite = OrganizacaoConvite::where('token', urldecode($token))
+                ->where('email', $user->email)
+                ->firstOrFail();
+    
+            OrganizacaoPessoa::create([
+                'organizacao_id' => $convite->organizacao_id,
+                'pessoa_id' => $user->pessoa->id
+            ]);
+    
+            $convite->delete();
+        });
+    }
+
+    /**
+     * Apaga a pessoa vinculada
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function deletePessoa(int $id)
+    {
+        if ($id === auth('api')->user()->pessoa->id) {
+            abort(403, 'Acesso negado. Não é possível remover a pessoa responsável pela organização.');
+        }
+
+        return OrganizacaoPessoa::where('organizacao_id', request()->organizacao_id)
+            ->where('pessoa_id', $id)
+            ->where('pessoa_id', '<>', auth('api')->user()->pessoa->id)
+            ->delete();
+    }
+
+    /**
+     * Apaga o convite vinculado
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function deleteConvite(int $id)
+    {
+        return OrganizacaoConvite::where('organizacao_id', request()->organizacao_id)
+            ->where('id', $id)
+            ->delete();
     }
 }

@@ -8,7 +8,21 @@ use Illuminate\Support\Str;
 class Organizacao extends Model
 {
     protected $table = 'organizacoes';
-    protected $fillable = ['pessoa_responsavel_id', 'documento', 'nome', 'organizacao_tipo_id'];
+    protected $fillable = [
+        'pessoa_responsavel_id', 
+        'organizacao_tipo_id',
+        'documento', 
+        'nome', 
+        'email',
+        'razao_social',
+        'telefone',
+        'rua',
+        'numero',
+        'complemento',
+        'cidade',
+        'uf_id',
+        'cep'
+    ];
 
     public function organizacaoPessoas()
     {
@@ -18,6 +32,11 @@ class Organizacao extends Model
     public function organizacaoTipo()
     {
         return $this->belongsTo(OrganizacaoTipo::class);
+    }
+
+    public function organizacaoConvites()
+    {
+        return $this->hasMany(OrganizacaoConvite::class);
     }
 
     protected static function booted()

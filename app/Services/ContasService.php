@@ -3,17 +3,20 @@
 namespace App\Services;
 
 use App\Conta;
+use App\Helpers\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class ContasService {
     public function get()
     {
-        return Conta::get();
+        return Conta::where('organizacao_id', request()->organizacao_id)
+            ->get();
     }
 
     public function store(Request $request)
     {
+        Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
         $request->merge([
             'organizacao_id' => $request->organizacao_id,
@@ -31,6 +34,7 @@ class ContasService {
 
     public function update(Request $request, $id)
     {
+        Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
         $conta = Conta::where('organizacao_id', $request->organizacao_id)
             ->findOrFail($id);
@@ -43,6 +47,7 @@ class ContasService {
 
     public function delete($id)
     {
+        Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . request()->organizacao_id);
         return Conta::where('organizacao_id', request()->organizacao_id)
             ->where('id', $id)->delete();

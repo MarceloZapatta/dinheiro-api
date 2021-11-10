@@ -22,7 +22,7 @@ class OrganizacaoMiddleware
             abort(403, 'O header X-Organizacao-Hash é obrigatório');
         }
 
-        $organizacao = Organizacao::select('id')
+        $organizacao = Organizacao::select('id', 'pessoa_responsavel_id')
             ->where('hash', $organizacaoHash)
             ->first();
 
@@ -31,6 +31,8 @@ class OrganizacaoMiddleware
         }
 
         $request->request->add(['organizacao_id' => $organizacao->id]);
+        $request->request->add(['organizacao_atual' => $organizacao]);
+
         return $next($request);
     }
 }

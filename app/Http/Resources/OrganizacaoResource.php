@@ -17,7 +17,20 @@ class OrganizacaoResource extends JsonResource
         return [
             'hash' => $this->hash,
             'nome' => $this->nome,
-            'tipo' => $this->organizacaoTipo
+            'tipo' => $this->organizacaoTipo,
+            'pessoas' => $this->organizacaoPessoas ? $this->organizacaoPessoas->map(function ($organizacaoPessoa) {
+                return [
+                    'id' => $organizacaoPessoa->pessoa->user->id,
+                    'nome' => $organizacaoPessoa->pessoa->user->nome,
+                    'email' => $organizacaoPessoa->pessoa->user->email
+                ];
+            }) : [],
+            'convites' => $this->organizacaoConvites ? $this->organizacaoConvites->map(function ($organizacaoConvite) {
+                return [
+                    'id' => $organizacaoConvite->id,
+                    'email' => $organizacaoConvite->email
+                ];
+            }) : []
         ];
     }
 }

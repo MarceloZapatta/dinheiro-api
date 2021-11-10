@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class Helpers {
@@ -27,5 +28,11 @@ class Helpers {
         DB::table('cache')
             ->where('key', 'like', 'poupis_cache' . $keyWildcard)
             ->delete();
+    }
+
+    public static function flushCacheMovimentacoes()
+    {
+        Cache::forget('movimentacoes.saldo.' . request()->organizacao_id);
+        Cache::forget('movimentacoes.saldo_previsto.' . request()->organizacao_id);
     }
 }

@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 class CategoriasService {
     public function get()
     {
-        return Categoria::get();
+        return Categoria::where('organizacao_id', request()->organizacao_id)
+            ->get();
     }
 
     public function store(Request $request)
@@ -39,7 +40,8 @@ class CategoriasService {
         ]));
     }
 
-    public function delete($id)
+    public function 
+    delete($id)
     {
         return Categoria::where('organizacao_id', request()->organizacao_id)
             ->where('id', $id)->delete();
