@@ -11,14 +11,14 @@ use App\Rules\CpfCnpj;
 use App\Rules\Telefone;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class OrganizacoesService {
+class OrganizacoesService
+{
     /**
      * Grava a organização
      *
@@ -38,7 +38,7 @@ class OrganizacoesService {
                 'documento' => $documento,
                 'email' => $pessoa->user->email,
             ]);
-    
+
             OrganizacaoPessoa::create([
                 'organizacao_id' => $organizacao->id,
                 'pessoa_id' => $pessoa->id
@@ -87,7 +87,7 @@ class OrganizacoesService {
             $validationRules = [
                 'nome' => 'required|max:255',
                 'email' => 'required|max:255',
-                'documento' => ['nullable', new CpfCnpj], 
+                'documento' => ['nullable', new CpfCnpj],
                 'email' => 'nullable|email',
                 'razao_social' => 'nullable|max:255',
                 'telefone' => ['nullable', new Telefone],
@@ -106,12 +106,16 @@ class OrganizacoesService {
         $organizacao = null;
 
         DB::transaction(function () use ($request, &$organizacao) {
+            $request->merge([
+                'documento' => str_replace(['.', '-', '/', ' '], '', $request->documento)
+            ]);
+
             $organizacao = Organizacao::where('id', request()->organizacao_id)
                 ->update($request->only([
                     'nome',
                     'email',
-                    'documento', 
-                    'nome', 
+                    'documento',
+                    'nome',
                     'email',
                     'razao_social',
                     'telefone',
@@ -122,12 +126,90 @@ class OrganizacoesService {
                     'uf_id',
                     'cep'
                 ]));
-            
+
             if ($request->convite_novos) {
                 foreach ($request->convite_novos as $conviteNovo) {
                     $token = Hash::make(Str::random(10));
                     OrganizacaoConvite::create([
                         'organizacao_id' => request()->organizacao_id,
+                        'email' => $conviteNovo,
+                        'token' => $token
+                    ]);
+                    Mail::to($conviteNovo)
+                        ->send(new ConviteOrganizacao($token));
+                }
+            }
+        });
+
+        return $organizacao;
+    }
+
+    public function storeNova(Request $request)
+    {
+        $organizacaoTipoPessoaFisica = 1;
+
+        if ($request->organizacao_tipo_id === $organizacaoTipoPessoaFisica) {
+            $validationRules = [
+                'nome' => 'required|max:255',
+            ];
+        } else {
+            $validationRules = [
+                'organizacao_tipo_id' => 'required|exists:organizacao_tipos,id',
+                'documento' => ['required', new CpfCnpj],
+                'nome' => 'required|max:255',
+                'razao_social' => 'nullable|max:255',
+                'email' => 'nullable|max:255',
+                'email' => 'nullable|email',
+                'telefone' => ['nullable', new Telefone],
+                'rua' => 'nullable|max:255',
+                'numero' => 'nullable|max:255',
+                'complemento' => 'nullable|max:255',
+                'cidade' => 'nullable|max:255',
+                'uf_id' => 'nullable|exists:ufs,id',
+                'cep' => ['nullable', new Cep]
+            ];
+        }
+
+        $validator = Validator::make($request->all(), $validationRules);
+        $validator->validate();
+
+        $organizacao = null;
+
+        DB::transaction(function () use ($request, &$organizacao) {
+            $user = auth('api')->user();
+            $request->merge([
+                'pessoa_responsavel_id' => $user->id,
+                'documento' => str_replace(['.', '-', '/', ' '], '', $request->documento)
+            ]);
+
+            $organizacao = Organizacao::create($request->only([
+                'organizacao_tipo_id',
+                'pessoa_responsavel_id',
+                'nome',
+                'email',
+                'documento',
+                'nome',
+                'email',
+                'razao_social',
+                'telefone',
+                'rua',
+                'numero',
+                'complemento',
+                'cidade',
+                'uf_id',
+                'cep'
+            ]));
+
+            OrganizacaoPessoa::create([
+                'organizacao_id' => $organizacao->id,
+                'pessoa_id' => $user->pessoa->id
+            ]);
+
+            if ($request->convite_novos) {
+                foreach ($request->convite_novos as $conviteNovo) {
+                    $token = Hash::make(Str::random(10));
+                    OrganizacaoConvite::create([
+                        'organizacao_id' => $organizacao->id,
                         'email' => $conviteNovo,
                         'token' => $token
                     ]);
@@ -153,12 +235,12 @@ class OrganizacoesService {
             $convite = OrganizacaoConvite::where('token', urldecode($token))
                 ->where('email', $user->email)
                 ->firstOrFail();
-    
+
             OrganizacaoPessoa::create([
                 'organizacao_id' => $convite->organizacao_id,
                 'pessoa_id' => $user->pessoa->id
             ]);
-    
+
             $convite->delete();
         });
     }

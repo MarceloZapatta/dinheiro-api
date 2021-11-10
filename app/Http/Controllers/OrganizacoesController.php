@@ -53,6 +53,12 @@ class OrganizacoesController extends Controller
         return response()->json(Mensagem::sucesso('Sucesso!'));
     }
 
+    public function store(Request $request)
+    {
+        $this->organizacoesService->storeNova($request);
+        return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
     public function aceitarConvite(Request $request)
     {
         $this->validate($request, [

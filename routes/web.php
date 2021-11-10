@@ -43,6 +43,7 @@ $router->group(
         $router->group(['middleware' => 'auth:api'], function ($router) {
             $router->get('organizacoes', 'OrganizacoesController@index');
             $router->post('organizacoes/convite', 'OrganizacoesController@aceitarConvite');
+            $router->post('organizacoes', 'OrganizacoesController@store');
 
             $router->group(['middleware' => 'organizacao'], function ($router) {
                 $router->get('cores', 'CoresController@index');
@@ -88,7 +89,6 @@ $router->group(
                     ],
                     function ($router) {
                         $router->get('/dados', 'OrganizacoesController@show');
-                        $router->post('/', 'OrganizacoesController@store');
                         $router->put('/', 'OrganizacoesController@update');
                         $router->group(
                             [
@@ -101,6 +101,7 @@ $router->group(
                         $router->delete('/{id}', 'OrganizacoesController@destroy');
                     }
                 );
+                $router->get('ufs', 'UfsController@index');
             });
         });
     }
