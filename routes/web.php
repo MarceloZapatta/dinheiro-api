@@ -85,6 +85,19 @@ $router->group(
                 );
                 $router->group(
                     [
+                        'prefix' => 'clientes',
+                        'middleware' => 'organizacaoPj'
+                    ],
+                    function ($router) {
+                        $router->get('/', 'ClientesController@index');
+                        $router->post('/', 'ClientesController@store');
+                        $router->get('/{id}', 'ClientesController@show');
+                        $router->put('/{id}', 'ClientesController@update');
+                        $router->delete('/{id}', 'ClientesController@destroy');
+                    }
+                );
+                $router->group(
+                    [
                         'prefix' => 'organizacoes'
                     ],
                     function ($router) {
@@ -97,8 +110,17 @@ $router->group(
                             function ($router) {
                                 $router->delete('/pessoas/{id}', 'OrganizacoesController@destroyPessoa');
                                 $router->delete('/convites/{id}', 'OrganizacoesController@destroyConvite');
-                            });
+                            }
+                        );
                         $router->delete('/{id}', 'OrganizacoesController@destroy');
+                        $router->group(
+                            [
+                                'prefix' => 'integracoes'
+                            ],
+                            function ($router) {
+                                $router->get('/', 'OrganizacoesController@integracoes');
+                            }
+                        );
                     }
                 );
                 $router->get('ufs', 'UfsController@index');

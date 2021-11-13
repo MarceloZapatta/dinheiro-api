@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\IntegracaoDadosResourceCollection;
 use App\Http\Resources\OrganizacaoResource;
 use App\Http\Resources\OrganizacaoResourceCollection;
 use App\Mensagem;
@@ -91,5 +92,16 @@ class OrganizacoesController extends Controller
     {
         $this->organizacoesService->deleteConvite($id);
         return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
+    /**
+     * Recebe os dados de integrações da organização
+     *
+     * @return \App\Http\Resources\IntegracaoDadosResourceCollection
+     */
+    public function integracoes(): IntegracaoDadosResourceCollection
+    {
+        $integracoesDados = $this->organizacoesService->getIntegracaoDados();
+        return new IntegracaoDadosResourceCollection($integracoesDados);
     }
 }

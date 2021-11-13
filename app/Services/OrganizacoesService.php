@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\IntegracaoDado;
 use App\Mail\ConviteOrganizacao;
 use App\Organizacao;
 use App\OrganizacaoConvite;
@@ -274,5 +275,15 @@ class OrganizacoesService
         return OrganizacaoConvite::where('organizacao_id', request()->organizacao_id)
             ->where('id', $id)
             ->delete();
+    }
+
+    /**
+     * Recebe os dados de integração
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getIntegracaoDados(): \Illuminate\Support\Collection
+    {
+        return IntegracaoDado::get();
     }
 }

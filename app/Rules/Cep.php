@@ -15,7 +15,7 @@ class Cep implements Rule
      */
     public function passes($attribute, $value)
     {
-        return !preg_match('/^[0-9]{5,5}\-([0-9]{3,3})?$/', $value);
+        return preg_match('/^\d{5}\-\d{3}$/', $value);
     }
 
     /**

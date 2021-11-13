@@ -88,7 +88,8 @@ $app->routeMiddleware(
     [
         'auth' => App\Http\Middleware\Authenticate::class,
         'organizacao' => App\Http\Middleware\OrganizacaoMiddleware::class,
-        'organizacaoResponsavel' => App\Http\Middleware\OrganizacaoResponsavelMiddleware::class
+        'organizacaoResponsavel' => App\Http\Middleware\OrganizacaoResponsavelMiddleware::class,
+        'organizacaoPj' => App\Http\Middleware\OrganizacaoPjMiddleware::class
     ]
 );
 
