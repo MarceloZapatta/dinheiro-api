@@ -6,6 +6,7 @@ use App\Cobranca;
 use App\Helpers\Helpers;
 use App\JunoLogs;
 use App\Movimentacao;
+use App\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -25,7 +26,8 @@ class MovimentacoesService
     public function get(Request $request)
     {
         $movimentacoes = Movimentacao::orderBy('data_transacao')
-            ->with('cobranca');
+            ->with('cobranca')
+            ->whereNull('importacao_movimentacao_id');
 
         if ($request->data_inicio) {
             $movimentacoes->where('data_transacao', '>=', Carbon::createFromFormat('d/m/Y', $request->data_inicio));
@@ -83,11 +85,15 @@ class MovimentacoesService
         $movimentacao = Movimentacao::where('organizacao_id', $request->organizacao_id)
             ->findOrFail($id);
 
+        $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
+
         $request->merge([
+            'importacao_movimentacao_id' => null,
             'data_transacao' => Carbon::createFromFormat('d/m/Y', $request->data_transacao)->format('Y-m-d'),
         ]);
 
         $movimentacao->update($request->only([
+            'importacao_movimentacao_id',
             'cliente_id',
             'descricao',
             'observacoes',
@@ -96,6 +102,16 @@ class MovimentacoesService
             'conta_id',
             'categoria_id'
         ]));
+
+        if ($movimentacaoImportacaoId) {
+            if (
+                Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
+                ->count() <= 0
+            ) {
+                MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
+                    ->delete();
+            }
+        }
     }
 
     public function delete($id)
@@ -104,7 +120,7 @@ class MovimentacoesService
             ->where('id', $id)
             ->firstOrFail();
 
-        DB::transaction(function () use ($id, &$movimentacao) {            
+        DB::transaction(function () use ($id, &$movimentacao) {
             if ($movimentacao->cobranca) {
                 $cancelarCobranca = $this->junoService->cancelarCobranca($movimentacao->cobranca);
 
@@ -112,9 +128,21 @@ class MovimentacoesService
                 $movimentacao->cobranca->status = 'canceled';
                 $movimentacao->cobranca->save();
             } else {
+                $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
+
                 $movimentacao = Movimentacao::where('organizacao_id', request()->organizacao_id)
                     ->where('id', $id)
                     ->delete();
+
+                if ($movimentacaoImportacaoId) {
+                    if (
+                        Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
+                        ->count() <= 0
+                    ) {
+                        MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
+                            ->delete();
+                    }
+                }
             }
         });
 
@@ -136,7 +164,8 @@ class MovimentacoesService
      * @param float $valor
      * @return float
      */
-    private function transformarValorNegativo(float $valor): float {
+    private function transformarValorNegativo(float $valor): float
+    {
         return abs($valor) * -1;
     }
 
@@ -151,8 +180,9 @@ class MovimentacoesService
             $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
             $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::now())
                 ->where('organizacao_id', request()->organizacao_id)
+                ->whereNull('importacao_movimentacao_id')
                 ->sum('valor');
-                
+
             return $acumulado + $somaSaldosIniciais;
         });
     }
@@ -168,8 +198,9 @@ class MovimentacoesService
             $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
             $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::createFromFormat('d/m/Y', $request->data_fim))
                 ->where('organizacao_id', request()->organizacao_id)
+                ->whereNull('importacao_movimentacao_id')
                 ->sum('valor');
-            
+
             return $acumulado + $somaSaldosIniciais;
         });
     }

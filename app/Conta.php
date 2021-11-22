@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\WithOrganizacao;
 use Illuminate\Database\Eloquent\Model;
 
 class Conta extends Model
 {
+    use WithOrganizacao;
+
     protected $fillable = [
         'organizacao_id',
         'nome',

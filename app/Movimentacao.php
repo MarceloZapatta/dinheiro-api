@@ -10,6 +10,7 @@ class Movimentacao extends Model
 
     protected $fillable = [
         'organizacao_id',
+        'importacao_movimentacao_id',
         'cliente_id',
         'descricao',
         'observacoes',

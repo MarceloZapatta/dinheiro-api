@@ -78,6 +78,16 @@ $router->group(
                         'prefix' => 'movimentacoes'
                     ],
                     function ($router) {
+                        $router->group(
+                            [
+                                'prefix' => 'importacoes'
+                            ],
+                            function ($router) {
+                                $router->get('/', 'MovimentacaoImportacoesController@index');
+                                $router->post('/excel', 'MovimentacaoImportacoesController@importarExcel');
+                                $router->get('/{id}', 'MovimentacaoImportacoesController@show');
+                            }
+                        );
                         $router->get('/', 'MovimentacoesController@index');
                         $router->post('/', 'MovimentacoesController@store');
                         $router->post('/emitir-cobranca', 'MovimentacoesController@emitirCobranca');
