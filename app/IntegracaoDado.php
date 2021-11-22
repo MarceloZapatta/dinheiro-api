@@ -15,6 +15,15 @@ class IntegracaoDado extends Model
         'dados'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'dados' => 'array',
+    ];
+
     public function integracao()
     {
         return $this->belongsTo(Integracao::class, 'integracao_id');

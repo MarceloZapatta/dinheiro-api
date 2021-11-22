@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MovimentacaoResource;
 use App\Http\Resources\MovimentacaoResourceCollection;
+use App\JunoLogs;
 use App\Mensagem;
 use App\Services\MovimentacoesService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 /**
  * @group Movimentações
@@ -57,18 +57,8 @@ class MovimentacoesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'descricao' => 'required|max:255',
-            'observacoes' => 'nullable|max:255',
-            'valor' => 'required|numeric',
-            'data_transacao' => 'required|date_format:d/m/Y',
-            'conta_id' => 'required|numeric|conta_organizacao',
-            'categoria_id' => 'required|numeric|categoria_organizacao'
-        ], [
-            'conta_organizacao' => 'A conta não foi encontrada',
-            'categoria_organizacao' => 'A categoria não foi encontrada'
-        ]);
-
+        $this->validarMovimentacao($request);
+        
         $movimentacao = $this->movimentacoesService->store($request);
 
         return response()->json(Mensagem::sucesso('Sucesso!', [
@@ -107,17 +97,7 @@ class MovimentacoesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'descricao' => 'required|max:255',
-            'observacoes' => 'nullable|max:255',
-            'valor' => 'required|numeric',
-            'data_transacao' => 'required|date_format:d/m/Y',
-            'conta_id' => 'required|numeric|conta_organizacao',
-            'categoria_id' => 'required|numeric|categoria_organizacao'
-        ], [
-            'conta_organizacao' => 'A conta não foi encontrada',
-            'categoria_organizacao' => 'A categoria não foi encontrada'
-        ]);
+        $this->validarMovimentacao($request);
 
         $movimentacao = $this->movimentacoesService->update($request, $id);
 
@@ -139,5 +119,39 @@ class MovimentacoesController extends Controller
         $this->movimentacoesService->delete($id);
 
         return response()->json(Mensagem::sucesso('Sucesso!'));
+    }
+
+    public function emitirCobranca(Request $request)
+    {
+        $this->validarMovimentacao($request);
+
+        $cobranca = $this->movimentacoesService->emitirCobranca($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso!', [
+            'data' => $cobranca
+        ]));
+    }
+
+    private function validarMovimentacao(Request $request)
+    {
+        $this->validate($request, [
+            'descricao' => 'required|max:255',
+            'observacoes' => 'nullable|max:255',
+            'valor' => 'required|numeric',
+            'data_transacao' => 'required|date_format:d/m/Y',
+            'conta_id' => 'required|numeric|conta_organizacao',
+            'categoria_id' => 'required|numeric|categoria_organizacao'
+        ], [
+            'conta_organizacao' => 'A conta não foi encontrada',
+            'categoria_organizacao' => 'A categoria não foi encontrada'
+        ]);
+    }
+
+    public function webhookJuno(Request $request)
+    {
+        JunoLogs::create([
+            'dados' => json_encode($request->all()),
+            'mensagem' => 'Web hook JUNO'
+        ]);
     }
 }

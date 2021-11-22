@@ -53,7 +53,7 @@ return array(
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    'front_url' => env('APP_FRONT_URL', 'http://localhost:3000'),
+    'front_url' => env('APP_FRONT_URL', 'http://127.0.0.1:3000'),
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -166,6 +166,7 @@ return array(
         /*
          * Package Service Providers...
          */
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -2,24 +2,30 @@
 
 namespace App\Services;
 
+use App\Cobranca;
 use App\Helpers\Helpers;
+use App\JunoLogs;
 use App\Movimentacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class MovimentacoesService
 {
     private $contasService;
+    private $junoService;
 
-    public function __construct(ContasService $contasService)
+    public function __construct(ContasService $contasService, JunoService $junoService)
     {
         $this->contasService = $contasService;
+        $this->junoService = $junoService;
     }
 
     public function get(Request $request)
     {
-        $movimentacoes = Movimentacao::orderBy('data_transacao');
+        $movimentacoes = Movimentacao::orderBy('data_transacao')
+            ->with('cobranca');
 
         if ($request->data_inicio) {
             $movimentacoes->where('data_transacao', '>=', Carbon::createFromFormat('d/m/Y', $request->data_inicio));
@@ -52,7 +58,7 @@ class MovimentacoesService
             'saldo' => $request->saldo_inicial
         ]);
 
-        if ($request->despesa) {
+        if ((int) $request->despesa === 1) {
             $request->merge([
                 'valor' => $this->transformarValorNegativo($request->valor)
             ]);
@@ -60,6 +66,7 @@ class MovimentacoesService
 
         return Movimentacao::create($request->only([
             'organizacao_id',
+            'cliente_id',
             'descricao',
             'observacoes',
             'valor',
@@ -81,6 +88,7 @@ class MovimentacoesService
         ]);
 
         $movimentacao->update($request->only([
+            'cliente_id',
             'descricao',
             'observacoes',
             'valor',
@@ -92,11 +100,28 @@ class MovimentacoesService
 
     public function delete($id)
     {
+        $movimentacao = Movimentacao::where('organizacao_id', request()->organizacao_id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        DB::transaction(function () use ($id, &$movimentacao) {            
+            if ($movimentacao->cobranca) {
+                $cancelarCobranca = $this->junoService->cancelarCobranca($movimentacao->cobranca);
+
+                $movimentacao->cobranca->data_cancelamento = Carbon::now();
+                $movimentacao->cobranca->status = 'canceled';
+                $movimentacao->cobranca->save();
+            } else {
+                $movimentacao = Movimentacao::where('organizacao_id', request()->organizacao_id)
+                    ->where('id', $id)
+                    ->delete();
+            }
+        });
+
         Helpers::flushCacheMovimentacoes();
         Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . request()->organizacao_id . '.%');
-        return Movimentacao::where('organizacao_id', request()->organizacao_id)
-            ->where('id', $id)
-            ->delete();
+
+        return $movimentacao;
     }
 
     public function find($id)
@@ -147,5 +172,25 @@ class MovimentacoesService
             
             return $acumulado + $somaSaldosIniciais;
         });
+    }
+
+    public function emitirCobranca(Request $request)
+    {
+        $movimentacao = $this->store($request);
+
+        try {
+            $cobranca = $this->junoService->emitirCobranca($movimentacao);
+        } catch (\Throwable $th) {
+            JunoLogs::create([
+                'dados' => json_encode($movimentacao->toArray()) . '||' . $th->getMessage(),
+                'message' => 'Falha na tentativa de gerar cobrança para a movimentação',
+                'code' => $th->getCode()
+            ]);
+
+            throw $th;
+        }
+
+        $cobranca = Cobranca::create($this->junoService->gerarDataCobranca($movimentacao, $cobranca));
+        return $cobranca;
     }
 }

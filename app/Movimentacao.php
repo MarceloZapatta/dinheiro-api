@@ -10,6 +10,7 @@ class Movimentacao extends Model
 
     protected $fillable = [
         'organizacao_id',
+        'cliente_id',
         'descricao',
         'observacoes',
         'valor',
@@ -26,5 +27,15 @@ class Movimentacao extends Model
     public function conta()
     {
         return $this->belongsTo(Conta::class);
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
+    }
+
+    public function cobranca()
+    {
+        return $this->hasOne(Cobranca::class);
     }
 }

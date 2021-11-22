@@ -27,6 +27,8 @@ class ClientesService {
     {
         $request->merge([
             'organizacao_id' => $request->organizacao_id,
+            'documento' => str_replace(['.', '-', '/'], '', $request->documento),
+            'cep' => str_replace('-', '', $request->cep)
         ]);
 
         $data = $request->only([
@@ -37,6 +39,7 @@ class ClientesService {
         ]);
 
         $dataEndereco = $request->only('endereco');
+        $dataEndereco['endereco']['cep'] = str_replace('-', '', $request->endereco['cep']);
         $data = array_merge($data, $dataEndereco['endereco']);
 
         return Cliente::create($data);
@@ -46,6 +49,7 @@ class ClientesService {
     {
         $request->merge([
             'organizacao_id' => $request->organizacao_id,
+            'documento' => str_replace(['.', '-', '/'], '', $request->documento)
         ]);
 
         $data = $request->only([
@@ -56,6 +60,7 @@ class ClientesService {
         ]);
 
         $dataEndereco = $request->only('endereco');
+        $dataEndereco['endereco']['cep'] = str_replace('-', '', $request->endereco['cep']);
         $data = array_merge($data, $dataEndereco['endereco']);
 
         $cliente = Cliente::findOrFail($id);

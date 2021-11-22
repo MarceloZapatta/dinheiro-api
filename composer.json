@@ -20,6 +20,7 @@
         "illuminate/support": "^7.30.1",
         "laravel-lang/lang": "~7.0",
         "laravel/lumen-framework": "^7.0",
+        "maatwebsite/excel": "^3.1",
         "mpociot/laravel-apidoc-generator": "^4.8",
         "tymon/jwt-auth": "^1.0",
         "zircote/swagger-php": "3.*"

@@ -20,14 +20,12 @@ class ContasService {
         Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
         $request->merge([
             'organizacao_id' => $request->organizacao_id,
-            'saldo' => $request->saldo_inicial
         ]);
         return Conta::create($request->only([
                 'organizacao_id',
                 'nome',
                 'icone',
                 'cor_id',
-                'saldo',
                 'saldo_inicial'
             ]));
     }

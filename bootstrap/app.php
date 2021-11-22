@@ -72,6 +72,7 @@ $app->alias('mailer', \Illuminate\Contracts\Mail\MailQueue::class);
 
 $app->configure('app');
 $app->configure('apidoc');
+$app->configure('juno');
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +114,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(\SwaggerLume\ServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class);
+$app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

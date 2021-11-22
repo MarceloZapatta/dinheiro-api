@@ -40,6 +40,8 @@ $router->group(
             }
         );
 
+        $router->get('movimentacoes/integracoes/juno/webhook', 'MovimentacoesController@webhookJuno');
+
         $router->group(['middleware' => 'auth:api'], function ($router) {
             $router->get('organizacoes', 'OrganizacoesController@index');
             $router->post('organizacoes/convite', 'OrganizacoesController@aceitarConvite');
@@ -78,6 +80,7 @@ $router->group(
                     function ($router) {
                         $router->get('/', 'MovimentacoesController@index');
                         $router->post('/', 'MovimentacoesController@store');
+                        $router->post('/emitir-cobranca', 'MovimentacoesController@emitirCobranca');
                         $router->get('/{id}', 'MovimentacoesController@show');
                         $router->put('/{id}', 'MovimentacoesController@update');
                         $router->delete('/{id}', 'MovimentacoesController@destroy');
@@ -110,6 +113,7 @@ $router->group(
                             function ($router) {
                                 $router->delete('/pessoas/{id}', 'OrganizacoesController@destroyPessoa');
                                 $router->delete('/convites/{id}', 'OrganizacoesController@destroyConvite');
+                                $router->get('/integracoes/juno/link-cadastrar', 'IntegracaoJunoController@getLinkCadastro');
                             }
                         );
                         $router->delete('/{id}', 'OrganizacoesController@destroy');

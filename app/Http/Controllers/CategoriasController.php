@@ -47,7 +47,9 @@ class CategoriasController extends Controller
     {
         $this->validate($request, [
             'nome' => 'required',
-            'nome' => ['required', Rule::unique('categorias', 'nome')],
+            'nome' => ['required', Rule::unique('categorias', 'nome')->where(function ($query) {
+                return $query->where('organizacao_id', request()->organizacao_id);
+            })],
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id'
         ]);
@@ -90,7 +92,9 @@ class CategoriasController extends Controller
     {
         $this->validate($request, [
             'nome' => [
-                'required', Rule::unique('categorias', 'nome')->ignore($id)
+                'required', Rule::unique('categorias', 'nome')->where(function ($query) {
+                    return $query->where('organizacao_id', request()->organizacao_id);
+                })->ignore($id)
             ],
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id'
