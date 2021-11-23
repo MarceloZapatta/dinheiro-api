@@ -88,6 +88,15 @@ $router->group(
                                 $router->get('/{id}', 'MovimentacaoImportacoesController@show');
                             }
                         );
+                        $router->group(
+                            [
+                                'prefix' => 'dashboards'
+                            ],
+                            function ($router) {
+                                $router->get('/por-categoria', 'DashboardsController@porCategoria');
+                                $router->get('/movimentacoes-anual', 'DashboardsController@movimentacoesAnual');
+                            }
+                        );
                         $router->get('/', 'MovimentacoesController@index');
                         $router->post('/', 'MovimentacoesController@store');
                         $router->post('/emitir-cobranca', 'MovimentacoesController@emitirCobranca');

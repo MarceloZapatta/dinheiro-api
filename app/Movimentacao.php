@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\WithOrganizacao;
 use Illuminate\Database\Eloquent\Model;
 
 class Movimentacao extends Model
