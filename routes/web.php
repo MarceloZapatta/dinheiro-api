@@ -33,6 +33,8 @@ $router->group(
             function ($router) {
                 $router->post('login', 'AuthController@login');
                 $router->post('cadastrar', 'AuthController@cadastrar');
+                $router->post('esqueci-senha', 'AuthController@esqueciSenha');
+                $router->post('verificar-recuperar-senha', ['as' => 'recuperar-senha', 'uses' => 'AuthController@verificarRecuperarSenha']);
                 $router->get('verificar-email', ['as' => 'verificar-email', 'uses' => 'AuthController@verificarEmail']);
                 $router->post('sair', 'AuthController@sair');
                 $router->post('atualizar', 'AuthController@atualizar');

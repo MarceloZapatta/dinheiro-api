@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\EmailVerificacaoToken;
+use App\Mail\RecuperarSenha;
 use App\Mail\VerificarEmail;
 use App\User;
 use Carbon\Carbon;
@@ -124,6 +125,45 @@ class AuthsService
             $user->email_verificado = 1;
             $user->email_verified_at = Carbon::now();
             $user->email_verificacao_token = NULL;
+            $user->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function recuperarSenha(Request $request)
+    {
+        $user = User::where('email', $request->email)
+            ->where('email_verificado', 1)
+            ->first();
+
+        if ($user) {
+            $token = urlencode(Hash::make(Str::random(32)));
+            $user->email_verificacao_token = $token;
+            $user->save();
+
+            $url = config('app.front_url') . '/recuperar-senha/' . $token;
+
+            Mail::to($user)
+                ->send(new RecuperarSenha($user->nome, $url));
+        }
+    }
+
+    /**
+     * Verificar se o token passado é válido
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function verificarRecuperarSenha(Request $request): bool
+    {
+        $user = User::where('email_verificacao_token', $request->token)
+            ->first();
+
+        if ($user) {
+            $user->senha = Hash::make($request->senha);
             $user->save();
 
             return true;

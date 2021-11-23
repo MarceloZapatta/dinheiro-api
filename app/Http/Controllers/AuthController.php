@@ -166,6 +166,38 @@ class AuthController extends Controller
     }
 
     /**
+     * Esqueci a senha
+     */
+    public function esqueciSenha(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required'
+        ]);
+
+        $this->authsService->recuperarSenha($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso!', [], 200), 200);
+    }
+
+
+    public function verificarRecuperarSenha(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required',
+            'senha' => 'required|max:255',
+            'confirmar_senha' => 'required|same:senha'
+        ]);
+
+        $recuperarSenha = $this->authsService->verificarRecuperarSenha($request);
+
+        if ($recuperarSenha) {
+            return response()->json(Mensagem::sucesso('Senha recuperada com sucesso!', [], 200), 200);
+        }
+        
+        return response()->json(Mensagem::sucesso('Ocorreu algum erro ao tentar recuperar a senha.', [], 400), 400);
+    }
+
+    /**
      * Desloga o usuário
      *
      * @return \Illuminate\Http\Response
