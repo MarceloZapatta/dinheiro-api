@@ -18,15 +18,7 @@ class OrganizacaoResource extends JsonResource
             'hash' => $this->hash,
             'nome' => $this->nome,
             'email' => $this->email,
-            'razao_social' => $this->razao_social,
             'documento' => $this->documento,
-            'telefone' => $this->telefone,
-            'cep' => $this->cep,
-            'rua' => $this->rua,
-            'numero' => $this->numero,
-            'complemento' => $this->complemento,
-            'cidade' => $this->cidade,
-            'uf_id' => $this->uf_id,
             'tipo' => $this->organizacaoTipo,
             'pessoas' => $this->organizacaoPessoas ? $this->organizacaoPessoas->map(function ($organizacaoPessoa) {
                 return [

@@ -43,16 +43,34 @@ class AuthsService
      */
     private $consultoresService;
 
+    /**
+     * Contas Service
+     *
+     * @var \App\Services\ContasService
+     */
+    private $contasService;
+
+    /**
+     * Categorias Service
+     *
+     * @var \App\Services\CategoriasService
+     */
+    private $categoriasService;
+
     public function __construct(
         UsersService $usersService,
         OrganizacoesService $organizacoesService,
         ConsultoresService $consultoresService,
-        PessoasService $pessoasService
+        PessoasService $pessoasService,
+        ContasService $contasService,
+        CategoriasService $categoriasService
     ) {
         $this->usersService = $usersService;
         $this->organizacoesService = $organizacoesService;
         $this->consultoresService = $consultoresService;
         $this->pessoasService = $pessoasService;
+        $this->contasService = $contasService;
+        $this->categoriasService = $categoriasService;
     }
 
     /**
@@ -73,7 +91,7 @@ class AuthsService
             $user = $this->usersService->store($request);
             $pessoa = $this->pessoasService->store($user, $request);
 
-            $this->organizacoesService->store(
+            $organizacao = $this->organizacoesService->store(
                 $pessoa,
                 (int) $request->organizacao_tipo_id === 1 ?
                     'Pessoal' : $request->nome_fantasia,
@@ -84,6 +102,9 @@ class AuthsService
             if ($request->consultor) {
                 $this->consultoresService->store($user, $request);
             }
+
+            $this->contasService->storeContasIniciais($organizacao);
+            $this->categoriasService->storeCategoriasIniciais($organizacao);
 
             $url = $this->gerarUrlTokenVerificacaoEmail($user);
         });

@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Conta;
 use App\Helpers\Helpers;
+use App\Organizacao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class ContasService {
+class ContasService
+{
     public function get()
     {
         return Conta::where('organizacao_id', request()->organizacao_id)
@@ -22,12 +24,12 @@ class ContasService {
             'organizacao_id' => $request->organizacao_id,
         ]);
         return Conta::create($request->only([
-                'organizacao_id',
-                'nome',
-                'icone',
-                'cor_id',
-                'saldo_inicial'
-            ]));
+            'organizacao_id',
+            'nome',
+            'icone',
+            'cor_id',
+            'saldo_inicial'
+        ]));
     }
 
     public function update(Request $request, $id)
@@ -68,5 +70,34 @@ class ContasService {
             return Conta::where('organizacao_id', request()->organizacao_id)
                 ->sum('saldo_inicial');
         });
+    }
+
+    public function storeContasIniciais(Organizacao $organizacao)
+    {
+        $contas = [
+            [
+                'nome' => 'Carteira',
+                'icone' => 'wallet',
+                'cor_id' => 3,
+                'organizacao_id' => $organizacao->id,
+                'saldo_inicial' => 0
+            ],
+            [
+                'nome' => 'Conta corrente',
+                'icone' => 'cash',
+                'cor_id' => 7,
+                'organizacao_id' => $organizacao->id,
+                'saldo_inicial' => 0
+            ],
+            [
+                'nome' => 'Conta poupança',
+                'icone' => 'server',
+                'cor_id' => 5,
+                'organizacao_id' => $organizacao->id,
+                'saldo_inicial' => 0
+            ],
+        ];
+
+        Conta::insert($contas);
     }
 }

@@ -14,14 +14,7 @@ class Organizacao extends Model
         'documento', 
         'nome', 
         'email',
-        'razao_social',
-        'telefone',
-        'rua',
-        'numero',
-        'complemento',
-        'cidade',
-        'uf_id',
-        'cep'
+        'razao_social'
     ];
 
     public function organizacaoPessoas()

@@ -21,6 +21,28 @@ use Illuminate\Support\Str;
 class OrganizacoesService
 {
     /**
+     * Contas Service
+     *
+     * @var \App\Services\ContasService
+     */
+    private $contasService;
+
+    /**
+     * Categorias Service
+     *
+     * @var \App\Services\CategoriasService
+     */
+    private $categoriasService;
+
+    public function __construct(
+        ContasService $contasService,
+        CategoriasService $categoriasService
+    ) {
+        $this->contasService = $contasService;
+        $this->categoriasService = $categoriasService;
+    }
+
+    /**
      * Grava a organização
      *
      * @param \App\Pessoa $pessoa
@@ -91,13 +113,6 @@ class OrganizacoesService
                 'documento' => ['nullable', new CpfCnpj],
                 'email' => 'nullable|email',
                 'razao_social' => 'nullable|max:255',
-                'telefone' => ['nullable', new Telefone],
-                'rua' => 'nullable|max:255',
-                'numero' => 'nullable|max:255',
-                'complemento' => 'nullable|max:255',
-                'cidade' => 'nullable|max:255',
-                'uf_id' => 'nullable|exists:ufs,id',
-                'cep' => ['nullable', new Cep]
             ];
         }
 
@@ -116,16 +131,7 @@ class OrganizacoesService
                     'nome',
                     'email',
                     'documento',
-                    'nome',
-                    'email',
                     'razao_social',
-                    'telefone',
-                    'rua',
-                    'numero',
-                    'complemento',
-                    'cidade',
-                    'uf_id',
-                    'cep'
                 ]));
 
             if ($request->convite_novos) {
@@ -205,6 +211,9 @@ class OrganizacoesService
                 'organizacao_id' => $organizacao->id,
                 'pessoa_id' => $user->pessoa->id
             ]);
+
+            $this->contasService->storeContasIniciais($organizacao);
+            $this->categoriasService->storeCategoriasIniciais($organizacao);
 
             if ($request->convite_novos) {
                 foreach ($request->convite_novos as $conviteNovo) {
