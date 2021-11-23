@@ -6,6 +6,7 @@ use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
 use App\Http\Resources\MovimentacaoImportacaoShow;
 use App\Mensagem;
 use App\Services\MovimentacaoImportacoesService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 /**
@@ -53,6 +54,27 @@ class MovimentacaoImportacoesController extends Controller
         ]);
 
         $movimentacaoImportacao = $this->movimentacaoImportacaoService->importarExcel($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
+            'data' => [
+                'movimentacao_importacao' => $movimentacaoImportacao
+            ]
+        ]));
+    }
+
+    /**
+     * Realiza a importação por código de barras
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function importarCodigoBarras(Request $request)
+    {
+        $this->validate($request, [
+            'codigo_barras' => 'required|size:44'
+        ]);
+
+        $movimentacaoImportacao = $this->movimentacaoImportacaoService->importarCodigoBarras($request);
 
         return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
             'data' => [

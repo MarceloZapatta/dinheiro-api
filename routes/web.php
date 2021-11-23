@@ -85,6 +85,7 @@ $router->group(
                             function ($router) {
                                 $router->get('/', 'MovimentacaoImportacoesController@index');
                                 $router->post('/excel', 'MovimentacaoImportacoesController@importarExcel');
+                                $router->post('/codigo-barras', 'MovimentacaoImportacoesController@importarCodigoBarras');
                                 $router->get('/{id}', 'MovimentacaoImportacoesController@show');
                             }
                         );
