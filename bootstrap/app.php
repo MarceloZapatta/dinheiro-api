@@ -48,7 +48,10 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
-$app->configure('swagger-lume');
+if (config('app.env') !== 'production') {
+    $app->configure('swagger-lume');
+}
+
 $app->configure('mail');
 $app->configure('jwt');
 
@@ -111,9 +114,13 @@ $app->register(App\Providers\AuthServiceProvider::class);
 
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(\SwaggerLume\ServiceProvider::class);
-$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
-$app->register(\Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class);
+
+if (config('app.env') !== 'production') {
+    $app->register(\SwaggerLume\ServiceProvider::class);
+    $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+    $app->register(\Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class);
+}
+
 $app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
 
 /*
