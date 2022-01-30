@@ -92,6 +92,12 @@ class MovimentacoesService
             'data_transacao' => Carbon::createFromFormat('d/m/Y', $request->data_transacao)->format('Y-m-d'),
         ]);
 
+        if ((int) $request->despesa === 1) {
+            $request->merge([
+                'valor' => $this->transformarValorNegativo($request->valor)
+            ]);
+        }
+
         $movimentacao->update($request->only([
             'importacao_movimentacao_id',
             'cliente_id',
@@ -125,7 +131,7 @@ class MovimentacoesService
                 $cancelarCobranca = $this->junoService->cancelarCobranca($movimentacao->cobranca);
 
                 $movimentacao->cobranca->data_cancelamento = Carbon::now();
-                $movimentacao->cobranca->status = 'canceled';
+                $movimentacao->cobranca->status = 'CANCELADA';
                 $movimentacao->cobranca->save();
             } else {
                 $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;

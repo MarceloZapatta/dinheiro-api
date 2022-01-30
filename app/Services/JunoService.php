@@ -169,7 +169,7 @@ class JunoService
             'movimentacao_id' => $movimentacao->id,
             'valor_pago' => null,
             'data_pagamento' => null,
-            'status' => $cobranca->status,
+            'status' => 'PENDENTE',
             'pagamento_metodo_id' => $idPagamentoBoleto,
             'checkout_url' => $cobranca->checkoutUrl,
             'fatura_url' => $cobranca->link,

@@ -48,7 +48,9 @@ class ContasController extends Controller
     {
         $this->validate($request, [
             'nome' => 'required',
-            'nome' => ['required', Rule::unique('contas', 'nome')],
+            'nome' => ['required', Rule::unique('contas', 'nome')->where(function ($query) {
+                return $query->where('organizacao_id', request()->organizacao_id);
+            })],
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id',
             'saldo_inicial' => 'required|numeric'
@@ -92,7 +94,9 @@ class ContasController extends Controller
     {
         $this->validate($request, [
             'nome' => [
-                'required', Rule::unique('contas', 'nome')->ignore($id)
+                'required', Rule::unique('contas', 'nome')->where(function ($query) {
+                    return $query->where('organizacao_id', request()->organizacao_id);
+                })->ignore($id)
             ],
             'icone' => 'required',
             'cor_id' => 'required|exists:cores,id'
