@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Mensagem;
+use App\Models\Mensagem;
 use App\Services\CoresService;
 
 /**
  * @group Cores
- * 
+ *
  * Cores
  */
 class CoresController extends Controller

@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Cobranca;
+use App\Models\Cobranca;
 use App\Helpers\Helpers;
-use App\JunoLogs;
-use App\Movimentacao;
-use App\MovimentacaoImportacao;
+use App\Models\JunoLogs;
+use App\Models\Movimentacao;
+use App\Models\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Organizacao;
+use App\Models\Organizacao;
 use Closure;
 
 class OrganizacaoMiddleware

@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UsersService
 {
-    public function store(Request $request): \App\User
+    public function store(Request $request): \App\Models\User
     {
         $request->merge([
             'senha' => Hash::make($request->senha)

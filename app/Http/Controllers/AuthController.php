@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Mensagem;
+use App\Models\Mensagem;
 use App\Rules\CpfCnpj;
 use App\Services\AuthsService;
 use Illuminate\Http\Request;
 
 /**
  * @group Auth
- * 
+ *
  * Autenticação do usuário
  */
 class AuthController extends Controller
@@ -34,10 +34,10 @@ class AuthController extends Controller
 
     /**
      * Login
-     * 
+     *
      * @bodyParam email string required O e-mail do usuário. Example: email@usuario.com
      * @bodyParam senha string required Senha do usuário Example: senha123
-     * 
+     *
      * @response 200 {
      *   "sucesso": true,
      *   "status_codigo": 200,
@@ -45,13 +45,13 @@ class AuthController extends Controller
      *   "token_type": "bearer",
      *   "expires_in": 3600
      * }
-     * 
+     *
      * @response 401 {
      *   "sucesso": false,
      *   "mensagem": "Login ou senha inválidos",
      *   "status_codigo": 401
      * }
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
@@ -97,7 +97,7 @@ class AuthController extends Controller
      * @bodyParam nome_fantasia string optional Obrigatório quando organizacao_tipo_id = 2 (PJ)
      * @bodyParam consultor boolean required Indica se será um cadastro de consultor
      * @bodyParam consultor_resumo string optional Obrigatório se for cadastro de consultor
-     * 
+     *
      * @param Request $request
      * @return void
      */
@@ -132,8 +132,8 @@ class AuthController extends Controller
     /**
      * Verificar token de e-mail
      *
-     * @bodyParam token string required Token recebido via e-mail 
-     * 
+     * @bodyParam token string required Token recebido via e-mail
+     *
      * @param Request $request
      * @return void
      */
@@ -193,7 +193,7 @@ class AuthController extends Controller
         if ($recuperarSenha) {
             return response()->json(Mensagem::sucesso('Senha recuperada com sucesso!', [], 200), 200);
         }
-        
+
         return response()->json(Mensagem::sucesso('Ocorreu algum erro ao tentar recuperar a senha.', [], 400), 400);
     }
 

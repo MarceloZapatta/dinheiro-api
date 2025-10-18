@@ -1,8 +1,7 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\Scopes\OrganizacaoScope;
 use App\Traits\WithOrganizacao;
 use Illuminate\Database\Eloquent\Model;
 

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\EmailVerificacaoToken;
+use App\Models\EmailVerificacaoToken;
 use App\Mail\RecuperarSenha;
 use App\Mail\VerificarEmail;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,12 +77,12 @@ class AuthsService
      * Realiza um novo cadastro
      *
      * @param \Illuminate\Http\Request $request
-     * @return \App\User
+     * @return \App\Models\User
      */
     public function cadastrar(Request $request): User
     {
         /**
-         * @var ?\App\User
+         * @var ?\App\Models\User
          */
         $user = null;
         $url = '';

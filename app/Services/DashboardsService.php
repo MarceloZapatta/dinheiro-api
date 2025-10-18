@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Movimentacao;
+use App\Models\Movimentacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

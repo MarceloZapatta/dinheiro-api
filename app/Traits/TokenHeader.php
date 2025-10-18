@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\User;
+use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait TokenHeader
@@ -11,7 +11,7 @@ trait TokenHeader
     public function tokenHeader(User $user = null)
     {
         if (! $user) {
-            $user = factory('App\User')->create();
+            $user = factory('App\Models\User')->create();
         }
 
         $headers = array(

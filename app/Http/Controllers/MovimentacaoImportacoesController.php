@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
 use App\Http\Resources\MovimentacaoImportacaoShow;
-use App\Mensagem;
+use App\Models\Mensagem;
 use App\Services\MovimentacaoImportacoesService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 /**
  * @group Movimentações
- * 
+ *
  * Movimentações
  */
 class MovimentacaoImportacoesController extends Controller

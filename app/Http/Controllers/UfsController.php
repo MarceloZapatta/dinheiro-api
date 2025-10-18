@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UfResourceCollection;
-use App\Uf;
+use App\Models\Uf;
 
 class UfsController extends Controller
 {

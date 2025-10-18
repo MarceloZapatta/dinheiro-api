@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Conta;
+use App\Models\Conta;
 use App\Helpers\Helpers;
-use App\Organizacao;
+use App\Models\Organizacao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 

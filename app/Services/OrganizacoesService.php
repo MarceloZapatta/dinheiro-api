@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\IntegracaoDado;
+use App\Models\IntegracaoDado;
 use App\Mail\ConviteOrganizacao;
-use App\Organizacao;
-use App\OrganizacaoConvite;
-use App\OrganizacaoPessoa;
+use App\Models\Organizacao;
+use App\Models\OrganizacaoConvite;
+use App\Models\OrganizacaoPessoa;
 use App\Rules\Cep;
 use App\Rules\CpfCnpj;
 use App\Rules\Telefone;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -45,11 +45,11 @@ class OrganizacoesService
     /**
      * Grava a organização
      *
-     * @param \App\Pessoa $pessoa
+     * @param \App\Models\Pessoa $pessoa
      * @param integer $organizacaoTipoId
      * @return void
      */
-    public function store(\App\Pessoa $pessoa, string $nome, int $organizacaoTipoId, string $documento = null): ?\App\Organizacao
+    public function store(\App\Models\Pessoa $pessoa, string $nome, int $organizacaoTipoId, string $documento = null): ?\App\Models\Organizacao
     {
         $organizacao = null;
 
@@ -74,7 +74,7 @@ class OrganizacoesService
     /**
      * Recebe as organizações vinculadas ao usuário
      *
-     * @param \App\User
+     * @param \App\Models\User
      * @return \Illuminate\Support\Collection
      */
     public function getPorUsuario(User $user): \Illuminate\Support\Collection
@@ -88,7 +88,7 @@ class OrganizacoesService
     /**
      * Retorna a organização por hash
      *
-     * @return \App\Organizacao
+     * @return \App\Models\Organizacao
      */
     public function findPorHeader()
     {

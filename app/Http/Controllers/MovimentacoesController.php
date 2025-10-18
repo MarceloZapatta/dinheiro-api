@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MovimentacaoResource;
 use App\Http\Resources\MovimentacaoResourceCollection;
-use App\JunoLogs;
-use App\Mensagem;
+use App\Models\JunoLogs;
+use App\Models\Mensagem;
 use App\Services\MovimentacoesService;
 use Illuminate\Http\Request;
 
 /**
  * @group Movimentações
- * 
+ *
  * Movimentações
  */
 class MovimentacoesController extends Controller
@@ -36,8 +36,8 @@ class MovimentacoesController extends Controller
         ]);
 
         return new MovimentacaoResourceCollection(
-            $this->movimentacoesService->get($request), 
-            $this->movimentacoesService->getSaldo($request), 
+            $this->movimentacoesService->get($request),
+            $this->movimentacoesService->getSaldo($request),
             $this->movimentacoesService->getSaldoPrevisto($request)
         );
     }
@@ -51,14 +51,14 @@ class MovimentacoesController extends Controller
      * @bodyParam categoria_id int required ID Categoria da movimentacao
      * @bodyParam conta_id int required ID Conta da movimentacao
      * @bodyParam valor float required Valor da movimentacao
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $this->validarMovimentacao($request);
-        
+
         $movimentacao = $this->movimentacoesService->store($request);
 
         return response()->json(Mensagem::sucesso('Sucesso!', [
@@ -70,7 +70,7 @@ class MovimentacoesController extends Controller
      * Visualizar
      *
      * @apiParam id int required ID da Movimentacao
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -90,7 +90,7 @@ class MovimentacoesController extends Controller
      * @bodyParam categoria_id int required ID Categoria da movimentacao
      * @bodyParam conta_id int required ID Conta da movimentacao
      * @bodyParam valor float required Valor da movimentacao
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -110,7 +110,7 @@ class MovimentacoesController extends Controller
      * Excluir
      *
      * @apiParam id int required ID da Movimentacao
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

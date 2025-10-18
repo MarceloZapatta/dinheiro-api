@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\IntegracaoDado;
+use App\Models\IntegracaoDado;
 use Carbon\Carbon;
 
 class IntegracaoJunoService
@@ -26,7 +26,7 @@ class IntegracaoJunoService
             $integracaoDado &&
             $integracaoDado->onBoarding &&
             Carbon::parse($integracaoDado->onBoarding->createdOn)
-                ->lessThan(Carbon::now())
+            ->lessThan(Carbon::now())
         ) {
             return $integracaoDado->onBoarding->url;
         }

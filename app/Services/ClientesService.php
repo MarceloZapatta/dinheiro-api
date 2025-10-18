@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use App\Cliente;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 
-class ClientesService {
+class ClientesService
+{
     public function get(Request $request)
     {
         $clientes = Cliente::latest();

@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Cor;
+use App\Models\Cor;
 
-class CoresService {
+class CoresService
+{
     /**
      * Retorna as cores
      *

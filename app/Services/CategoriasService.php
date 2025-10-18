@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Categoria;
-use App\Organizacao;
+use App\Models\Categoria;
+use App\Models\Organizacao;
 use Illuminate\Http\Request;
 
 class CategoriasService

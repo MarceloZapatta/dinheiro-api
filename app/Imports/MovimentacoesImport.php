@@ -2,11 +2,11 @@
 
 namespace App\Imports;
 
-use App\Categoria;
-use App\Conta;
-use App\Movimentacao;
-use App\MovimentacaoImport;
-use App\MovimentacaoImportacao;
+use App\Models\Categoria;
+use App\Models\Conta;
+use App\Models\Movimentacao;
+use App\Models\MovimentacaoImport;
+use App\Models\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
@@ -21,8 +21,8 @@ class MovimentacoesImport implements ToCollection, WithHeadingRow
     }
 
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $movimentacoes)
     {
         $contas = Conta::get();

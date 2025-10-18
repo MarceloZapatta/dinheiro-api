@@ -3,19 +3,20 @@
 namespace App\Services;
 
 use App\Helpers\Helpers;
-use App\Pessoa;
-use App\User;
+use App\Models\Pessoa;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class PessoasService {
+class PessoasService
+{
     /**
-     * Armazena 
+     * Armazena
      *
-     * @param \App\User $user
+     * @param \App\Models\User $user
      * @param Request $request
-     * @return \App\Pessoa|null
+     * @return \App\Models\Pessoa|null
      */
-    public function store(User $user, Request $request): ?\App\Pessoa
+    public function store(User $user, Request $request): ?\App\Models\Pessoa
     {
         $requestMerge = [
             'usuario_id' => $user->id

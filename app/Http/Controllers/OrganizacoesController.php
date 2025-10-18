@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\IntegracaoDadosResourceCollection;
 use App\Http\Resources\OrganizacaoResource;
 use App\Http\Resources\OrganizacaoResourceCollection;
-use App\Mensagem;
+use App\Models\Mensagem;
 use App\Services\OrganizacoesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * @group Organizações
- * 
+ *
  * Organizações são entidades que podem ser vinculadas as Pessoas.
  */
 class OrganizacoesController extends Controller

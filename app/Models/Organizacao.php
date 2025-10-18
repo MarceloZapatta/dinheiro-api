@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -9,10 +9,10 @@ class Organizacao extends Model
 {
     protected $table = 'organizacoes';
     protected $fillable = [
-        'pessoa_responsavel_id', 
+        'pessoa_responsavel_id',
         'organizacao_tipo_id',
-        'documento', 
-        'nome', 
+        'documento',
+        'nome',
         'email',
         'razao_social'
     ];

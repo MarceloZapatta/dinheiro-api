@@ -2,21 +2,22 @@
 
 namespace App\Services;
 
-use App\Consultor;
+use App\Models\Consultor;
 use App\Helpers\Helpers;
-use App\Pessoa;
-use App\User;
+use App\Models\Pessoa;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ConsultoresService {
+class ConsultoresService
+{
     /**
-     * Armazena o consultor 
+     * Armazena o consultor
      *
-     * @param \App\User $request
+     * @param \App\Models\User $request
      * @param Request $request
-     * @return \App\Consultor|null
+     * @return \App\Models\Consultor|null
      */
-    public function store(User $user, Request $request): ?\App\Consultor
+    public function store(User $user, Request $request): ?\App\Models\Consultor
     {
         $request->merge([
             'usuario_id' => $user->id,

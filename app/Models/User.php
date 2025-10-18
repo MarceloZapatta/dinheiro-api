@@ -1,11 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable as AccessAuthorizable;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -14,7 +15,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $table = 'usuarios';
 
     use Authenticatable;
-    use Authorizable;
+    use AccessAuthorizable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +23,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = array(
-        'nome', 'email', 'ativo', 'senha',
+        'nome',
+        'email',
+        'ativo',
+        'senha',
     );
 
     /**
@@ -54,7 +58,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return array();
     }
 
-    public function getAuthPassword(){  
+    public function getAuthPassword()
+    {
         return $this->senha;
     }
 

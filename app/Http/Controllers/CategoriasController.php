@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoriaResource;
 use App\Http\Resources\CategoriaResourceCollection;
-use App\Mensagem;
+use App\Models\Mensagem;
 use App\Services\CategoriasService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 /**
  * @group Categorias
- * 
+ *
  * Categorias
  */
 class CategoriasController extends Controller
@@ -39,7 +39,7 @@ class CategoriasController extends Controller
      * @bodyParam nome string required Nome da categoria
      * @bodyParam icone string required Ícone da categoria
      * @bodyParam cor_id int required ID Cor da categoria
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -65,7 +65,7 @@ class CategoriasController extends Controller
      * Visualizar
      *
      * @apiParam id int required ID da Conta
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -83,7 +83,7 @@ class CategoriasController extends Controller
      * @bodyParam nome string optional Nome da categoria
      * @bodyParam icone string optional Ícone da categoria
      * @bodyParam cor_id int optional ID Cor da categoria
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -92,7 +92,8 @@ class CategoriasController extends Controller
     {
         $this->validate($request, [
             'nome' => [
-                'required', Rule::unique('categorias', 'nome')->where(function ($query) {
+                'required',
+                Rule::unique('categorias', 'nome')->where(function ($query) {
                     return $query->where('organizacao_id', request()->organizacao_id);
                 })->ignore($id)
             ],
@@ -111,7 +112,7 @@ class CategoriasController extends Controller
      * Excluir
      *
      * @apiParam id int required ID da Conta
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

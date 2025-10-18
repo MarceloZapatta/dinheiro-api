@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Cliente;
-use App\Cobranca;
-use App\IntegracaoDado;
-use App\JunoLogs;
-use App\Movimentacao;
+use App\Models\Cliente;
+use App\Models\Cobranca;
+use App\Models\IntegracaoDado;
+use App\Models\JunoLogs;
+use App\Models\Movimentacao;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;

@@ -1,6 +1,6 @@
 <?php
 
-use App\OrganizacaoTipo;
+use App\Models\OrganizacaoTipo;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,7 +26,7 @@ class CreateOrganizacaoTiposTable extends Migration
             [
                 'tipo' => 'Pessoa júridica'
             ]
-            ]);
+        ]);
     }
 
     /**
