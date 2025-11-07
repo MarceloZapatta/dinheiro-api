@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\Mensagem;
 use App\Rules\CpfCnpj;
 use App\Services\AuthsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @group Auth
@@ -29,7 +32,6 @@ class AuthController extends Controller
     public function __construct(AuthsService $authsService)
     {
         $this->authsService = $authsService;
-        // $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -54,36 +56,20 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $this->validate(
-            $request,
-            array(
-                'email' => 'required|email|max:255',
-                'senha' => 'required|max:255'
-            )
-        );
-
-        $request->merge(
-            array(
-                'password' => $request->senha,
-            )
-        );
-
-        $credenciais = request(['email', 'password']);
-
-        if (!$token = auth('api')->attempt($credenciais)) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(Mensagem::erro('Login ou senha inválidos', [], 401), 401);
         }
 
-        $usuario = auth('api')->user();
+        $user = Auth::user();
 
-        if (!$usuario->email_verificado) {
-            auth('api')->invalidate();
+        if (!$user->email_verificado) {
+            Auth::logout();
             return response()->json(Mensagem::erro('O e-mail não foi verificado', [], 401), 401);
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($user->createToken('api')->plainTextToken);
     }
 
     /**
@@ -101,25 +87,8 @@ class AuthController extends Controller
      * @param Request $request
      * @return void
      */
-    public function cadastrar(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $tipoPessoaFisica = 1;
-        $tipoPessoaJuridica = 2;
-
-        $this->validate(
-            $request,
-            [
-                'nome' => 'required|max:255',
-                'documento' => ["required_if:organizacao_tipo_id,$tipoPessoaJuridica", new CpfCnpj],
-                'organizacao_tipo_id' => "required|in:$tipoPessoaFisica,$tipoPessoaJuridica",
-                'email' => 'required|email|unique:usuarios,email|max:255',
-                'senha' => 'required|max:255',
-                'nome_fantasia' => "required_if:organizacao_tipo_id,$tipoPessoaJuridica|max:255",
-                'consultor' => "required_if:organizacao_tipo_id,$tipoPessoaFisica|boolean",
-                'consultor_resumo' => 'required_if:consultor,1|max:255'
-            ]
-        );
-
         $user = $this->authsService->cadastrar($request);
 
         if ($user) {
@@ -144,11 +113,10 @@ class AuthController extends Controller
             'token.max' => 'O token é inválido, tente novamente.',
         );
 
-        $this->validate(
-            $request,
-            array(
+        $request->validate(
+            [
                 'token' => 'required|max:255',
-            ),
+            ],
             $messages
         );
 
@@ -170,7 +138,7 @@ class AuthController extends Controller
      */
     public function esqueciSenha(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required'
         ]);
 
@@ -182,10 +150,10 @@ class AuthController extends Controller
 
     public function verificarRecuperarSenha(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'token' => 'required',
-            'senha' => 'required|max:255',
-            'confirmar_senha' => 'required|same:senha'
+            'password' => 'required|max:255',
+            'password_confirm' => 'required|same:password'
         ]);
 
         $recuperarSenha = $this->authsService->verificarRecuperarSenha($request);
@@ -237,7 +205,7 @@ class AuthController extends Controller
                     'data' => [
                         'access_token' => $token,
                         'token_type' => 'bearer',
-                        'expires_in' => auth()->factory()->getTTL() * 60,
+                        'expires_in' => 3600,
                     ]
                 ]
             )

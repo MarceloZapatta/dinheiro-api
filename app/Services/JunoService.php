@@ -146,7 +146,7 @@ class JunoService
         JunoLogs::create([
             'movimentacao_id' => $movimentacao->id,
             'organizacao_id' => request()->organizacao_id,
-            'usuario_id' => $user ? $user->id : null,
+            'user_id' => $user ? $user->id : null,
             'dados' => $response->body(),
             'code' => $response->status(),
             'mensagem' => 'Criação de cobrança'

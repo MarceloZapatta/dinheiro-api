@@ -18,12 +18,18 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         Schema::defaultStringLength(191);
+    }
 
-        Validator::extend('conta_organizacao', function ($attribute, $value, $parameters) {
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Validator::extend('conta_organizacao', function ($attribute, $value, $parameters, $validator) {
             return Conta::where('organizacao_id', request()->organizacao_id)->find($value);
         });
 
-        Validator::extend('categoria_organizacao', function ($attribute, $value, $parameters) {
+        Validator::extend('categoria_organizacao', function ($attribute, $value, $parameters, $validator) {
             return Categoria::where('organizacao_id', request()->organizacao_id)->find($value);
         });
     }

@@ -49,11 +49,9 @@ class OrganizacoesService
      * @param integer $organizacaoTipoId
      * @return void
      */
-    public function store(\App\Models\Pessoa $pessoa, string $nome, int $organizacaoTipoId, string $documento = null): ?\App\Models\Organizacao
+    public function store(\App\Models\Pessoa $pessoa, string $nome, int $organizacaoTipoId, ?string $documento = null): Organizacao
     {
-        $organizacao = null;
-
-        DB::transaction(function () use (&$organizacao, $pessoa, $nome, $organizacaoTipoId, $documento) {
+        return DB::transaction(function () use ($pessoa, $nome, $organizacaoTipoId, $documento) {
             $organizacao = Organizacao::create([
                 'nome' => $nome,
                 'pessoa_responsavel_id' => $pessoa->id,
@@ -66,9 +64,9 @@ class OrganizacoesService
                 'organizacao_id' => $organizacao->id,
                 'pessoa_id' => $pessoa->id
             ]);
-        });
 
-        return $organizacao;
+            return $organizacao;
+        });
     }
 
     /**

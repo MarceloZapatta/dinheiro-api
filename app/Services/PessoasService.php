@@ -19,7 +19,7 @@ class PessoasService
     public function store(User $user, Request $request): ?\App\Models\Pessoa
     {
         $requestMerge = [
-            'usuario_id' => $user->id
+            'user_id' => $user->id
         ];
 
         if ($request->documento) {
@@ -30,6 +30,6 @@ class PessoasService
 
         $request->merge($requestMerge);
 
-        return Pessoa::create($request->only(['documento', 'usuario_id']));
+        return Pessoa::create($request->only(['documento', 'user_id']));
     }
 }

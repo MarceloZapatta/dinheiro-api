@@ -11,9 +11,9 @@ class UsersService
     public function store(Request $request): \App\Models\User
     {
         $request->merge([
-            'senha' => Hash::make($request->senha)
+            'password' => Hash::make($request->password)
         ]);
 
-        return User::create($request->only('nome', 'email', 'senha'));
+        return User::create($request->only('nome', 'email', 'password'));
     }
 }

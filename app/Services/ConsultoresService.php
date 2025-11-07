@@ -20,9 +20,9 @@ class ConsultoresService
     public function store(User $user, Request $request): ?\App\Models\Consultor
     {
         $request->merge([
-            'usuario_id' => $user->id,
+            'user_id' => $user->id,
             'resumo' => $request->consultor_resumo
         ]);
-        return Consultor::create($request->only(['resumo', 'usuario_id']));
+        return Consultor::create($request->only(['resumo', 'user_id']));
     }
 }

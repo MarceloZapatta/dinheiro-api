@@ -8,7 +8,7 @@ class Consultor extends Model
 {
     protected $table = 'consultores';
     protected $fillable = [
-        'usuario_id',
+        'user_id',
         'resumo',
         'imagem_capa'
     ];

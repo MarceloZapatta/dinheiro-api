@@ -15,7 +15,7 @@ class CreateConsultoresTable extends Migration
     {
         Schema::create('consultores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usuario_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->string('resumo', 500)->nullable()->default(NULL);
             $table->string('imagem_capa')->nullable()->default(NULL);
             $table->timestamps();

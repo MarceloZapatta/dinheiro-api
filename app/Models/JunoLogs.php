@@ -9,7 +9,7 @@ class JunoLogs extends Model
     protected $fillable = [
         'organizacao_id',
         'movimentacao_id',
-        'usuario_id',
+        'user_id',
         'dados',
         'mensagem',
         'code'

@@ -7,15 +7,15 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable as AccessAuthorizable;
-use Laravel\Lumen\Auth\Authorizable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
+class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    protected $table = 'usuarios';
+    protected $table = 'users';
 
     use Authenticatable;
     use AccessAuthorizable;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +26,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'nome',
         'email',
         'ativo',
-        'senha',
+        'password',
     );
 
     /**
@@ -35,7 +35,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = array(
-        'senha',
+        'password',
     );
 
     /**
@@ -58,13 +58,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return array();
     }
 
-    public function getAuthPassword()
-    {
-        return $this->senha;
-    }
-
     public function pessoa()
     {
-        return $this->hasOne(Pessoa::class, 'usuario_id');
+        return $this->hasOne(Pessoa::class, 'user_id');
     }
 }
