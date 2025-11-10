@@ -10,14 +10,12 @@ class CategoriasService
 {
     public function get()
     {
-        return Categoria::where('organizacao_id', request()->organizacao_id)
-            ->get();
+        return Categoria::get();
     }
 
     public function store(Request $request)
     {
         $request->merge([
-            'organizacao_id' => $request->organizacao_id,
             'saldo' => $request->saldo_inicial
         ]);
 

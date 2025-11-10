@@ -4,7 +4,8 @@ namespace App\Traits;
 
 use App\Scopes\OrganizacaoScope;
 
-trait WithOrganizacao {
+trait WithOrganizacao
+{
     /**
      * The "booted" method of the model.
      *

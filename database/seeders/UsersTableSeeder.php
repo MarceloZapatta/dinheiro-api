@@ -20,6 +20,8 @@ class UsersTableSeeder extends Seeder
                 'nome' => 'Api Test',
                 'email' => 'test@login.com',
                 'password' => Hash::make('123456'),
+                'email_verificado' => 1,
+                'email_verified_at' => now(),
                 'ativo' => 1,
             )
         );

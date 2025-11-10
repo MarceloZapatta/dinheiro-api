@@ -9,18 +9,17 @@ use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class MovimentacoesService
 {
     private $contasService;
-    private $junoService;
 
-    public function __construct(ContasService $contasService, JunoService $junoService)
+    public function __construct(ContasService $contasService)
     {
         $this->contasService = $contasService;
-        $this->junoService = $junoService;
     }
 
     public function get(Request $request)
@@ -29,12 +28,12 @@ class MovimentacoesService
             ->with('cobranca')
             ->whereNull('importacao_movimentacao_id');
 
-        if ($request->data_inicio) {
-            $movimentacoes->where('data_transacao', '>=', Carbon::createFromFormat('d/m/Y', $request->data_inicio));
+        if ($request->date_start) {
+            $movimentacoes->where('data_transacao', '>=', Carbon::parse($request->date_start));
         }
 
-        if ($request->data_fim) {
-            $movimentacoes->where('data_transacao', '<=', Carbon::createFromFormat('d/m/Y', $request->data_fim));
+        if ($request->date_end) {
+            $movimentacoes->where('data_transacao', '<=', Carbon::parse($request->date_end));
         }
 
         if (!empty($request->categorias)) {
@@ -45,18 +44,19 @@ class MovimentacoesService
             $movimentacoes->whereIn('conta_id', $request->contas);
         }
 
-        $movimentacoes->where('organizacao_id', request()->organizacao_id);
+        $movimentacoes->where('user_id', Auth::id());
 
         return $movimentacoes->get();
     }
 
     public function store(Request $request)
     {
+        $userId = Auth::id();
+
         Helpers::flushCacheMovimentacoes();
-        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . request()->organizacao_id . '.%');
+        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id() . '.%');
         $request->merge([
-            'data_transacao' => Carbon::createFromFormat('d/m/Y', $request->data_transacao)->format('Y-m-d'),
-            'organizacao_id' => $request->organizacao_id,
+            'user_id' => $userId,
             'saldo' => $request->saldo_inicial
         ]);
 
@@ -67,10 +67,8 @@ class MovimentacoesService
         }
 
         return Movimentacao::create($request->only([
-            'organizacao_id',
-            'cliente_id',
+            'user_id',
             'descricao',
-            'observacoes',
             'valor',
             'data_transacao',
             'conta_id',
@@ -128,7 +126,6 @@ class MovimentacoesService
 
         DB::transaction(function () use ($id, &$movimentacao) {
             if ($movimentacao->cobranca) {
-                $cancelarCobranca = $this->junoService->cancelarCobranca($movimentacao->cobranca);
 
                 $movimentacao->cobranca->data_cancelamento = Carbon::now();
                 $movimentacao->cobranca->status = 'CANCELADA';
@@ -182,10 +179,10 @@ class MovimentacoesService
      */
     public function getSaldo(): float
     {
-        return Cache::rememberForever('movimentacoes.saldo.' . request()->organizacao_id, function () {
+        return Cache::rememberForever('movimentacoes.saldo.' . Auth::id(), function () {
             $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
             $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::now())
-                ->where('organizacao_id', request()->organizacao_id)
+                ->where('user_id', Auth::id())
                 ->whereNull('importacao_movimentacao_id')
                 ->sum('valor');
 
@@ -200,34 +197,14 @@ class MovimentacoesService
      */
     public function getSaldoPrevisto(Request $request): float
     {
-        return Cache::rememberForever('movimentacoes.saldo_previsto.' . request()->organizacao_id . '.' . $request->data_fim, function () use ($request) {
+        return Cache::rememberForever('movimentacoes.saldo_previsto.' . Auth::id() . '.' . $request->data_fim, function () use ($request) {
             $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
-            $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::createFromFormat('d/m/Y', $request->data_fim))
-                ->where('organizacao_id', request()->organizacao_id)
+            $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::parse($request->date_start))
+                ->where('user_id', Auth::id())
                 ->whereNull('importacao_movimentacao_id')
                 ->sum('valor');
 
             return $acumulado + $somaSaldosIniciais;
         });
-    }
-
-    public function emitirCobranca(Request $request)
-    {
-        $movimentacao = $this->store($request);
-
-        try {
-            $cobranca = $this->junoService->emitirCobranca($movimentacao);
-        } catch (\Throwable $th) {
-            JunoLogs::create([
-                'dados' => json_encode($movimentacao->toArray()) . '||' . $th->getMessage(),
-                'message' => 'Falha na tentativa de gerar cobrança para a movimentação',
-                'code' => $th->getCode()
-            ]);
-
-            throw $th;
-        }
-
-        $cobranca = Cobranca::create($this->junoService->gerarDataCobranca($movimentacao, $cobranca));
-        return $cobranca;
     }
 }

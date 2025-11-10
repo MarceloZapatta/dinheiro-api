@@ -6,25 +6,21 @@ use App\Models\Conta;
 use App\Helpers\Helpers;
 use App\Models\Organizacao;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ContasService
 {
     public function get()
     {
-        return Conta::where('organizacao_id', request()->organizacao_id)
-            ->get();
+        return Conta::get();
     }
 
     public function store(Request $request)
     {
         Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
-        $request->merge([
-            'organizacao_id' => $request->organizacao_id,
-        ]);
         return Conta::create($request->only([
-            'organizacao_id',
             'nome',
             'icone',
             'cor_id',
@@ -36,8 +32,7 @@ class ContasService
     {
         Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
-        $conta = Conta::where('organizacao_id', $request->organizacao_id)
-            ->findOrFail($id);
+        $conta = Conta::findOrFail($id);
         $conta->update($request->only([
             'nome',
             'icone',
@@ -49,14 +44,12 @@ class ContasService
     {
         Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . request()->organizacao_id);
-        return Conta::where('organizacao_id', request()->organizacao_id)
-            ->where('id', $id)->delete();
+        return Conta::where('id', $id)->delete();
     }
 
     public function find($id)
     {
-        return Conta::where('organizacao_id', request()->organizacao_id)
-            ->findOrFail($id);
+        return Conta::findOrFail($id);
     }
 
     /**
@@ -67,7 +60,7 @@ class ContasService
     public function calcularSaldosIniciais(): float
     {
         return Cache::rememberForever('contas.saldos_iniciais.' . request()->organizacao_id, function () {
-            return Conta::where('organizacao_id', request()->organizacao_id)
+            return Conta::where('user_id', Auth::id())
                 ->sum('saldo_inicial');
         });
     }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\WithOrganizacao;
 use Illuminate\Database\Eloquent\Model;
 
 class Movimentacao extends Model
@@ -10,11 +9,9 @@ class Movimentacao extends Model
     protected $table = 'movimentacoes';
 
     protected $fillable = [
-        'organizacao_id',
+        'user_id',
         'importacao_movimentacao_id',
-        'cliente_id',
         'descricao',
-        'observacoes',
         'valor',
         'data_transacao',
         'conta_id',

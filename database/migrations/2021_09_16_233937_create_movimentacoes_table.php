@@ -15,12 +15,10 @@ class CreateMovimentacoesTable extends Migration
     {
         Schema::create('movimentacoes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('organizacao_id');
-            $table->foreign('organizacao_id')->references('id')->on('organizacoes');
+            $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('importacao_movimentacao_id')->nullable()->default(NULL);
             $table->foreign('importacao_movimentacao_id')->references('id')->on('movimentacao_importacoes');
             $table->string('descricao');
-            $table->string('observacoes', 300);
             $table->decimal('valor');
             $table->date('data_transacao');
             $table->foreignId('conta_id')->constrained();

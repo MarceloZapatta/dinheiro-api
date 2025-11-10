@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\WithOrganizacao;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
-    use WithOrganizacao;
+    use HasFactory;
 
     protected $fillable = [
-        'organizacao_id',
         'nome',
         'cor_id',
         'icone'

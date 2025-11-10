@@ -15,8 +15,6 @@ class CreateCategoriasTable extends Migration
     {
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('organizacao_id');
-            $table->foreign('organizacao_id')->references('id')->on('organizacoes');
             $table->string('nome')->unique();
             $table->unsignedBigInteger('cor_id');
             $table->foreign('cor_id')->references('id')->on('cores');
