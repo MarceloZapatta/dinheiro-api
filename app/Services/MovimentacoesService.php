@@ -79,15 +79,15 @@ class MovimentacoesService
     public function update(Request $request, $id)
     {
         Helpers::flushCacheMovimentacoes();
-        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . request()->organizacao_id . '.%');
-        $movimentacao = Movimentacao::where('organizacao_id', $request->organizacao_id)
+        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id()  . '.%');
+        $movimentacao = Movimentacao::where('user_id', Auth::id())
             ->findOrFail($id);
 
         $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
 
         $request->merge([
             'importacao_movimentacao_id' => null,
-            'data_transacao' => Carbon::createFromFormat('d/m/Y', $request->data_transacao)->format('Y-m-d'),
+            'data_transacao' => $request->data_transacao,
         ]);
 
         if ((int) $request->despesa === 1) {
@@ -107,14 +107,13 @@ class MovimentacoesService
             'categoria_id'
         ]));
 
-        if ($movimentacaoImportacaoId) {
-            if (
-                Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
-                ->count() <= 0
-            ) {
-                MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
-                    ->delete();
-            }
+        if (
+            $movimentacaoImportacaoId &&
+            Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
+            ->count() <= 0
+        ) {
+            MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
+                ->delete();
         }
     }
 

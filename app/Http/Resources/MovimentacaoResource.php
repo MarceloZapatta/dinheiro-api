@@ -19,7 +19,7 @@ class MovimentacaoResource extends JsonResource
             'id' => $this->id,
             'descricao' => $this->descricao,
             'observacoes' => $this->observacoes,
-            'data_transacao' => Carbon::parse($this->data_transacao)->format('d/m/Y'),
+            'data_transacao' => $this->data_transacao,
             'valor' => $this->valor,
             'conta' => [
                 'id' => $this->conta->id,

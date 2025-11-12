@@ -33,7 +33,7 @@ Route::prefix('v2')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::resource('transactions', TransactionsController::class)->only(['index', 'store']);
+        Route::resource('transactions', TransactionsController::class)->only(['index', 'store', 'update']);
         Route::get('cores', [CoresController::class, 'index']);
         Route::prefix('contas')->group(function () {
             Route::get('/', [ContasController::class, 'index']);
