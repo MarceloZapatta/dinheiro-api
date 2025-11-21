@@ -15,13 +15,12 @@ class Cors
      */
     public function handle($request, Closure $next)
     {
-        $headers = array(
-            'Access-Control-Allow-Origin' => '*',
+        $headers = [
+            'Access-Control-Allow-Origin' => 'http://localhost:3000',
             'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE',
-            'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age' => '86400',
-            'Access-Control-Allow-Headers' => 'Content-Type, Authorization, X-Requested-With, X-Organizacao-Hash',
-        );
+            'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
+        ];
 
         if ($request->isMethod('OPTIONS')) {
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
@@ -33,5 +32,15 @@ class Cors
         }
 
         return $response;
+    }
+
+    public function terminate($request, $response)
+    {
+        if (method_exists($response, 'headers')) {
+            dd('to aqq');
+            $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:3000');
+            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
+            $response->headers->set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+        }
     }
 }

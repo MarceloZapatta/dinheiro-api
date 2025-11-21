@@ -15,7 +15,8 @@ class Movimentacao extends Model
         'valor',
         'data_transacao',
         'conta_id',
-        'categoria_id'
+        'categoria_id',
+        'fitid'
     ];
 
     public function categoria()

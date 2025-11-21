@@ -2,30 +2,21 @@
 
 namespace App\Services;
 
+use App\Http\Requests\ImportOfxRequest;
 use App\Models\Categoria;
-use App\Models\Cobranca;
 use App\Models\Conta;
-use App\Helpers\Helpers;
 use App\Imports\MovimentacoesImport;
-use App\Models\JunoLogs;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MovimentacaoImportacoesService
 {
-    private $contasService;
-    private $junoService;
-
-    public function __construct(ContasService $contasService, JunoService $junoService)
-    {
-        $this->contasService = $contasService;
-        $this->junoService = $junoService;
-    }
+    public function __construct(private readonly OfxReaderService $ofxReaderService) {}
 
     public function get()
     {
@@ -86,5 +77,78 @@ class MovimentacaoImportacoesService
         });
 
         return $movimentacaoImportacao;
+    }
+
+    public function importOfx(ImportOfxRequest $request)
+    {
+        $movimentacaoImportacao = null;
+
+        dd($request->file('file'));
+
+        DB::transaction(function () use ($request, &$movimentacaoImportacao) {
+            $movimentacaoImportacao = MovimentacaoImportacao::create([
+                'user_id' => Auth::id(),
+                'arquivo' => $request->file('file')->getClientOriginalName()
+            ]);
+
+            $ofxFilePath = $request->file('file')->getPathname();
+
+            $content = $this->ofxReaderService->read($ofxFilePath);
+
+            $transactions = $content['BANKMSGSRSV1']['STMTTRNRS']['STMTRS']['BANKTRANLIST']['STMTTRN'] ?? [];
+            $insertTransacations = [];
+
+            foreach ($transactions as $transaction) {
+                $value = isset($transaction['TRNAMT']) ? (float) $transaction['TRNAMT'] : 0.0;
+                $description = $transaction['NAME'] ?? '';
+                $fitid = $transaction['FITID'] ?? null;
+
+                // Parse OFX date format: 20251014112549[-3:BRT]
+                $dtPostedRaw = $transaction['DTPOSTED'] ?? null;
+                $datePosted = null;
+
+                if ($dtPostedRaw) {
+                    // Extract only the date/time part (first 14 digits)
+                    if (preg_match('/^(\d{14})/', $dtPostedRaw, $matches)) {
+                        $datePosted = Carbon::createFromFormat('YmdHis', $matches[1]);
+                    }
+                }
+
+                $othersCategory = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->first();
+                $defaultAccount = Conta::where('user_id', Auth::id())->first();
+
+                $insertTransacations[] = [
+                    'user_id' => Auth::id(),
+                    'importacao_movimentacao_id' => $movimentacaoImportacao->id,
+                    'valor' => $value,
+                    'descricao' => $description,
+                    'data_transacao' => $datePosted,
+                    'conta_id' => $defaultAccount->id,
+                    'categoria_id' => $othersCategory->id,
+                    'fitid' => $fitid,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            Movimentacao::upsert($insertTransacations, [
+                'fitid'
+            ]);
+        });
+
+        return $movimentacaoImportacao;
+    }
+
+    public function confirmAllImport(int $id): void
+    {
+        $movimentacaoImportacao = MovimentacaoImportacao::findOrFail($id);
+
+        Movimentacao::where('user_id', Auth::id())
+            ->where('importacao_movimentacao_id', $movimentacaoImportacao->id)
+            ->update(['importacao_movimentacao_id' => null]);
+
+        MovimentacaoImportacao::where('user_id', Auth::id())
+            ->where('id', $movimentacaoImportacao->id)
+            ->delete();
     }
 }

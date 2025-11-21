@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Cor;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class CategoriaFactory extends Factory
     {
         return [
             'nome' => $this->faker->unique()->word(),
+            'user_id' => User::factory(),
             'cor_id' => Cor::factory(),
             'icone' => $this->faker->word(),
         ];

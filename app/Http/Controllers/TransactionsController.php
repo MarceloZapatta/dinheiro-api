@@ -38,7 +38,6 @@ class TransactionsController extends Controller
      * Gravar
      *
      * @bodyParam descricao string required Descricao da movimentacao
-     * @bodyParam observacoes string optional Observações da movimentação
      * @bodyParam data_transacao string required DAta em que ocorreu a movimentacao
      * @bodyParam categoria_id int required ID Categoria da movimentacao
      * @bodyParam conta_id int required ID Conta da movimentacao
@@ -75,7 +74,6 @@ class TransactionsController extends Controller
      * Atualizar
      *
      * @bodyParam descricao string required Descricao da movimentacao
-     * @bodyParam observacoes string optional Observações da movimentação
      * @bodyParam data_transacao string required Data em que ocorreu a movimentacao
      * @bodyParam categoria_id int required ID Categoria da movimentacao
      * @bodyParam conta_id int required ID Conta da movimentacao

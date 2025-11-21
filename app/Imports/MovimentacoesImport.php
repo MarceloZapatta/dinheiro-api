@@ -53,7 +53,6 @@ class MovimentacoesImport implements ToCollection, WithHeadingRow
                 'organizacao_id' => request()->organizacao_id,
                 'importacao_movimentacao_id' => $this->movimentacaoImportacao->id,
                 'descricao' => $movimentacao['descricao'],
-                'observacoes' => $movimentacao['observacoes'],
                 'conta_id' => $contaMovimentacao->id,
                 'categoria_id' => $categoriaMovimentacao->id,
                 'valor' => $movimentacao['valor'],

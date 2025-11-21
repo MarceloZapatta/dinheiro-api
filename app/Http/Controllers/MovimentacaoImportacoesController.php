@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportOfxRequest;
 use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
 use App\Http\Resources\MovimentacaoImportacaoShow;
 use App\Models\Mensagem;
 use App\Services\MovimentacaoImportacoesService;
-use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -81,5 +82,30 @@ class MovimentacaoImportacoesController extends Controller
                 'movimentacao_importacao' => $movimentacaoImportacao
             ]
         ]));
+    }
+
+    /**
+     * Import OFX files
+     *
+     * @param ImportOfxRequest $request
+     * @return JsonResponse
+     */
+    public function importOfx(ImportOfxRequest $request): JsonResponse
+    {
+        dd('não pasouuu aqqq???');
+        $movimentacaoImportacao = $this->movimentacaoImportacaoService->importOfx($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
+            'data' => [
+                'movimentacao_importacao' => $movimentacaoImportacao
+            ]
+        ]));
+    }
+
+    public function confirmAll(string $id)
+    {
+        $this->movimentacaoImportacaoService->confirmAllImport((int) $id);
+
+        return response()->json(Mensagem::sucesso('Todas as importações foram confirmadas com sucesso!'));
     }
 }

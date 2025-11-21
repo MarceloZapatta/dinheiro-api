@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Categoria;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class CategoriasSeeder extends Seeder
@@ -13,6 +13,14 @@ class CategoriasSeeder extends Seeder
      */
     public function run(): void
     {
-        Categoria::factory()->count(10)->create();
+        $user = User::first();
+
+        Categoria::factory()->count(9)->create([
+            'user_id' => $user->id,
+        ]);
+        Categoria::factory()->create([
+            'user_id' => $user->id,
+            'nome' => 'Outros',
+        ]);
     }
 }

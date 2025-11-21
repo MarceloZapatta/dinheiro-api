@@ -18,7 +18,6 @@ class MovimentacaoResource extends JsonResource
         return [
             'id' => $this->id,
             'descricao' => $this->descricao,
-            'observacoes' => $this->observacoes,
             'data_transacao' => $this->data_transacao,
             'valor' => $this->valor,
             'conta' => [

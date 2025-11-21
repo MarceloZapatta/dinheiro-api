@@ -119,37 +119,25 @@ class MovimentacoesService
 
     public function delete($id)
     {
-        $movimentacao = Movimentacao::where('organizacao_id', request()->organizacao_id)
+        $movimentacao = Movimentacao::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
 
         DB::transaction(function () use ($id, &$movimentacao) {
-            if ($movimentacao->cobranca) {
+            $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
 
-                $movimentacao->cobranca->data_cancelamento = Carbon::now();
-                $movimentacao->cobranca->status = 'CANCELADA';
-                $movimentacao->cobranca->save();
-            } else {
-                $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
+            $movimentacao = Movimentacao::where('user_id', Auth::id())
+                ->where('id', $id)
+                ->delete();
 
-                $movimentacao = Movimentacao::where('organizacao_id', request()->organizacao_id)
-                    ->where('id', $id)
+            if ($movimentacaoImportacaoId) {
+                MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
                     ->delete();
-
-                if ($movimentacaoImportacaoId) {
-                    if (
-                        Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
-                        ->count() <= 0
-                    ) {
-                        MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
-                            ->delete();
-                    }
-                }
             }
         });
 
         Helpers::flushCacheMovimentacoes();
-        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . request()->organizacao_id . '.%');
+        Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id() . '.%');
 
         return $movimentacao;
     }

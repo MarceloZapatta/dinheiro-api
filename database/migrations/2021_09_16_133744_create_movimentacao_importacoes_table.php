@@ -15,6 +15,7 @@ class CreateMovimentacaoImportacoesTable extends Migration
     {
         Schema::create('movimentacao_importacoes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('arquivo')->nullable()->default(NULL);
             $table->timestamps();
         });

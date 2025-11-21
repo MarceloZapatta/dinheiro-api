@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MovimentacoesController;
 use App\Http\Controllers\OrganizacoesController;
 use App\Http\Controllers\CoresController;
 use App\Http\Controllers\ContasController;
@@ -17,6 +16,12 @@ use App\Http\Controllers\UfsController;
 Route::get('/', function () {
     return 'Poupis API v1.0.0';
 });
+
+Route::options('/{any}', function () {
+    dd('to aqq');
+    return response()->noContent();
+})->where('any', '.*');
+
 
 Route::prefix('v2')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -33,7 +38,17 @@ Route::prefix('v2')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::resource('transactions', TransactionsController::class)->only(['index', 'store', 'update']);
+        Route::apiResource('transactions', TransactionsController::class)->except(['show', 'edit', 'create']);
+
+        Route::prefix('transactions/import')->group(function () {
+            Route::post('/excel', [MovimentacaoImportacoesController::class, 'importarExcel']);
+            Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);
+            Route::post('/ofx', [MovimentacaoImportacoesController::class, 'importOfx']);
+            Route::post('/{id}/confirm-all', [MovimentacaoImportacoesController::class, 'confirmAll']);
+            Route::get('/{id}', [MovimentacaoImportacoesController::class, 'show']);
+            Route::get('/', [MovimentacaoImportacoesController::class, 'index']);
+        });
+
         Route::get('cores', [CoresController::class, 'index']);
         Route::prefix('contas')->group(function () {
             Route::get('/', [ContasController::class, 'index']);
