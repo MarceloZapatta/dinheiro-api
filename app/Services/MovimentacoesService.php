@@ -124,16 +124,9 @@ class MovimentacoesService
             ->firstOrFail();
 
         DB::transaction(function () use ($id, &$movimentacao) {
-            $movimentacaoImportacaoId = $movimentacao->importacao_movimentacao_id;
-
             $movimentacao = Movimentacao::where('user_id', Auth::id())
                 ->where('id', $id)
                 ->delete();
-
-            if ($movimentacaoImportacaoId) {
-                MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
-                    ->delete();
-            }
         });
 
         Helpers::flushCacheMovimentacoes();

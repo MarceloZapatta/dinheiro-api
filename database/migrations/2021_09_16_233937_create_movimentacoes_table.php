@@ -23,7 +23,6 @@ class CreateMovimentacoesTable extends Migration
             $table->date('data_transacao');
             $table->foreignId('conta_id')->constrained();
             $table->foreignId('categoria_id')->constrained();
-            $table->foreignId('recorrencia_id')->constrained()->nullable()->default(NULL);
             $table->string('fitid')->nullable();
             $table->timestamps();
 
