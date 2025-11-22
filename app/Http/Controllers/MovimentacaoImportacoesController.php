@@ -92,7 +92,6 @@ class MovimentacaoImportacoesController extends Controller
      */
     public function importOfx(ImportOfxRequest $request): JsonResponse
     {
-        dd('não pasouuu aqqq???');
         $movimentacaoImportacao = $this->movimentacaoImportacaoService->importOfx($request);
 
         return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [

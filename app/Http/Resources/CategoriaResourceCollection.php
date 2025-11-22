@@ -14,6 +14,11 @@ class CategoriaResourceCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'data' => [
+                'expense' => $this->collection->where('expense', true)->values(),
+                'income' => $this->collection->where('expense', false)->values(),
+            ],
+        ];
     }
 }

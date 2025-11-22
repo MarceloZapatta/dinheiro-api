@@ -83,9 +83,11 @@ class MovimentacaoImportacoesService
     {
         $movimentacaoImportacao = null;
 
-        dd($request->file('file'));
+        $othersCategoryExpense = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->where('expense', true)->first();
+        $othersCategoryIncome = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->where('expense', false)->first();
+        $defaultAccount = Conta::where('user_id', Auth::id())->first();
 
-        DB::transaction(function () use ($request, &$movimentacaoImportacao) {
+        DB::transaction(function () use ($request, &$movimentacaoImportacao, $defaultAccount, $othersCategoryExpense, $othersCategoryIncome) {
             $movimentacaoImportacao = MovimentacaoImportacao::create([
                 'user_id' => Auth::id(),
                 'arquivo' => $request->file('file')->getClientOriginalName()
@@ -100,8 +102,12 @@ class MovimentacaoImportacoesService
 
             foreach ($transactions as $transaction) {
                 $value = isset($transaction['TRNAMT']) ? (float) $transaction['TRNAMT'] : 0.0;
-                $description = $transaction['NAME'] ?? '';
+                $description = $transaction['MEMO'] ?? '';
                 $fitid = $transaction['FITID'] ?? null;
+
+                if (empty($description)) {
+                    $description = $value > 0 ? 'Entrada/Resgate' : 'Despesa/Aplicação';
+                }
 
                 // Parse OFX date format: 20251014112549[-3:BRT]
                 $dtPostedRaw = $transaction['DTPOSTED'] ?? null;
@@ -114,9 +120,6 @@ class MovimentacaoImportacoesService
                     }
                 }
 
-                $othersCategory = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->first();
-                $defaultAccount = Conta::where('user_id', Auth::id())->first();
-
                 $insertTransacations[] = [
                     'user_id' => Auth::id(),
                     'importacao_movimentacao_id' => $movimentacaoImportacao->id,
@@ -124,7 +127,7 @@ class MovimentacaoImportacoesService
                     'descricao' => $description,
                     'data_transacao' => $datePosted,
                     'conta_id' => $defaultAccount->id,
-                    'categoria_id' => $othersCategory->id,
+                    'categoria_id' => $value < 0 ? $othersCategoryExpense->id : $othersCategoryIncome->id,
                     'fitid' => $fitid,
                     'created_at' => now(),
                     'updated_at' => now(),

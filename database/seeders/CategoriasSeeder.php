@@ -15,12 +15,18 @@ class CategoriasSeeder extends Seeder
     {
         $user = User::first();
 
-        Categoria::factory()->count(9)->create([
+        Categoria::factory()->count(15)->create([
             'user_id' => $user->id,
         ]);
         Categoria::factory()->create([
             'user_id' => $user->id,
             'nome' => 'Outros',
+            'expense' => true,
+        ]);
+        Categoria::factory()->create([
+            'user_id' => $user->id,
+            'nome' => 'Outros',
+            'expense' => false,
         ]);
     }
 }

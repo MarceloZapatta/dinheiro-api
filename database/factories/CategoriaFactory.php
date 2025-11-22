@@ -23,6 +23,7 @@ class CategoriaFactory extends Factory
             'user_id' => User::factory(),
             'cor_id' => Cor::factory(),
             'icone' => $this->faker->word(),
+            'expense' => $this->faker->boolean(),
         ];
     }
 }
