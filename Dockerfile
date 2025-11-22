@@ -29,9 +29,6 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
 RUN echo "error_log = /var/log/php-fpm.log" > /usr/local/etc/php/conf.d/docker-php-errorlog.ini \
     && echo "log_errors = On" >> /usr/local/etc/php/conf.d/docker-php-errorlog.ini
 
-# Configure PHP-FPM to listen on all interfaces
-RUN sed -i 's|^listen = .*|listen = 0.0.0.0:9000|' /usr/local/etc/php-fpm.d/www.conf
-
 # Set working directory
 WORKDIR /var/www/html
 
