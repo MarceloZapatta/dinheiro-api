@@ -30,23 +30,6 @@ services:
             - app
         networks:
             - dinheiro-net
-    mariadb:
-        image: "mariadb:10.5"
-        container_name: dinheiro-api-mariadb
-        ports:
-            - "${DB_PORT:-3306}:3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-            MYSQL_DATABASE: "${DB_DATABASE}"
-            MYSQL_USER: "${DB_USERNAME}"
-            MYSQL_PASSWORD: "${DB_PASSWORD}"
-        volumes:
-            - "dinheiro-mariadb:/var/lib/mysql"
-        networks:
-            - dinheiro-net
 networks:
     dinheiro-net:
         driver: bridge
-
-volumes:
-    dinheiro-mariadb:
