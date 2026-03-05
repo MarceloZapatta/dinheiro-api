@@ -1,5 +1,7 @@
 services:
     app:
+        container_name: dinheiro-api-app
+        restart: unless-stopped
         build:
             context: .
             dockerfile: Dockerfile
@@ -8,7 +10,6 @@ services:
                 HOST_GID: ${HOST_GID:-1000}
         ports:
             - "${PHP_FPM_PORT:-9000}:9000"
-        container_name: dinheiro-api-app
         working_dir: /var/www/html
         environment:
             - HOST_UID=${HOST_UID:-1000}
@@ -20,6 +21,7 @@ services:
     nginx:
         image: nginx:alpine
         container_name: dinheiro-api-nginx
+        restart: unless-stopped
         ports:
             - "${APP_PORT:-8000}:80"
         volumes:
