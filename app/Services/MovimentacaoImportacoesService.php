@@ -135,6 +135,7 @@ class MovimentacaoImportacoesService
             }
 
             Movimentacao::upsert($insertTransacations, [
+                'user_id',
                 'fitid'
             ]);
         });
