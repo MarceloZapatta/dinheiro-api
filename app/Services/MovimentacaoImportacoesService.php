@@ -103,7 +103,7 @@ class MovimentacaoImportacoesService
             foreach ($transactions as $transaction) {
                 $value = isset($transaction['TRNAMT']) ? (float) $transaction['TRNAMT'] : 0.0;
                 $description = $transaction['MEMO'] ?? '';
-                $fitid = $transaction['FITID'] ?? null;
+                $refnum = $transaction['REFNUM'] ?? null;
 
                 if (empty($description)) {
                     $description = $value > 0 ? 'Entrada/Resgate' : 'Despesa/Aplicação';
@@ -128,7 +128,7 @@ class MovimentacaoImportacoesService
                     'data_transacao' => $datePosted,
                     'conta_id' => $defaultAccount->id,
                     'categoria_id' => $value < 0 ? $othersCategoryExpense->id : $othersCategoryIncome->id,
-                    'fitid' => $fitid,
+                    'refnum' => $refnum,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -136,7 +136,7 @@ class MovimentacaoImportacoesService
 
             Movimentacao::upsert($insertTransacations, [
                 'user_id',
-                'fitid'
+                'refnum'
             ]);
         });
 

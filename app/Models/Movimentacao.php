@@ -16,7 +16,7 @@ class Movimentacao extends Model
         'data_transacao',
         'conta_id',
         'categoria_id',
-        'fitid'
+        'refnum'
     ];
 
     public function categoria()
