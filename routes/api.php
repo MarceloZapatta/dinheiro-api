@@ -12,6 +12,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\IntegracaoJunoController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UfsController;
+use App\Http\Controllers\MonthlyReportController;
 
 Route::get('/', function () {
     return 'Poupis API v1.0.0';
@@ -89,6 +90,8 @@ Route::prefix('v2')->group(function () {
                     Route::get('/por-categoria', [DashboardsController::class, 'porCategoria']);
                     Route::get('/movimentacoes-anual', [DashboardsController::class, 'movimentacoesAnual']);
                 });
+
+                Route::get('/report/monthly', [MonthlyReportController::class, 'generateReport']);
 
                 // Route::get('/', [MovimentacoesController::class, 'index']);
                 // Route::post('/', [MovimentacoesController::class, 'store']);
