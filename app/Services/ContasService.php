@@ -13,27 +13,26 @@ class ContasService
 {
     public function get()
     {
-        return Conta::get();
+        return Conta::where('user_id', Auth::id())->get();
     }
 
     public function store(Request $request)
     {
-        Helpers::flushCacheMovimentacoes();
-        Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
-        return Conta::create($request->only([
+        $data = $request->only([
             'nome',
             'icone',
             'cor_id',
             'saldo_inicial'
-        ]));
+        ]);
+
+        $data['user_id'] = Auth::id();
+
+        return Conta::create($data);
     }
 
     public function update(Request $request, $id)
     {
-        Helpers::flushCacheMovimentacoes();
-        Cache::forget('contas.saldos_iniciais.' . $request->organizacao_id);
-        $conta = Conta::findOrFail($id);
-        $conta->update($request->only([
+        Conta::where('id', $id)->updateOrFail($request->only([
             'nome',
             'icone',
             'cor_id'

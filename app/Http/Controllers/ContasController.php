@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountRequest;
 use App\Http\Resources\ContaResource;
 use App\Http\Resources\ContaResourceCollection;
 use App\Models\Mensagem;
@@ -44,18 +45,8 @@ class ContasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AccountRequest $request)
     {
-        $this->validate($request, [
-            'nome' => 'required',
-            'nome' => ['required', Rule::unique('contas', 'nome')->where(function ($query) {
-                return $query->where('organizacao_id', request()->organizacao_id);
-            })],
-            'icone' => 'required',
-            'cor_id' => 'required|exists:cores,id',
-            'saldo_inicial' => 'required|numeric'
-        ]);
-
         $conta = $this->contasService->store($request);
 
         return response()->json(Mensagem::sucesso('Sucesso!', [
@@ -96,10 +87,9 @@ class ContasController extends Controller
             'nome' => [
                 'required',
                 Rule::unique('contas', 'nome')->where(function ($query) {
-                    return $query->where('organizacao_id', request()->organizacao_id);
+                    return $query->where('user_id', request()->user()->id);
                 })->ignore($id)
             ],
-            'icone' => 'required',
             'cor_id' => 'required|exists:cores,id'
         ]);
 

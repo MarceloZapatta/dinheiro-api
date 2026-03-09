@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mensagem;
+use App\Http\Resources\ColorResourceCollection;
 use App\Services\CoresService;
 
 /**
@@ -26,15 +26,6 @@ class CoresController extends Controller
      */
     public function index()
     {
-        return response()->json(
-            Mensagem::sucesso(
-                'Sucesso!',
-                [
-                    'sucesso' => true,
-                    'status_codigo' => 200,
-                    'data' => $this->coresService->get()
-                ]
-            )
-        );
+        return new ColorResourceCollection($this->coresService->get());
     }
 }

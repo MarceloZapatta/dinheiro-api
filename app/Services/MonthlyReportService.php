@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Movimentacao;
-use Illuminate\Support\Facades\DB;
 
 class MonthlyReportService
 {

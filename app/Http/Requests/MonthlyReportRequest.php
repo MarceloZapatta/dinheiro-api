@@ -22,8 +22,8 @@ class MonthlyReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data_inicial' => ['required', 'date_format:Y-m-d'],
-            'data_final' => ['required', 'date_format:Y-m-d', 'after_or_equal:data_inicial'],
+            'start_date' => ['required', 'date_format:Y-m-d'],
+            'end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:start_date'],
         ];
     }
 
@@ -35,11 +35,11 @@ class MonthlyReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'data_inicial.required' => 'A data inicial é obrigatória.',
-            'data_inicial.date_format' => 'A data inicial deve estar no formato Y-m-d.',
-            'data_final.required' => 'A data final é obrigatória.',
-            'data_final.date_format' => 'A data final deve estar no formato Y-m-d.',
-            'data_final.after_or_equal' => 'A data final deve ser igual ou posterior à data inicial.',
+            'start_date.required' => 'A data inicial é obrigatória.',
+            'start_date.date_format' => 'A data inicial deve estar no formato Y-m-d.',
+            'end_date.required' => 'A data final é obrigatória.',
+            'end_date.date_format' => 'A data final deve estar no formato Y-m-d.',
+            'end_date.after_or_equal' => 'A data final deve ser igual ou posterior à data inicial.',
         ];
     }
 }

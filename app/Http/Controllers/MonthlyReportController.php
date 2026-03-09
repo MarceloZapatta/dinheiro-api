@@ -25,11 +25,13 @@ class MonthlyReportController extends Controller
     public function generateReport(MonthlyReportRequest $request): JsonResponse
     {
         $userId = Auth::id();
-        $startDate = $request->input('data_inicial');
-        $endDate = $request->input('data_final');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
         $reportData = $this->monthlyReportService->generateMonthlyReport($userId, $startDate, $endDate);
 
-        return response()->json($reportData);
+        return response()->json([
+            'data' => $reportData
+        ]);
     }
 }

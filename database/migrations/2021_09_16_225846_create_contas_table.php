@@ -17,7 +17,7 @@ class CreateContasTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('nome')->unique();
-            $table->string('icone');
+            $table->string('icone')->nullable();
             $table->unsignedBigInteger('cor_id');
             $table->foreign('cor_id')->references('id')->on('cores');
             $table->decimal('saldo_inicial')->default(0);

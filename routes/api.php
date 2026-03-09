@@ -50,10 +50,12 @@ Route::prefix('v2')->group(function () {
             Route::get('/', [MovimentacaoImportacoesController::class, 'index']);
         });
 
+        Route::get('reports/monthly', [MonthlyReportController::class, 'generateReport']);
+
         Route::get('cores', [CoresController::class, 'index']);
-        Route::prefix('contas')->group(function () {
-            Route::get('/', [ContasController::class, 'index']);
-        });
+
+        Route::apiResource('/contas', ContasController::class);
+
         Route::prefix('categorias')->group(function () {
             Route::get('/', [CategoriasController::class, 'index']);
         });
@@ -62,71 +64,62 @@ Route::prefix('v2')->group(function () {
         Route::post('organizacoes/convite', [OrganizacoesController::class, 'aceitarConvite']);
         Route::post('organizacoes', [OrganizacoesController::class, 'store']);
 
-        Route::middleware('organizacao')->group(function () {
+        // Route::middleware('organizacao')->group(function () {
 
-            Route::prefix('contas')->group(function () {
-                Route::post('/', [ContasController::class, 'store']);
-                Route::get('/{id}', [ContasController::class, 'show']);
-                Route::put('/{id}', [ContasController::class, 'update']);
-                Route::delete('/{id}', [ContasController::class, 'destroy']);
-            });
-
-            Route::prefix('categorias')->group(function () {
-                Route::post('/', [CategoriasController::class, 'store']);
-                Route::get('/{id}', [CategoriasController::class, 'show']);
-                Route::put('/{id}', [CategoriasController::class, 'update']);
-                Route::delete('/{id}', [CategoriasController::class, 'destroy']);
-            });
-
-            Route::prefix('movimentacoes')->group(function () {
-                Route::prefix('importacoes')->group(function () {
-                    Route::get('/', [MovimentacaoImportacoesController::class, 'index']);
-                    Route::post('/excel', [MovimentacaoImportacoesController::class, 'importarExcel']);
-                    Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);
-                    Route::get('/{id}', [MovimentacaoImportacoesController::class, 'show']);
-                });
-
-                Route::prefix('dashboards')->group(function () {
-                    Route::get('/por-categoria', [DashboardsController::class, 'porCategoria']);
-                    Route::get('/movimentacoes-anual', [DashboardsController::class, 'movimentacoesAnual']);
-                });
-
-                Route::get('/report/monthly', [MonthlyReportController::class, 'generateReport']);
-
-                // Route::get('/', [MovimentacoesController::class, 'index']);
-                // Route::post('/', [MovimentacoesController::class, 'store']);
-                // Route::post('/emitir-cobranca', [MovimentacoesController::class, 'emitirCobranca']);
-                // Route::get('/{id}', [MovimentacoesController::class, 'show']);
-                // Route::put('/{id}', [MovimentacoesController::class, 'update']);
-                // Route::delete('/{id}', [MovimentacoesController::class, 'destroy']);
-            });
-
-            Route::prefix('clientes')->middleware('organizacaoPj')->group(function () {
-                Route::get('/', [ClientesController::class, 'index']);
-                Route::post('/', [ClientesController::class, 'store']);
-                Route::get('/{id}', [ClientesController::class, 'show']);
-                Route::put('/{id}', [ClientesController::class, 'update']);
-                Route::delete('/{id}', [ClientesController::class, 'destroy']);
-            });
-
-            Route::prefix('organizacoes')->group(function () {
-                Route::get('/dados', [OrganizacoesController::class, 'show']);
-                Route::put('/', [OrganizacoesController::class, 'update']);
-
-                Route::middleware('organizacaoResponsavel')->group(function () {
-                    Route::delete('/pessoas/{id}', [OrganizacoesController::class, 'destroyPessoa']);
-                    Route::delete('/convites/{id}', [OrganizacoesController::class, 'destroyConvite']);
-                    Route::get('/integracoes/juno/link-cadastrar', [IntegracaoJunoController::class, 'getLinkCadastro']);
-                });
-
-                Route::delete('/{id}', [OrganizacoesController::class, 'destroy']);
-
-                Route::prefix('integracoes')->group(function () {
-                    Route::get('/', [OrganizacoesController::class, 'integracoes']);
-                });
-            });
-
-            Route::get('ufs', [UfsController::class, 'index']);
+        Route::prefix('categorias')->group(function () {
+            Route::post('/', [CategoriasController::class, 'store']);
+            Route::get('/{id}', [CategoriasController::class, 'show']);
+            Route::put('/{id}', [CategoriasController::class, 'update']);
+            Route::delete('/{id}', [CategoriasController::class, 'destroy']);
         });
+
+        Route::prefix('movimentacoes')->group(function () {
+            Route::prefix('importacoes')->group(function () {
+                Route::get('/', [MovimentacaoImportacoesController::class, 'index']);
+                Route::post('/excel', [MovimentacaoImportacoesController::class, 'importarExcel']);
+                Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);
+                Route::get('/{id}', [MovimentacaoImportacoesController::class, 'show']);
+            });
+
+            Route::prefix('dashboards')->group(function () {
+                Route::get('/por-categoria', [DashboardsController::class, 'porCategoria']);
+                Route::get('/movimentacoes-anual', [DashboardsController::class, 'movimentacoesAnual']);
+            });
+
+            // Route::get('/', [MovimentacoesController::class, 'index']);
+            // Route::post('/', [MovimentacoesController::class, 'store']);
+            // Route::post('/emitir-cobranca', [MovimentacoesController::class, 'emitirCobranca']);
+            // Route::get('/{id}', [MovimentacoesController::class, 'show']);
+            // Route::put('/{id}', [MovimentacoesController::class, 'update']);
+            // Route::delete('/{id}', [MovimentacoesController::class, 'destroy']);
+        });
+
+        Route::prefix('clientes')->middleware('organizacaoPj')->group(function () {
+            Route::get('/', [ClientesController::class, 'index']);
+            Route::post('/', [ClientesController::class, 'store']);
+            Route::get('/{id}', [ClientesController::class, 'show']);
+            Route::put('/{id}', [ClientesController::class, 'update']);
+            Route::delete('/{id}', [ClientesController::class, 'destroy']);
+        });
+
+        Route::prefix('organizacoes')->group(function () {
+            Route::get('/dados', [OrganizacoesController::class, 'show']);
+            Route::put('/', [OrganizacoesController::class, 'update']);
+
+            Route::middleware('organizacaoResponsavel')->group(function () {
+                Route::delete('/pessoas/{id}', [OrganizacoesController::class, 'destroyPessoa']);
+                Route::delete('/convites/{id}', [OrganizacoesController::class, 'destroyConvite']);
+                Route::get('/integracoes/juno/link-cadastrar', [IntegracaoJunoController::class, 'getLinkCadastro']);
+            });
+
+            Route::delete('/{id}', [OrganizacoesController::class, 'destroy']);
+
+            Route::prefix('integracoes')->group(function () {
+                Route::get('/', [OrganizacoesController::class, 'integracoes']);
+            });
+        });
+
+        Route::get('ufs', [UfsController::class, 'index']);
     });
+    // });
 });

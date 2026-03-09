@@ -11,10 +11,10 @@ class Conta extends Model
 
     protected $fillable = [
         'nome',
-        'saldo',
         'saldo_inicial',
         'cor_id',
-        'icone'
+        'icone',
+        'user_id'
     ];
 
     public function cor()
