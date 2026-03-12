@@ -22,7 +22,6 @@ class CreateCategoriasTable extends Migration
             $table->string('icone');
             $table->boolean('expense')->default(true);
             $table->timestamps();
-
             $table->unique(['user_id', 'nome', 'expense']);
         });
     }
