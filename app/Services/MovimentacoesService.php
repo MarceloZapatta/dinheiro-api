@@ -137,9 +137,24 @@ class MovimentacoesService
             ]);
         }
 
+        if ($movimentacao->movimentacao_relacao_id) {
+            $movimentacaoRelacionada = Movimentacao::find($movimentacao->movimentacao_relacao_id);
+
+            if ($movimentacaoRelacionada) {
+                $movimentacaoRelacionada->update([
+                    'descricao' => $request->descricao,
+                    'valor' => $request->valor * -1,
+                    'data_transacao' => $request->data_transacao,
+                ]);
+            }
+
+            $request->merge([
+                'categoria_id' => $movimentacao->categoria_id
+            ]);
+        }
+
         $movimentacao->update($request->only([
             'importacao_movimentacao_id',
-            'cliente_id',
             'descricao',
             'observacoes',
             'valor',
@@ -158,22 +173,28 @@ class MovimentacoesService
         }
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
+        $deleted = false;
+
         $movimentacao = Movimentacao::where('user_id', Auth::id())
             ->where('id', $id)
             ->firstOrFail();
 
-        DB::transaction(function () use ($id, &$movimentacao) {
-            $movimentacao = Movimentacao::where('user_id', Auth::id())
-                ->where('id', $id)
+
+        if ($movimentacao->importacao_movimentacao_id) {
+            MovimentacaoImportacao::where('id', $movimentacao->importacao_movimentacao_id)
                 ->delete();
-        });
+        }
+
+        $deleted = Movimentacao::where('user_id', Auth::id())
+            ->whereIn('id', [$id, $movimentacao->movimentacao_relacao_id])
+            ->delete();
 
         Helpers::flushCacheMovimentacoes();
         Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id() . '.%');
 
-        return $movimentacao;
+        return $deleted;
     }
 
     public function find($id)

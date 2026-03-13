@@ -15,6 +15,7 @@ class Movimentacao extends Model
         'valor',
         'data_transacao',
         'conta_id',
+        'movimentacao_relacao_id',
         'categoria_id',
         'refnum'
     ];
@@ -37,5 +38,10 @@ class Movimentacao extends Model
     public function cobranca()
     {
         return $this->hasOne(Cobranca::class);
+    }
+
+    public function movimentacaoRelacao()
+    {
+        return $this->belongsTo(Movimentacao::class, 'movimentacao_relacao_id');
     }
 }
