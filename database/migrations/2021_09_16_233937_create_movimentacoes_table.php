@@ -16,14 +16,16 @@ class CreateMovimentacoesTable extends Migration
         Schema::create('movimentacoes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->unsignedBigInteger('importacao_movimentacao_id')->nullable()->default(NULL);
+            $table->unsignedBigInteger('importacao_movimentacao_id')->nullable()->default(null);
             $table->foreign('importacao_movimentacao_id')->references('id')->on('movimentacao_importacoes');
             $table->string('descricao');
             $table->decimal('valor');
             $table->date('data_transacao');
             $table->foreignId('conta_id')->constrained();
+            $table->unsignedBigInteger('movimentacao_relacao_id')->nullable()->default(null);
+            $table->foreign('movimentacao_relacao_id')->references('id')->on('movimentacoes');
             $table->foreignId('categoria_id')->constrained();
-            $table->string('refnum')->nullable();
+            $table->string('refnum')->nullable()->default(null);
             $table->timestamps();
 
             $table->unique(['user_id', 'refnum']);

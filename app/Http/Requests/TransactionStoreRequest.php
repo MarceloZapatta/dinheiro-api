@@ -24,7 +24,8 @@ class TransactionStoreRequest extends FormRequest
         return [
             'descricao' => 'required|string|max:255',
             'conta_id' => 'required|integer|exists:contas,id',
-            'categoria_id' => 'required|integer|exists:categorias,id',
+            'conta_relacao_id' => 'nullable|integer|exists:contas,id',
+            'categoria_id' => 'required_without:conta_relacao_id|nullable|integer|exists:categorias,id',
             'data_transacao' => 'required|date_format:Y-m-d',
             'valor' => 'required|numeric',
             'despesa' => 'required|boolean'

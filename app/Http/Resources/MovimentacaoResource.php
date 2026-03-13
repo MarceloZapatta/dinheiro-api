@@ -26,6 +26,15 @@ class MovimentacaoResource extends JsonResource
                 'icone' => $this->conta->icone,
                 'cor' => $this->conta->cor
             ],
+            'movimentacao_relacao' => $this->movimentacaoRelacao ? [
+                'id' => $this->movimentacaoRelacao->id,
+                'conta' => [
+                    'id' => $this->movimentacaoRelacao->conta->id,
+                    'nome' => $this->movimentacaoRelacao->conta->nome,
+                    'icone' => $this->movimentacaoRelacao->conta->icone,
+                    'cor' => $this->movimentacaoRelacao->conta->cor
+                ],
+            ] : null,
             'categoria' => [
                 'id' => $this->categoria->id,
                 'nome' => $this->categoria->nome,

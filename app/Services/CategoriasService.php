@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Categoria;
 use App\Models\Organizacao;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriasService
 {
@@ -50,6 +51,14 @@ class CategoriasService
     {
         return Categoria::where('organizacao_id', request()->organizacao_id)
             ->findOrFail($id);
+    }
+
+    public function findTransferCategories(): array
+    {
+        return [...Categoria::where('user_id', Auth::id())
+            ->where('nome', 'Transferência')
+            ->orderBy('expense')
+            ->get()];
     }
 
     public function storeCategoriasIniciais(Organizacao $organizacao)

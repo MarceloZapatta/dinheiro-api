@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Cobranca;
 use App\Helpers\Helpers;
+use App\Http\Requests\TransactionStoreRequest;
+use App\Models\Categoria;
 use App\Models\JunoLogs;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
@@ -15,12 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class MovimentacoesService
 {
-    private $contasService;
-
-    public function __construct(ContasService $contasService)
-    {
-        $this->contasService = $contasService;
-    }
+    public function __construct(private readonly ContasService $contasService, private readonly CategoriasService $categoriasService) {}
 
     public function get(Request $request)
     {
@@ -49,7 +46,7 @@ class MovimentacoesService
         return $movimentacoes->get();
     }
 
-    public function store(Request $request)
+    public function store(TransactionStoreRequest $request)
     {
         $userId = Auth::id();
 
@@ -60,10 +57,16 @@ class MovimentacoesService
             'saldo' => $request->saldo_inicial
         ]);
 
-        if ((int) $request->despesa === 1) {
-            $request->merge([
-                'valor' => $this->transformarValorNegativo($request->valor)
-            ]);
+        $despesa = (int) $request->despesa === 1;
+
+        $handledValue = $despesa ? $this->transformarValorNegativo($request->valor) : $request->valor;
+
+        $request->merge([
+            'valor' => $handledValue
+        ]);
+
+        if ($request->conta_relacao_id) {
+            return $this->handleTransferTransaction($request, $despesa);
         }
 
         return Movimentacao::create($request->only([
@@ -72,8 +75,46 @@ class MovimentacoesService
             'valor',
             'data_transacao',
             'conta_id',
+            'movimentacao_relacao_id',
             'categoria_id'
         ]));
+    }
+
+    private function handleTransferTransaction(Request $request, bool $despesa): Movimentacao
+    {
+        $userId = Auth::id();
+
+        [$incomeTransferCategory, $outcomeTransferCategory] = $this->categoriasService->findTransferCategories();
+
+        $movimentacaoDestino = Movimentacao::create([
+            'user_id' => $userId,
+            'descricao' => $request->descricao,
+            'valor' => $request->valor * -1,
+            'data_transacao' => $request->data_transacao,
+            'conta_id' => $request->conta_relacao_id,
+            'categoria_id' => $despesa ? $incomeTransferCategory->id : $outcomeTransferCategory->id
+        ]);
+
+        $request->merge([
+            'movimentacao_relacao_id' => $movimentacaoDestino->id,
+            'categoria_id' => $despesa ? $outcomeTransferCategory->id : $incomeTransferCategory->id
+        ]);
+
+        $movimentacao = Movimentacao::create($request->only([
+            'user_id',
+            'descricao',
+            'valor',
+            'data_transacao',
+            'conta_id',
+            'movimentacao_relacao_id',
+            'categoria_id'
+        ]));
+
+        $movimentacaoDestino->update([
+            'movimentacao_relacao_id' => $movimentacao->id
+        ]);
+
+        return $movimentacao;
     }
 
     public function update(Request $request, $id)
