@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
 use App\Models\Categoria;
 use App\Models\Conta;
 use App\Imports\MovimentacoesImport;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
+use App\Services\IA\IAServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class MovimentacaoImportacoesService
 {
-    public function __construct(private readonly OfxReaderService $ofxReaderService) {}
+    public function __construct(private readonly OfxReaderService $ofxReaderService, private readonly IAServiceInterface $iaService, private readonly CategoriasService $categoriasService) {}
 
     public function get()
     {
@@ -79,12 +81,42 @@ class MovimentacaoImportacoesService
         return $movimentacaoImportacao;
     }
 
+    public function importImage(ImportImageRequest $request): MovimentacaoImportacao
+    {
+        return DB::transaction(function () use ($request): MovimentacaoImportacao {
+            $movimentacaoImportacao = MovimentacaoImportacao::create([
+                'user_id' => Auth::id(),
+                'arquivo' => $request->file('file')->getClientOriginalName()
+            ]);
+
+            $extractedTransactions = $this->iaService->extractTransactionsFromImage($request->file('file'));
+
+            foreach ($extractedTransactions as $extractedTransaction) {
+                [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
+
+                $conta = Conta::first();
+
+                Movimentacao::create([
+                    'user_id' => Auth::id(),
+                    'importacao_movimentacao_id' => $movimentacaoImportacao->id,
+                    'descricao' => $extractedTransaction->description,
+                    'observacoes' => null,
+                    'conta_id' => $conta->id,
+                    'categoria_id' => $extractedTransaction->value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
+                    'valor' => $extractedTransaction->value,
+                    'data_transacao' => $extractedTransaction->date,
+                ]);
+            }
+
+            return $movimentacaoImportacao;
+        });
+    }
+
     public function importOfx(ImportOfxRequest $request)
     {
         $movimentacaoImportacao = null;
 
-        $othersCategoryExpense = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->where('expense', true)->first();
-        $othersCategoryIncome = Categoria::where('user_id', Auth::id())->where('nome', 'Outros')->where('expense', false)->first();
+        [$othersCategoryIncome, $othersCategoryExpense] = $this->categoriasService->findOthersCategories();
         $defaultAccount = Conta::where('user_id', Auth::id())->first();
 
         DB::transaction(function () use ($request, &$movimentacaoImportacao, $defaultAccount, $othersCategoryExpense, $othersCategoryIncome) {

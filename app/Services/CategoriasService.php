@@ -61,6 +61,14 @@ class CategoriasService
             ->get()];
     }
 
+    public function findOthersCategories(): array
+    {
+        return [...Categoria::where('user_id', Auth::id())
+            ->where('nome', 'Outros')
+            ->orderBy('expense')
+            ->get()];
+    }
+
     public function storeCategoriasIniciais(Organizacao $organizacao)
     {
         $categorias = [

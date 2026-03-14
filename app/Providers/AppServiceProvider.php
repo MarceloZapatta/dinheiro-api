@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Categoria;
 use App\Models\Conta;
+use App\Services\IA\GeminiIAService;
+use App\Services\IA\IAServiceInterface;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -32,5 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('categoria_organizacao', function ($attribute, $value, $parameters, $validator) {
             return Categoria::where('organizacao_id', request()->organizacao_id)->find($value);
         });
+
+        $this->app->bind(IAServiceInterface::class, GeminiIAService::class);
     }
 }

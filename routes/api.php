@@ -19,7 +19,6 @@ Route::get('/', function () {
 });
 
 Route::options('/{any}', function () {
-    dd('to aqq');
     return response()->noContent();
 })->where('any', '.*');
 
@@ -42,6 +41,7 @@ Route::prefix('v2')->group(function () {
         Route::apiResource('transactions', TransactionsController::class)->except(['show', 'edit', 'create']);
 
         Route::prefix('transactions/import')->group(function () {
+            Route::post('/image', [MovimentacaoImportacoesController::class, 'importImage']);
             Route::post('/excel', [MovimentacaoImportacoesController::class, 'importarExcel']);
             Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);
             Route::post('/ofx', [MovimentacaoImportacoesController::class, 'importOfx']);

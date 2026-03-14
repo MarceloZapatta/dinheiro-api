@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
 use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
 use App\Http\Resources\MovimentacaoImportacaoShow;
@@ -93,6 +94,23 @@ class MovimentacaoImportacoesController extends Controller
     public function importOfx(ImportOfxRequest $request): JsonResponse
     {
         $movimentacaoImportacao = $this->movimentacaoImportacaoService->importOfx($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
+            'data' => [
+                'movimentacao_importacao' => $movimentacaoImportacao
+            ]
+        ]));
+    }
+
+    /**
+     * Import image request using AI features
+     *
+     * @param ImportImageRequest $request
+     * @return JsonResponse
+     */
+    public function importImage(ImportImageRequest $request): JsonResponse
+    {
+        $movimentacaoImportacao = $this->movimentacaoImportacaoService->importImage($request);
 
         return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
             'data' => [
