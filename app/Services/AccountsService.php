@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AccountType;
 use App\Models\Conta;
 use App\Helpers\Helpers;
 use App\Models\Organizacao;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
-class ContasService
+class AccountsService
 {
     public function get()
     {
@@ -22,8 +23,15 @@ class ContasService
             'nome',
             'icone',
             'cor_id',
-            'saldo_inicial'
+            'saldo_inicial',
+            'account_type',
         ]);
+
+        if ($request->input('account_type') === AccountType::CREDIT_CARD->value) {
+            $data['closing_day'] = $request->input('closing_day');
+            $data['due_day'] = $request->input('due_day');
+            $data['credit_limit'] = $request->input('credit_limit');
+        }
 
         $data['user_id'] = Auth::id();
 
@@ -32,11 +40,24 @@ class ContasService
 
     public function update(Request $request, $id)
     {
-        Conta::where('id', $id)->updateOrFail($request->only([
+        $data = $request->only([
             'nome',
             'icone',
-            'cor_id'
-        ]));
+            'cor_id',
+            'account_type',
+        ]);
+
+        if ($request->input('account_type') === AccountType::CREDIT_CARD->value) {
+            $data['closing_day'] = $request->input('closing_day');
+            $data['due_day'] = $request->input('due_day');
+            $data['credit_limit'] = $request->input('credit_limit');
+        } else {
+            $data['closing_day'] = null;
+            $data['due_day'] = null;
+            $data['credit_limit'] = null;
+        }
+
+        Conta::where('id', $id)->updateOrFail($data);
     }
 
     public function delete($id)
@@ -52,11 +73,11 @@ class ContasService
     }
 
     /**
-     * Calcula o saldo inicial das contas
+     * Calculate initial balances for accounts
      *
      * @return float
      */
-    public function calcularSaldosIniciais(): float
+    public function calculateInitialBalances(): float
     {
         return Cache::rememberForever('contas.saldos_iniciais.' . request()->organizacao_id, function () {
             return Conta::where('user_id', Auth::id())
@@ -64,9 +85,9 @@ class ContasService
         });
     }
 
-    public function storeContasIniciais(Organizacao $organizacao)
+    public function storeDefaultAccounts(Organizacao $organizacao)
     {
-        $contas = [
+        $accounts = [
             [
                 'nome' => 'Carteira',
                 'icone' => 'wallet',
@@ -90,6 +111,6 @@ class ContasService
             ],
         ];
 
-        Conta::insert($contas);
+        Conta::insert($accounts);
     }
 }

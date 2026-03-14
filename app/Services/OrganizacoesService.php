@@ -21,11 +21,11 @@ use Illuminate\Support\Str;
 class OrganizacoesService
 {
     /**
-     * Contas Service
+     * Accounts Service
      *
-     * @var \App\Services\ContasService
+     * @var \App\Services\AccountsService
      */
-    private $contasService;
+    private $accountsService;
 
     /**
      * Categorias Service
@@ -35,10 +35,10 @@ class OrganizacoesService
     private $categoriasService;
 
     public function __construct(
-        ContasService $contasService,
+        AccountsService $accountsService,
         CategoriasService $categoriasService
     ) {
-        $this->contasService = $contasService;
+        $this->accountsService = $accountsService;
         $this->categoriasService = $categoriasService;
     }
 
@@ -210,7 +210,7 @@ class OrganizacoesService
                 'pessoa_id' => $user->pessoa->id
             ]);
 
-            $this->contasService->storeContasIniciais($organizacao);
+            $this->accountsService->storeDefaultAccounts($organizacao);
             $this->categoriasService->storeCategoriasIniciais($organizacao);
 
             if ($request->convite_novos) {

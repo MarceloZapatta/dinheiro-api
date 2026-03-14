@@ -20,7 +20,11 @@ class ContaResource extends JsonResource
             'saldo' => (float) $this->saldo,
             'saldo_inicial' => (float) $this->saldo_inicial,
             'cor' => $this->cor,
-            'icone' => $this->icone
+            'icone' => $this->icone,
+            'account_type' => $this->account_type,
+            'closing_day' => $this->closing_day,
+            'due_day' => $this->due_day,
+            'credit_limit' => $this->credit_limit ? (float) $this->credit_limit : null,
         ];
     }
 }

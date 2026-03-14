@@ -4,9 +4,10 @@ namespace App\Http\Requests;
 
 use App\Enums\AccountType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
-class AccountRequest extends FormRequest
+class UpdateAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +24,17 @@ class AccountRequest extends FormRequest
      */
     public function rules(): array
     {
+        $accountId = $this->route('conta');
+
         $rules = [
-            'nome' => 'required|max:255',
+            'nome' => [
+                'required',
+                'max:255',
+                Rule::unique('contas', 'nome')->where(function ($query) {
+                    return $query->where('user_id', $this->user()->id);
+                })->ignore($accountId),
+            ],
             'cor_id' => 'required|exists:cores,id',
-            'saldo_inicial' => 'required|numeric',
             'account_type' => ['required', new Enum(AccountType::class)],
         ];
 

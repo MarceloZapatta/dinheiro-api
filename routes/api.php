@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrganizacoesController;
 use App\Http\Controllers\CoresController;
-use App\Http\Controllers\ContasController;
+use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MovimentacaoImportacoesController;
 use App\Http\Controllers\DashboardsController;
@@ -54,7 +54,7 @@ Route::prefix('v2')->group(function () {
 
         Route::get('cores', [CoresController::class, 'index']);
 
-        Route::apiResource('/contas', ContasController::class);
+        Route::apiResource('/contas', AccountsController::class);
 
         Route::prefix('categorias')->group(function () {
             Route::get('/', [CategoriasController::class, 'index']);

@@ -44,11 +44,11 @@ class AuthsService
     private $consultoresService;
 
     /**
-     * Contas Service
+     * Accounts Service
      *
-     * @var \App\Services\ContasService
+     * @var \App\Services\AccountsService
      */
-    private $contasService;
+    private $accountsService;
 
     /**
      * Categorias Service
@@ -62,14 +62,14 @@ class AuthsService
         OrganizacoesService $organizacoesService,
         ConsultoresService $consultoresService,
         PessoasService $pessoasService,
-        ContasService $contasService,
+        AccountsService $accountsService,
         CategoriasService $categoriasService
     ) {
         $this->usersService = $usersService;
         $this->organizacoesService = $organizacoesService;
         $this->consultoresService = $consultoresService;
         $this->pessoasService = $pessoasService;
-        $this->contasService = $contasService;
+        $this->accountsService = $accountsService;
         $this->categoriasService = $categoriasService;
     }
 
@@ -103,7 +103,7 @@ class AuthsService
                 $this->consultoresService->store($user, $request);
             }
 
-            $this->contasService->storeContasIniciais($organizacao);
+            $this->accountsService->storeDefaultAccounts($organizacao);
             $this->categoriasService->storeCategoriasIniciais($organizacao);
 
             $url = $this->gerarUrlTokenVerificacaoEmail($user);

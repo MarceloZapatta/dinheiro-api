@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class MovimentacoesService
 {
-    public function __construct(private readonly ContasService $contasService, private readonly CategoriasService $categoriasService) {}
+    public function __construct(private readonly AccountsService $accountsService, private readonly CategoriasService $categoriasService) {}
 
     public function get(Request $request)
     {
@@ -222,7 +222,7 @@ class MovimentacoesService
     public function getSaldo(): float
     {
         return Cache::rememberForever('movimentacoes.saldo.' . Auth::id(), function () {
-            $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
+            $somaSaldosIniciais = $this->accountsService->calculateInitialBalances();
             $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::now())
                 ->where('user_id', Auth::id())
                 ->whereNull('importacao_movimentacao_id')
@@ -240,7 +240,7 @@ class MovimentacoesService
     public function getSaldoPrevisto(Request $request): float
     {
         return Cache::rememberForever('movimentacoes.saldo_previsto.' . Auth::id() . '.' . $request->data_fim, function () use ($request) {
-            $somaSaldosIniciais = $this->contasService->calcularSaldosIniciais();
+            $somaSaldosIniciais = $this->accountsService->calculateInitialBalances();
             $acumulado = (float) Movimentacao::where('data_transacao', '<=', Carbon::parse($request->date_start))
                 ->where('user_id', Auth::id())
                 ->whereNull('importacao_movimentacao_id')
