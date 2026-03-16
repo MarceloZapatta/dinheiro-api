@@ -23,19 +23,11 @@ class AccountRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
             'nome' => 'required|max:255',
             'cor_id' => 'required|exists:cores,id',
             'saldo_inicial' => 'required|numeric',
-            'account_type' => ['required', new Enum(AccountType::class)],
+            'account_type' => ['required', new Enum(AccountType::class)->only(AccountType::BANK, AccountType::INVESTMENT)],
         ];
-
-        if ($this->input('account_type') === AccountType::CREDIT_CARD->value) {
-            $rules['closing_day'] = 'required|integer|min:1|max:31';
-            $rules['due_day'] = 'required|integer|min:1|max:31';
-            $rules['credit_limit'] = 'required|numeric|min:0';
-        }
-
-        return $rules;
     }
 }

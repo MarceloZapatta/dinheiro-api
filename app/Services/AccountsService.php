@@ -14,7 +14,9 @@ class AccountsService
 {
     public function get()
     {
-        return Conta::where('user_id', Auth::id())->get();
+        return Conta::where('user_id', Auth::id())
+            ->where('account_type', '!=', AccountType::CREDIT_CARD->value)
+            ->get();
     }
 
     public function store(Request $request)
@@ -47,29 +49,19 @@ class AccountsService
             'account_type',
         ]);
 
-        if ($request->input('account_type') === AccountType::CREDIT_CARD->value) {
-            $data['closing_day'] = $request->input('closing_day');
-            $data['due_day'] = $request->input('due_day');
-            $data['credit_limit'] = $request->input('credit_limit');
-        } else {
-            $data['closing_day'] = null;
-            $data['due_day'] = null;
-            $data['credit_limit'] = null;
-        }
-
-        Conta::where('id', $id)->updateOrFail($data);
+        Conta::where('user_id', Auth::id())->where('id', $id)->updateOrFail($data);
     }
 
     public function delete($id)
     {
         Helpers::flushCacheMovimentacoes();
         Cache::forget('contas.saldos_iniciais.' . request()->organizacao_id);
-        return Conta::where('id', $id)->delete();
+        return Conta::where('user_id', Auth::id())->where('id', $id)->delete();
     }
 
     public function find($id)
     {
-        return Conta::findOrFail($id);
+        return Conta::where('user_id', Auth::id())->where('id', $id)->firstOrFail();
     }
 
     /**

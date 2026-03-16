@@ -2,12 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\AccountType;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
 
-class UpdateAccountRequest extends FormRequest
+class CreditCardRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,15 +22,11 @@ class UpdateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' => [
-                'required',
-                'max:255',
-                Rule::unique('contas', 'nome')->where(function ($query) {
-                    return $query->where('user_id', $this->user()->id);
-                }),
-            ],
+            'nome' => 'required|max:255',
             'cor_id' => 'required|exists:cores,id',
-            'account_type' => ['required', new Enum(AccountType::class)->only(AccountType::BANK, AccountType::INVESTMENT)],
+            'closing_day' => 'required|integer|min:1|max:31',
+            'due_day' => 'required|integer|min:1|max:31',
+            'credit_limit' => 'required|numeric|min:0',
         ];
     }
 }

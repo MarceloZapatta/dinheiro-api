@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MovimentacaoImportacoesController;
 use App\Http\Controllers\DashboardsController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\CreditCardController;
 use App\Http\Controllers\IntegracaoJunoController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UfsController;
@@ -55,6 +56,8 @@ Route::prefix('v2')->group(function () {
         Route::get('cores', [CoresController::class, 'index']);
 
         Route::apiResource('/contas', AccountsController::class);
+        Route::apiResource('/credit-cards', CreditCardController::class);
+        Route::get('/credit-cards/{id}/invoices', [CreditCardController::class, 'invoices']);
 
         Route::prefix('categorias')->group(function () {
             Route::get('/', [CategoriasController::class, 'index']);
@@ -63,8 +66,6 @@ Route::prefix('v2')->group(function () {
         Route::get('organizacoes', [OrganizacoesController::class, 'index']);
         Route::post('organizacoes/convite', [OrganizacoesController::class, 'aceitarConvite']);
         Route::post('organizacoes', [OrganizacoesController::class, 'store']);
-
-        // Route::middleware('organizacao')->group(function () {
 
         Route::prefix('categorias')->group(function () {
             Route::post('/', [CategoriasController::class, 'store']);
@@ -85,13 +86,6 @@ Route::prefix('v2')->group(function () {
                 Route::get('/por-categoria', [DashboardsController::class, 'porCategoria']);
                 Route::get('/movimentacoes-anual', [DashboardsController::class, 'movimentacoesAnual']);
             });
-
-            // Route::get('/', [MovimentacoesController::class, 'index']);
-            // Route::post('/', [MovimentacoesController::class, 'store']);
-            // Route::post('/emitir-cobranca', [MovimentacoesController::class, 'emitirCobranca']);
-            // Route::get('/{id}', [MovimentacoesController::class, 'show']);
-            // Route::put('/{id}', [MovimentacoesController::class, 'update']);
-            // Route::delete('/{id}', [MovimentacoesController::class, 'destroy']);
         });
 
         Route::prefix('clientes')->middleware('organizacaoPj')->group(function () {
