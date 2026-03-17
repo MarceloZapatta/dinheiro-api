@@ -9,6 +9,7 @@ use App\Helpers\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CreditCardService
 {
@@ -19,7 +20,7 @@ class CreditCardService
             ->get();
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Conta
     {
         $data = $request->only([
             'nome',
@@ -34,7 +35,19 @@ class CreditCardService
         $data['user_id'] = Auth::id();
         $data['account_type'] = AccountType::CREDIT_CARD->value;
 
-        return Conta::create($data);
+        return DB::transaction(function () use ($data) {
+            $conta = Conta::create($data);
+
+            CreditCardInvoice::create([
+                'user_id' => Auth::id(),
+                'conta_id' => $conta->id,
+                'reference_date' => now()->startOfMonth(),
+                'closing_date' => now()->addMonth()->setDay($data['closing_day']),
+                'due_date' => now()->addMonth()->setDay($data['due_day']),
+            ]);
+
+            return $conta;
+        });
     }
 
     public function update(Request $request, $id)
@@ -48,7 +61,7 @@ class CreditCardService
             'credit_limit',
         ]);
 
-        Conta::where('user_id', Auth::id())->where('id', $id)->where('account_type', AccountType::CREDIT_CARD->value)->updateOrFail($data);
+        Conta::where('user_id', Auth::id())->where('id', $id)->where('account_type', AccountType::CREDIT_CARD->value)->update($data);
     }
 
     public function delete($id)
@@ -71,12 +84,10 @@ class CreditCardService
      */
     public function getInvoices(int $accountId)
     {
-        return CreditCardInvoice::whereHas('conta', function ($query) use ($accountId) {
-            $query->where('user_id', Auth::id())
-                ->where('id', $accountId);
-        })
-            ->where('user_id', Auth::id())
+        return CreditCardInvoice::where('user_id', Auth::id())
+            ->where('conta_id', $accountId)
             ->orderBy('reference_date', 'desc')
+            ->with('transactions')
             ->get();
     }
 }

@@ -22,6 +22,7 @@ class CreateMovimentacoesTable extends Migration
             $table->decimal('valor');
             $table->date('data_transacao');
             $table->foreignId('conta_id')->constrained();
+            $table->foreignId('credit_card_invoice_id')->nullable()->constrained('credit_card_invoices');
             $table->unsignedBigInteger('movimentacao_relacao_id')->nullable()->default(null);
             $table->foreign('movimentacao_relacao_id')->references('id')->on('movimentacoes');
             $table->foreignId('categoria_id')->constrained();

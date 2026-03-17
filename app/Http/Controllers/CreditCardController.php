@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreditCardRequest;
-use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\ContaResource;
 use App\Http\Resources\ContaResourceCollection;
 use App\Http\Resources\CreditCardInvoiceResource;
 use App\Models\Mensagem;
-use App\Services\AccountsService;
 use App\Services\CreditCardService;
 
 /**
@@ -67,19 +65,19 @@ class CreditCardController extends Controller
     }
 
     /**
-     * Update account
+     * Update credit card
      *
-     * @apiParam id int required Account ID
-     * @bodyParam nome string optional Nome da conta
-     * @bodyParam icone string optional Ícone da conta
-     * @bodyParam cor_id int optional ID Cor da conta
+     * @apiParam id int required Credit card ID
+     * @bodyParam nome string optional Nome do cartão
+     * @bodyParam icone string optional Ícone do cartão
+     * @bodyParam cor_id int optional ID Cor do cartão
      * @bodyParam account_type string required Account type (bank, investment, credit_card)
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAccountRequest $request, $id)
+    public function update(CreditCardRequest $request, $id)
     {
         $account = $this->creditCardService->update($request, $id);
 
@@ -111,9 +109,9 @@ class CreditCardController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function invoices($id)
+    public function invoices(string $id)
     {
-        $invoices = $this->creditCardService->getInvoices($id);
+        $invoices = $this->creditCardService->getInvoices((int) $id);
 
         return CreditCardInvoiceResource::collection($invoices);
     }

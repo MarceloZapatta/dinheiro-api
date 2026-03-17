@@ -20,9 +20,15 @@ class CreditCardInvoiceResource extends JsonResource
             'reference_date' => $this->reference_date->format('Y-m-d'),
             'closing_date' => $this->closing_date->format('Y-m-d'),
             'due_date' => $this->due_date->format('Y-m-d'),
-            'amount' => (float) $this->amount,
+            'total_amount' => $this->getTotalAmount(),
             'is_paid' => $this->is_paid,
             'paid_at' => $this->paid_at?->format('Y-m-d'),
+            'transactions' => new CreditCardInvoiceTransactionResourceCollection($this->whenLoaded('transactions')),
         ];
+    }
+
+    private function getTotalAmount()
+    {
+        return $this->transactions->sum('valor') * -1;
     }
 }

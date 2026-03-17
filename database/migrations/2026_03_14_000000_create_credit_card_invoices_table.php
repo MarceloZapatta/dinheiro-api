@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('credit_card_invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('conta_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->date('reference_date');
             $table->date('closing_date');
             $table->date('due_date');
-            $table->decimal('amount', 10, 2)->default(0);
             $table->boolean('is_paid')->default(false);
             $table->date('paid_at')->nullable();
             $table->timestamps();

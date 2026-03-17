@@ -29,13 +29,13 @@ class CreditCardInvoice extends Model
         'amount' => 'decimal:2',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function conta()
     {
-        return $this->belongsTo(Conta::class);
+        return $this->belongsTo(Conta::class, 'conta_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Movimentacao::class, 'credit_card_invoice_id');
     }
 }
