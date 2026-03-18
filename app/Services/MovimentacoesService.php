@@ -53,8 +53,7 @@ class MovimentacoesService
         Helpers::flushCacheMovimentacoes();
         Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id() . '.%');
         $request->merge([
-            'user_id' => $userId,
-            'saldo' => $request->saldo_inicial
+            'user_id' => $userId
         ]);
 
         $despesa = (int) $request->despesa === 1;
@@ -75,8 +74,8 @@ class MovimentacoesService
             'valor',
             'data_transacao',
             'conta_id',
-            'movimentacao_relacao_id',
-            'categoria_id'
+            'categoria_id',
+            'credit_card_invoice_id'
         ]));
     }
 
@@ -160,7 +159,8 @@ class MovimentacoesService
             'valor',
             'data_transacao',
             'conta_id',
-            'categoria_id'
+            'categoria_id',
+            'credit_card_invoice_id'
         ]));
 
         if (

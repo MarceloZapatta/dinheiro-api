@@ -28,7 +28,8 @@ class TransactionStoreRequest extends FormRequest
             'categoria_id' => 'required_without:conta_relacao_id|nullable|integer|exists:categorias,id',
             'data_transacao' => 'required|date_format:Y-m-d',
             'valor' => 'required|numeric',
-            'despesa' => 'required|boolean'
+            'despesa' => 'required|boolean',
+            'invoice_id' => 'nullable|integer|exists:credit_card_invoices,id',
         ];
     }
 }

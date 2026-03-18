@@ -17,7 +17,8 @@ class Movimentacao extends Model
         'conta_id',
         'movimentacao_relacao_id',
         'categoria_id',
-        'refnum'
+        'refnum',
+        'credit_card_invoice_id'
     ];
 
     public function categoria()
@@ -43,5 +44,10 @@ class Movimentacao extends Model
     public function movimentacaoRelacao()
     {
         return $this->belongsTo(Movimentacao::class, 'movimentacao_relacao_id');
+    }
+
+    public function creditCardInvoice()
+    {
+        return $this->belongsTo(CreditCardInvoice::class, 'credit_card_invoice_id');
     }
 }

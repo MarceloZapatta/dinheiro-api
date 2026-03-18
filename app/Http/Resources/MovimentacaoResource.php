@@ -20,11 +20,16 @@ class MovimentacaoResource extends JsonResource
             'descricao' => $this->descricao,
             'data_transacao' => $this->data_transacao,
             'valor' => $this->valor,
+            'credit_card_invoice' => $this->creditCardInvoice ? [
+                'id' => $this->creditCardInvoice->id,
+                'reference_date' => $this->creditCardInvoice->reference_date->format('Y-m-d'),
+            ] : null,
             'conta' => [
                 'id' => $this->conta->id,
                 'nome' => $this->conta->nome,
                 'icone' => $this->conta->icone,
-                'cor' => $this->conta->cor
+                'cor' => $this->conta->cor,
+                'account_type' => $this->conta->account_type,
             ],
             'movimentacao_relacao' => $this->movimentacaoRelacao ? [
                 'id' => $this->movimentacaoRelacao->id,
