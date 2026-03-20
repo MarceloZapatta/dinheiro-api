@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\AccountType;
 use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
+use App\Imports\ExcelImport;
 use App\Models\Categoria;
 use App\Models\Conta;
 use App\Imports\MovimentacoesImport;
@@ -37,11 +39,14 @@ class MovimentacaoImportacoesService
 
         DB::transaction(function () use ($request, &$movimentacaoImportacao) {
             $movimentacaoImportacao = MovimentacaoImportacao::create([
-                'organizacao_id' => $request->organizacao_id,
-                'arquivo' => $request->file('arquivo')->getPath()
+                'user_id' => Auth::id(),
+                'arquivo' => $request->file('file')->getPath()
             ]);
 
-            Excel::import(new MovimentacoesImport($movimentacaoImportacao), $request->file('arquivo'));
+            $contaId = (int) $request->conta_id;
+            $creditCardInvoiceId = $request->credit_card_invoice_id ? (int) $request->credit_card_invoice_id : null;
+
+            Excel::import(new ExcelImport($movimentacaoImportacao, $contaId, $creditCardInvoiceId), $request->file('file'));
         });
 
         return $movimentacaoImportacao;
@@ -94,14 +99,13 @@ class MovimentacaoImportacoesService
             foreach ($extractedTransactions as $extractedTransaction) {
                 [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
 
-                $conta = Conta::first();
-
                 Movimentacao::create([
                     'user_id' => Auth::id(),
                     'importacao_movimentacao_id' => $movimentacaoImportacao->id,
                     'descricao' => $extractedTransaction->description,
                     'observacoes' => null,
-                    'conta_id' => $conta->id,
+                    'conta_id' => $request->conta_id,
+                    'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
                     'categoria_id' => $extractedTransaction->value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
                     'valor' => $extractedTransaction->value,
                     'data_transacao' => $extractedTransaction->date,
@@ -117,9 +121,8 @@ class MovimentacaoImportacoesService
         $movimentacaoImportacao = null;
 
         [$othersCategoryIncome, $othersCategoryExpense] = $this->categoriasService->findOthersCategories();
-        $defaultAccount = Conta::where('user_id', Auth::id())->first();
 
-        DB::transaction(function () use ($request, &$movimentacaoImportacao, $defaultAccount, $othersCategoryExpense, $othersCategoryIncome) {
+        DB::transaction(function () use ($request, &$movimentacaoImportacao, $othersCategoryExpense, $othersCategoryIncome) {
             $movimentacaoImportacao = MovimentacaoImportacao::create([
                 'user_id' => Auth::id(),
                 'arquivo' => $request->file('file')->getClientOriginalName()
@@ -158,7 +161,8 @@ class MovimentacaoImportacoesService
                     'valor' => $value,
                     'descricao' => $description,
                     'data_transacao' => $datePosted,
-                    'conta_id' => $defaultAccount->id,
+                    'conta_id' => $request->conta_id,
+                    'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
                     'categoria_id' => $value < 0 ? $othersCategoryExpense->id : $othersCategoryIncome->id,
                     'refnum' => $refnum,
                     'created_at' => now(),

@@ -90,4 +90,18 @@ class CreditCardService
             ->with('transactions')
             ->get();
     }
+
+    /**
+     * Find a specific invoice
+     *
+     * @param integer $invoiceId
+     * @return CreditCardInvoice
+     */
+    public function findInvoice(int $invoiceId): CreditCardInvoice
+    {
+        return CreditCardInvoice::where('user_id', Auth::id())
+            ->where('id', $invoiceId)
+            ->with('transactions')
+            ->firstOrFail();
+    }
 }

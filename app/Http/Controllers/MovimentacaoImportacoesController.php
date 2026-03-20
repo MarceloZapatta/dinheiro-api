@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportExcelRequest;
 use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
 use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
@@ -49,12 +50,8 @@ class MovimentacaoImportacoesController extends Controller
         );
     }
 
-    public function importarExcel(Request $request)
+    public function importarExcel(ImportExcelRequest $request)
     {
-        $this->validate($request, [
-            'arquivo' => 'required|file|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel|max:10240'
-        ]);
-
         $movimentacaoImportacao = $this->movimentacaoImportacaoService->importarExcel($request);
 
         return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [

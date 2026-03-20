@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AccountType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\Exists;
 
 class ImportOfxRequest extends FormRequest
 {
@@ -22,7 +26,10 @@ class ImportOfxRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file'
+            'file' => 'required|file',
+            'conta_id' => ['required', 'integer', new Exists('contas', 'id')->where('user_id', Auth::id())],
+            'account_type' => ['required', 'string', new Enum(AccountType::class)],
+            'credit_card_invoice_id' => ['required_if:account_type,' . AccountType::CREDIT_CARD->value, 'integer', 'exists:credit_card_invoices,id'],
         ];
     }
 }
