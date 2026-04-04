@@ -17,7 +17,7 @@ class CreateContasTable extends Migration
         Schema::create('contas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('nome')->unique();
+            $table->string('nome');
             $table->string('icone')->nullable();
             $table->unsignedBigInteger('cor_id');
             $table->foreign('cor_id')->references('id')->on('cores');
@@ -27,6 +27,8 @@ class CreateContasTable extends Migration
             $table->integer('due_day')->nullable();
             $table->decimal('credit_limit', 10, 2)->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'nome']);
         });
     }
 

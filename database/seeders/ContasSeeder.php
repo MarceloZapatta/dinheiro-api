@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Conta;
-use App\Models\Cor;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,9 +13,13 @@ class ContasSeeder extends Seeder
      */
     public function run(): void
     {
-        Conta::factory()->create([
-            'nome' => 'C6 Bank',
-            'user_id' => User::first()->id,
-        ]);
+        $users = User::get();
+
+        foreach ($users as $user) {
+            Conta::factory()->create([
+                'nome' => 'C6 Bank',
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }

@@ -16,28 +16,32 @@ class CategoriasSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first();
+        $users = User::get();
 
-        foreach ($this->getDefaultExpensesCategories() as $category) {
-            $insertCategories[] = [
-                'nome' => $category['nome'],
-                'icone' => $category['icone'],
-                'cor_id' => $category['cor_id'],
-                'user_id' => $user->id,
-                'expense' => true
-            ];
+        foreach ($users as $user) {
+            $insertCategories = [];
+
+            foreach ($this->getDefaultExpensesCategories() as $category) {
+                $insertCategories[] = [
+                    'nome' => $category['nome'],
+                    'icone' => $category['icone'],
+                    'cor_id' => $category['cor_id'],
+                    'user_id' => $user->id,
+                    'expense' => true
+                ];
+            }
+
+            foreach ($this->getDefaultIncomesCategories() as $category) {
+                $insertCategories[] = [
+                    'nome' => $category['nome'],
+                    'icone' => $category['icone'],
+                    'cor_id' => $category['cor_id'],
+                    'user_id' => $user->id,
+                    'expense' => false
+                ];
+            }
+
+            Categoria::insert($insertCategories);
         }
-
-        foreach ($this->getDefaultIncomesCategories() as $category) {
-            $insertCategories[] = [
-                'nome' => $category['nome'],
-                'icone' => $category['icone'],
-                'cor_id' => $category['cor_id'],
-                'user_id' => $user->id,
-                'expense' => false
-            ];
-        }
-
-        Categoria::insert($insertCategories);
     }
 }
