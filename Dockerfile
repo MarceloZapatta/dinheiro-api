@@ -17,6 +17,9 @@ RUN apt-get update \
     curl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 # Create group and user to match host UID/GID
 RUN groupadd -g ${HOST_GID} appuser \
     && useradd -u ${HOST_UID} -g appuser -m appuser
