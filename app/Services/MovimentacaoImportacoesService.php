@@ -170,9 +170,14 @@ class MovimentacaoImportacoesService
                 ];
             }
 
-            Movimentacao::upsert($insertTransacations, [
+            Movimentacao::upsert($insertTransacations, uniqueBy: [
                 'user_id',
                 'refnum'
+            ], update: [
+                'valor',
+                'importacao_movimentacao_id',
+                'data_transacao',
+                'updated_at'
             ]);
         });
 
