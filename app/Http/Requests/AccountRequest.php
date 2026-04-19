@@ -27,7 +27,7 @@ class AccountRequest extends FormRequest
             'nome' => 'required|max:255',
             'cor_id' => 'required|exists:cores,id',
             'saldo_inicial' => 'required|numeric',
-            'account_type' => ['required', new Enum(AccountType::class)->only(AccountType::BANK, AccountType::INVESTMENT)],
+            'account_type' => ['required', new Enum(AccountType::class)->only([AccountType::BANK, AccountType::INVESTMENT])],
         ];
     }
 }
