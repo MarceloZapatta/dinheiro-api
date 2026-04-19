@@ -32,7 +32,7 @@ class GeminiIAService implements IAServiceInterface
                     - If the year of the transaction is missing, use YYYY at the current year, example: "YYYY-03-23".
                     - If invoice number is missing, use null.
                     - Do not include any text outside the JSON.
-                    - Return plain JSON without any formatting or explanations.
+                    - Do not return with json markdown "```json" or any other markdown formatting, return only the JSON content as plain text minified.
                     - Do not invent data', 'UTF-8');
 
         $geminiAiApiKey = config('gemini.ai_api_key');
@@ -49,12 +49,14 @@ class GeminiIAService implements IAServiceInterface
             ]);
 
         $textResponse = $generateContentResponse->text();
+        Log::debug('GeminiIAService - Resposta bruta da IA:', ['response' => $textResponse]);
 
         if (empty($textResponse)) {
             throw new ExtractTransactionsFromImage();
         }
 
         $jsonDecodedTransactions = json_decode($textResponse, true);
+        Log::debug('GeminiIAService - Transações decodificadas da resposta da IA:', ['transactions' => $jsonDecodedTransactions]);
 
         if (empty($jsonDecodedTransactions) || !is_array($jsonDecodedTransactions)) {
             return [];
@@ -75,6 +77,7 @@ class GeminiIAService implements IAServiceInterface
                 invoiceNumberCurrent: $this->formatCorrectInvoiceNumber($transaction['invoice_number_current'] ?? null),
                 invoiceNumberTotal: $this->formatCorrectInvoiceNumber($transaction['invoice_number_total'] ?? null)
             );
+            Log::debug('GeminiIAService - Transação formatada e validada:', ['transaction' => end($extractedTransactions)]);
         }
 
         return $extractedTransactions;
@@ -110,7 +113,7 @@ class GeminiIAService implements IAServiceInterface
         } else {
             try {
                 $carbonDate = Carbon::parse($date);
-                $carbonDate->setYear(date('Y'));
+                $carbonDate->setYear((int) date('Y'));
                 $dateFormatted = $carbonDate->format('Y-m-d');
             } catch (\Throwable $th) {
                 Log::error('Error in formatting date extracted from IA', ['date' => $date, 'error' => $th->getMessage()]);

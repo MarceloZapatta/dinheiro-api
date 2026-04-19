@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MovimentacaoImportacoesService
@@ -95,6 +96,7 @@ class MovimentacaoImportacoesService
             ]);
 
             $extractedTransactions = $this->iaService->extractTransactionsFromImage($request->file('file'));
+            Log::debug('Transações extraídas da imagem:', ['transactions' => $extractedTransactions]);
 
             foreach ($extractedTransactions as $extractedTransaction) {
                 [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
