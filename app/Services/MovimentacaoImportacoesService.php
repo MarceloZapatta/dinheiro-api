@@ -98,6 +98,8 @@ class MovimentacaoImportacoesService
             $extractedTransactions = $this->iaService->extractTransactionsFromImage($request->file('file'));
             Log::debug('Transações extraídas da imagem:', ['transactions' => $extractedTransactions]);
 
+            $accountType = AccountType::tryFrom($request->account_type) ?? AccountType::BANK;
+
             foreach ($extractedTransactions as $extractedTransaction) {
                 [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
 
@@ -109,7 +111,7 @@ class MovimentacaoImportacoesService
                     'conta_id' => $request->conta_id,
                     'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
                     'categoria_id' => $extractedTransaction->value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
-                    'valor' => $extractedTransaction->value,
+                    'valor' => $accountType === AccountType::CREDIT_CARD ? ($extractedTransaction->value * -1) : $extractedTransaction->value,
                     'data_transacao' => $extractedTransaction->date,
                 ]);
             }
