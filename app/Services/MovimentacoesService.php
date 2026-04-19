@@ -181,10 +181,15 @@ class MovimentacoesService
             ->where('id', $id)
             ->firstOrFail();
 
-
         if ($movimentacao->importacao_movimentacao_id) {
-            MovimentacaoImportacao::where('id', $movimentacao->importacao_movimentacao_id)
-                ->delete();
+            $transactions = Movimentacao::where('user_id', Auth::id())
+                ->where('id', $id)
+                ->count();
+
+            if ($transactions <= 1) {
+                MovimentacaoImportacao::where('id', $movimentacao->importacao_movimentacao_id)
+                    ->delete();
+            }
         }
 
         $deleted = Movimentacao::where('user_id', Auth::id())
