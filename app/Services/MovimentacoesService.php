@@ -13,7 +13,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class MovimentacoesService
 {
@@ -21,29 +20,26 @@ class MovimentacoesService
 
     public function get(Request $request)
     {
-        $movimentacoes = Movimentacao::orderBy('data_transacao')
-            ->with('cobranca')
-            ->whereNull('importacao_movimentacao_id');
-
-        if ($request->date_start) {
-            $movimentacoes->where('data_transacao', '>=', Carbon::parse($request->date_start));
-        }
-
-        if ($request->date_end) {
-            $movimentacoes->where('data_transacao', '<=', Carbon::parse($request->date_end));
-        }
-
-        if (!empty($request->categorias)) {
-            $movimentacoes->whereIn('categoria_id', $request->categorias);
-        }
-
-        if (!empty($request->contas)) {
-            $movimentacoes->whereIn('conta_id', $request->contas);
-        }
-
-        $movimentacoes->where('user_id', Auth::id());
-
-        return $movimentacoes->get();
+        return Movimentacao::with('categoria')
+            ->with('conta')
+            ->with('movimentacaoRelacao')
+            ->with('creditCardInvoice')
+            ->whereNull('importacao_movimentacao_id')
+            ->when($request->date_start, function ($query) use ($request) {
+                $query->where('data_transacao', '>=', Carbon::parse($request->date_start));
+            })
+            ->when($request->date_end, function ($query) use ($request) {
+                $query->where('data_transacao', '<=', Carbon::parse($request->date_end));
+            })
+            ->when(!empty($request->categorias), function ($query) use ($request) {
+                $query->whereIn('categoria_id', $request->categorias);
+            })
+            ->when(!empty($request->contas), function ($query) use ($request) {
+                $query->whereIn('conta_id', $request->contas);
+            })
+            ->where('user_id', Auth::id())
+            ->orderBy('data_transacao', 'desc')
+            ->get();
     }
 
     public function store(TransactionStoreRequest $request)
