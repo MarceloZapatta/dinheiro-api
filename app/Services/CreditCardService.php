@@ -87,7 +87,9 @@ class CreditCardService
         return CreditCardInvoice::where('user_id', Auth::id())
             ->where('conta_id', $accountId)
             ->orderBy('reference_date', 'desc')
-            ->with('transactions')
+            ->with(['transactions' => function ($query) {
+                $query->orderBy('data_transacao', 'desc');
+            }])
             ->get();
     }
 
