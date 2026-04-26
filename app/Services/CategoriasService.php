@@ -11,7 +11,7 @@ class CategoriasService
 {
     public function get()
     {
-        return Categoria::get();
+        return Categoria::where('user_id', Auth::id())->get();
     }
 
     public function store(Request $request)
@@ -32,7 +32,7 @@ class CategoriasService
 
     public function update(Request $request, $id)
     {
-        $categoria = Categoria::where('organizacao_id', $request->organizacao_id)
+        $categoria = Categoria::where('user_id', Auth::id())
             ->findOrFail($id);
         $categoria->update($request->only([
             'nome',
