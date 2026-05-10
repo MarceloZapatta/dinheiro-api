@@ -10,6 +10,7 @@ use App\Http\Controllers\MovimentacaoImportacoesController;
 use App\Http\Controllers\DashboardsController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\CreditCardController;
+use App\Http\Controllers\CreditCardInvoiceController;
 use App\Http\Controllers\IntegracaoJunoController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UfsController;
@@ -57,7 +58,7 @@ Route::prefix('v2')->group(function () {
 
         Route::apiResource('/contas', AccountsController::class);
         Route::apiResource('/credit-cards', CreditCardController::class);
-        Route::get('/credit-cards/{id}/invoices', [CreditCardController::class, 'invoices']);
+        Route::apiResource('/credit-cards/{id}/invoices', CreditCardInvoiceController::class);
 
         Route::prefix('categorias')->group(function () {
             Route::get('/', [CategoriasController::class, 'index']);

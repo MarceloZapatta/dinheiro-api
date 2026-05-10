@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreditCardRequest;
 use App\Http\Resources\ContaResource;
 use App\Http\Resources\ContaResourceCollection;
-use App\Http\Resources\CreditCardInvoiceResource;
 use App\Models\Mensagem;
 use App\Services\CreditCardService;
 
@@ -99,20 +98,5 @@ class CreditCardController extends Controller
         $this->creditCardService->delete($id);
 
         return response()->json(Mensagem::sucesso('Sucesso!'));
-    }
-
-    /**
-     * List credit card invoices
-     *
-     * @apiParam id int required Credit card account ID
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public function invoices(string $id)
-    {
-        $invoices = $this->creditCardService->getInvoices((int) $id);
-
-        return CreditCardInvoiceResource::collection($invoices);
     }
 }
