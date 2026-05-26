@@ -10,7 +10,7 @@ interface IAServiceInterface
     /**
      * Extract transactions from an image file returning in a structured format.
      *
-     * @param File $file
+     * @param UploadedFile $file
      * @return array<ExtractedTransactionDTO>
      */
     public function extractTransactionsFromImage(UploadedFile $file): array;

@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Enums\AccountType;
 use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
+use App\Http\Requests\ImportRequest;
 use App\Imports\ExcelImport;
 use App\Models\Categoria;
 use App\Models\Conta;
 use App\Imports\MovimentacoesImport;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
+use App\Services\IA\ExtractedTransactionDTO;
 use App\Services\IA\IAServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,6 +34,73 @@ class MovimentacaoImportacoesService
     {
         return MovimentacaoImportacao::with('movimentacoes')
             ->findOrFail($id);
+    }
+
+    public function batchImport(ImportRequest $request)
+    {
+        $movimentacaoImportacao = null;
+        [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
+        
+        DB::transaction(function () use ($request, &$movimentacaoImportacao, $incomeOthersCategory, $expenseOthersCategory) {
+            $extractedTransactions = [];
+
+            /** @var \Illuminate\Http\UploadedFile[] $files */
+            $files = $request->file('files');
+
+
+            $movimentacaoImportacao = MovimentacaoImportacao::create([
+                'user_id' => Auth::id(),
+                'arquivo' => $files ? implode(', ', array_map(fn($file) => $file->getClientOriginalName(), $files)) : 'Importação sem arquivo'
+            ]);
+
+            foreach ($files as $file) {
+                if (in_array($file->getClientMimeType(), ['application/ofx', 'application/x-ofx', '.ofx'])) {
+                    $extractedTransactions = array_merge($extractedTransactions, $this->ofxReaderService->extractTransactionsOfx($file->getPathname()));
+                } elseif (str_starts_with($file->getClientMimeType(), 'image/')) {
+                    Log::debug('Extracting transactions from image:', ['file' => $file->getClientOriginalName()]);
+                    $extractedTransactions = array_merge($extractedTransactions, $this->iaService->extractTransactionsFromImage($file));
+                    Log::debug('Extracted transactions from image:', ['transactions' => $extractedTransactions]);
+                } else {
+                    Log::warning('Unsupported file type for import:', ['file' => $file->getClientOriginalName(), 'mime_type' => $file->getClientMimeType()]);
+                    throw new \Exception('Unsupported file type: ' . $file->getClientMimeType());
+                }
+            }
+
+            $accountType = AccountType::tryFrom($request->account_type) ?? AccountType::BANK;
+
+            $insertTransacations = [];
+
+
+            foreach ($extractedTransactions as $extractedTransaction) {
+                $value = $accountType === AccountType::CREDIT_CARD ? ($extractedTransaction->value * -1) : $extractedTransaction->value;
+
+                $insertTransacations[] = [
+                    'user_id' => Auth::id(),
+                    'importacao_movimentacao_id' => $movimentacaoImportacao->id,
+                    'descricao' => $extractedTransaction->description,
+                    'conta_id' => $request->conta_id,
+                    'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
+                    'valor' => $value,
+                    'categoria_id' => $value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
+                    'data_transacao' => $extractedTransaction->date,
+                    'refnum' => $extractedTransaction->refnum,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            Movimentacao::upsert($insertTransacations, uniqueBy: [
+                'user_id',
+                'refnum'
+            ], update: [
+                'valor',
+                'importacao_movimentacao_id',
+                'data_transacao',
+                'updated_at'
+            ]);
+        });
+
+        return $movimentacaoImportacao;
     }
 
     public function importarExcel(Request $request)

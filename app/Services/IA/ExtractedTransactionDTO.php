@@ -9,6 +9,7 @@ class ExtractedTransactionDTO
         public float $value,
         public string $date,
         public ?int $invoiceNumberCurrent = null,
-        public ?int $invoiceNumberTotal = null
+        public ?int $invoiceNumberTotal = null,
+        public ?string $refnum = null
     ) {}
 }

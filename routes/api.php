@@ -43,6 +43,7 @@ Route::prefix('v2')->group(function () {
         Route::apiResource('transactions', TransactionsController::class)->except(['show', 'edit', 'create']);
 
         Route::prefix('transactions/import')->group(function () {
+            Route::post('/', [MovimentacaoImportacoesController::class, 'import']);
             Route::post('/image', [MovimentacaoImportacoesController::class, 'importImage']);
             Route::post('/excel', [MovimentacaoImportacoesController::class, 'importarExcel']);
             Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);

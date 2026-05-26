@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\OfxParseException;
+use App\Services\IA\ExtractedTransactionDTO;
+use Carbon\Carbon;
 
 class OfxReaderService
 {
@@ -37,5 +39,43 @@ class OfxReaderService
 
         // Convert SimpleXMLElement to array and return
         return json_decode(json_encode($xml), true);
+    }
+
+    public function extractTransactionsOfx(string $ofxFilePath): array
+    {
+        $content = $this->read($ofxFilePath);
+
+        $transactions = $content['BANKMSGSRSV1']['STMTTRNRS']['STMTRS']['BANKTRANLIST']['STMTTRN'] ?? [];
+        $extractedTransactions = [];
+
+        foreach ($transactions as $transaction) {
+            $value = isset($transaction['TRNAMT']) ? (float) $transaction['TRNAMT'] : 0.0;
+            $description = $transaction['MEMO'] ?? '';
+            $refnum = $transaction['REFNUM'] ?? null;
+
+            if (empty($description)) {
+                $description = $value > 0 ? 'Entrada/Resgate' : 'Despesa/Aplicação';
+            }
+
+            // Parse OFX date format: 20251014112549[-3:BRT]
+            $dtPostedRaw = $transaction['DTPOSTED'] ?? null;
+            $datePosted = null;
+
+            if ($dtPostedRaw) {
+                // Extract only the date/time part (first 14 digits)
+                if (preg_match('/^(\d{14})/', $dtPostedRaw, $matches)) {
+                    $datePosted = Carbon::createFromFormat('YmdHis', $matches[1]);
+                }
+            }
+
+            $extractedTransactions[] = new ExtractedTransactionDTO(
+                description: $description,
+                value: $value,
+                date: $datePosted,
+                refnum: $refnum
+            );
+        }
+
+        return $extractedTransactions;
     }
 }

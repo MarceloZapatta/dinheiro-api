@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ImportExcelRequest;
 use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
+use App\Http\Requests\ImportRequest;
 use App\Http\Resources\MovimentacaoImportacaoResourceCollection;
 use App\Http\Resources\MovimentacaoImportacaoShow;
 use App\Models\Mensagem;
@@ -19,11 +20,8 @@ use Illuminate\Http\Request;
  */
 class MovimentacaoImportacoesController extends Controller
 {
-    private $movimentacaoImportacaoService;
-
-    public function __construct(MovimentacaoImportacoesService $movimentacaoImportacaoService)
+    public function __construct(private MovimentacaoImportacoesService $movimentacaoImportacaoService)
     {
-        $this->movimentacaoImportacaoService = $movimentacaoImportacaoService;
     }
 
     /**
@@ -48,6 +46,16 @@ class MovimentacaoImportacoesController extends Controller
         return new MovimentacaoImportacaoShow(
             $this->movimentacaoImportacaoService->show($id)
         );
+    }
+
+    public function import(ImportRequest $request) {
+        $movimentacaoImportacao = $this->movimentacaoImportacaoService->batchImport($request);
+
+        return response()->json(Mensagem::sucesso('Sucesso ao realizar a importação!', [
+            'data' => [
+                'movimentacao_importacao' => $movimentacaoImportacao
+            ]
+        ]));
     }
 
     public function importarExcel(ImportExcelRequest $request)
