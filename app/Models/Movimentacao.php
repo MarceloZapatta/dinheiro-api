@@ -18,7 +18,9 @@ class Movimentacao extends Model
         'movimentacao_relacao_id',
         'categoria_id',
         'refnum',
-        'credit_card_invoice_id'
+        'credit_card_invoice_id',
+        'installment_number',
+        'total_installments',
     ];
 
     public function categoria()

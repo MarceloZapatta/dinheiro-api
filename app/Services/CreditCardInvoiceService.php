@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\CreditCardInvoiceRequest;
 use App\Models\CreditCardInvoice;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class CreditCardInvoiceService
@@ -42,16 +43,31 @@ class CreditCardInvoiceService
     }
 
     /**
+     * Get the invoice for a specific month
+     *
+     * @param int $accountId
+     * @param Carbon $date
+     * @return CreditCardInvoice|null
+     */
+    public function getFromDate(int $accountId, Carbon $date): ?CreditCardInvoice
+    {
+        return CreditCardInvoice::where('user_id', Auth::id())
+            ->where('conta_id', $accountId)
+            ->where('reference_date', $date)
+            ->orderBy('reference_date', 'asc')
+            ->first();
+    }
+
+    /**
      * Create a new invoice
      *
      * @param int $accountId
-     * @param CreditCardInvoiceRequest $request
+     * @param array $data
      * @return CreditCardInvoice
      */
-    public function store(int $accountId, CreditCardInvoiceRequest $request): CreditCardInvoice
+    public function store(int $accountId, array $data): CreditCardInvoice
     {
-        $data = $request->validated();
-        $data['is_paid'] = 0;
+        $data['is_paid'] = $data['is_paid'] ?? 0;
         $data['user_id'] = Auth::id();
         $data['conta_id'] = $accountId;
 
@@ -63,13 +79,11 @@ class CreditCardInvoiceService
      *
      * @param int $accountId
      * @param int $invoiceId
-     * @param CreditCardInvoiceRequest $request
+     * @param array $data
      * @return bool
      */
-    public function update(int $accountId, int $invoiceId, CreditCardInvoiceRequest $request): bool
+    public function update(int $accountId, int $invoiceId, array $data): bool
     {
-        $data = $request->validated();
-
         return CreditCardInvoice::where('id', $invoiceId)
             ->where('conta_id', $accountId)
             ->where('user_id', Auth::id())

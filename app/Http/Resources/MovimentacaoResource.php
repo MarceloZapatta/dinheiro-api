@@ -24,6 +24,8 @@ class MovimentacaoResource extends JsonResource
                 'id' => $this->creditCardInvoice->id,
                 'reference_date' => $this->creditCardInvoice->reference_date->format('Y-m-d'),
             ] : null,
+            'installment_number' => $this->installment_number,
+            'total_installments' => $this->total_installments,
             'conta' => [
                 'id' => $this->conta->id,
                 'nome' => $this->conta->nome,

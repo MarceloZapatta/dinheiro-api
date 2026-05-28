@@ -48,7 +48,7 @@ class CreditCardInvoiceController extends Controller
      */
     public function store(string $id, CreditCardInvoiceRequest $request)
     {
-        $invoice = $this->invoiceService->store((int) $id, $request);
+        $invoice = $this->invoiceService->store((int) $id, $request->validated());
 
         return response()->json(Mensagem::sucesso('Fatura criada com sucesso!', [
             'data' => new CreditCardInvoiceResource($invoice)
@@ -91,7 +91,7 @@ class CreditCardInvoiceController extends Controller
      */
     public function update(string $id, string $invoiceId, CreditCardInvoiceRequest $request)
     {
-        $invoice = $this->invoiceService->update((int) $id, (int) $invoiceId, $request);
+        $invoice = $this->invoiceService->update((int) $id, (int) $invoiceId, $request->validated());
 
         return response()->json(Mensagem::sucesso('Fatura atualizada com sucesso!', [
             'data' => new CreditCardInvoiceResource($invoice)

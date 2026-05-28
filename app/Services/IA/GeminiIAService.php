@@ -74,8 +74,8 @@ class GeminiIAService implements IAServiceInterface
                 description: $this->truncateBigDescriptions($transaction['description']),
                 value: $this->formatCorrectValue($transaction['value']),
                 date: $this->formatCorrectDateCurrentYear($transaction['date']),
-                invoiceNumberCurrent: $this->formatCorrectInvoiceNumber($transaction['invoice_number_current'] ?? null),
-                invoiceNumberTotal: $this->formatCorrectInvoiceNumber($transaction['invoice_number_total'] ?? null)
+                installmentNumber: $this->formatCorrectInvoiceNumber($transaction['invoice_number_current'] ?? null),
+                totalInstallments: $this->formatCorrectInvoiceNumber($transaction['invoice_number_total'] ?? null)
             );
             Log::debug('GeminiIAService - Transação formatada e validada:', ['transaction' => end($extractedTransactions)]);
         }

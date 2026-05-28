@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\AccountType;
+use App\Http\Requests\CreditCardInvoiceRequest;
 use App\Http\Requests\ImportImageRequest;
 use App\Http\Requests\ImportOfxRequest;
 use App\Http\Requests\ImportRequest;
@@ -19,11 +20,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MovimentacaoImportacoesService
 {
-    public function __construct(private readonly OfxReaderService $ofxReaderService, private readonly IAServiceInterface $iaService, private readonly CategoriasService $categoriasService) {}
+    public function __construct(private readonly OfxReaderService $ofxReaderService, private readonly IAServiceInterface $iaService, private readonly CategoriasService $categoriasService, private readonly CreditCardInvoiceService $creditCardInvoiceService) {}
 
     public function get()
     {
@@ -40,13 +42,12 @@ class MovimentacaoImportacoesService
     {
         $movimentacaoImportacao = null;
         [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
-        
+
         DB::transaction(function () use ($request, &$movimentacaoImportacao, $incomeOthersCategory, $expenseOthersCategory) {
             $extractedTransactions = [];
 
             /** @var \Illuminate\Http\UploadedFile[] $files */
             $files = $request->file('files');
-
 
             $movimentacaoImportacao = MovimentacaoImportacao::create([
                 'user_id' => Auth::id(),
@@ -70,9 +71,23 @@ class MovimentacaoImportacoesService
 
             $insertTransacations = [];
 
+            $originalCreditCardInvoice = null;
 
             foreach ($extractedTransactions as $extractedTransaction) {
                 $value = $accountType === AccountType::CREDIT_CARD ? ($extractedTransaction->value * -1) : $extractedTransaction->value;
+
+                $transactionDate = Carbon::parse($extractedTransaction->date);
+
+                if ($accountType === AccountType::CREDIT_CARD) {
+                    if (empty($originalCreditCardInvoice)) {
+                        $originalCreditCardInvoice = $this->creditCardInvoiceService->find($request->conta_id, $request->credit_card_invoice_id);
+                    }
+                    if ($transactionDate->isBefore(Carbon::parse($originalCreditCardInvoice->reference_date))) {
+                        $referenceDate = Carbon::parse($originalCreditCardInvoice->reference_date);
+
+                        $transactionDate = $transactionDate->copy()->setMonth($referenceDate->month)->setYear($referenceDate->year);
+                    }
+                }
 
                 $insertTransacations[] = [
                     'user_id' => Auth::id(),
@@ -82,11 +97,26 @@ class MovimentacaoImportacoesService
                     'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
                     'valor' => $value,
                     'categoria_id' => $value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
-                    'data_transacao' => $extractedTransaction->date,
+                    'data_transacao' => $transactionDate,
                     'refnum' => $extractedTransaction->refnum,
+                    'installment_number' => $extractedTransaction->installmentNumber,
+                    'total_installments' => $extractedTransaction->totalInstallments,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+
+                if ($extractedTransaction->installmentNumber && $extractedTransaction->totalInstallments) {
+                    $this->processTransactionInstallments(
+                        $insertTransacations,
+                        $extractedTransaction,
+                        $request,
+                        $movimentacaoImportacao,
+                        $incomeOthersCategory,
+                        $expenseOthersCategory,
+                        $value,
+                        $transactionDate
+                    );
+                }
             }
 
             Movimentacao::upsert($insertTransacations, uniqueBy: [
@@ -101,6 +131,61 @@ class MovimentacaoImportacoesService
         });
 
         return $movimentacaoImportacao;
+    }
+
+    private function processTransactionInstallments(
+        array &$insertTransacations,
+        ExtractedTransactionDTO $extractedTransaction,
+        ImportRequest $request,
+        MovimentacaoImportacao $movimentacaoImportacao,
+        Categoria $incomeOthersCategory,
+        Categoria $expenseOthersCategory,
+        float $value,
+        Carbon $transactionDate,
+    ) {
+        $count = 0;
+        for ($i = $extractedTransaction->installmentNumber + 1; $i <= $extractedTransaction->totalInstallments; $i++) {
+            if (empty($originalCreditCardInvoice)) {
+                $originalCreditCardInvoice = $this->creditCardInvoiceService->find($request->conta_id, $request->credit_card_invoice_id);
+            }
+
+            $invoiceDueDate = Carbon::parse($originalCreditCardInvoice->due_date)->addMonths($count);
+            $invoiceReferenceDate = $invoiceDueDate->copy()->startOfMonth();
+
+            $creditCardInvoice = $this->creditCardInvoiceService->getFromDate($request->conta_id, $invoiceReferenceDate);
+
+            if (!$creditCardInvoice) {
+                $closingDate = Carbon::parse($originalCreditCardInvoice->closing_date)->addMonths($count);
+                $data = [
+                    'reference_date' => $invoiceReferenceDate->toDateString(),
+                    'due_date' => $invoiceDueDate->toDateString(),
+                    'closing_date' => $closingDate->toDateString(),
+                    'is_paid' => false,
+                ];
+
+                Validator::make($data, (new CreditCardInvoiceRequest())->rules())->validate();
+
+                $creditCardInvoice = $this->creditCardInvoiceService->store($request->conta_id, $data);
+            }
+
+            $insertTransacations[] = [
+                'user_id' => Auth::id(),
+                'importacao_movimentacao_id' => $movimentacaoImportacao->id,
+                'descricao' => $extractedTransaction->description,
+                'conta_id' => $request->conta_id,
+                'credit_card_invoice_id' => $creditCardInvoice->id,
+                'valor' => $value,
+                'categoria_id' => $value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
+                'data_transacao' => $transactionDate->copy()->addMonths($count + 1),
+                'refnum' => $extractedTransaction->refnum ? ($extractedTransaction->refnum . "-{$i}") : null,
+                'installment_number' => $i,
+                'total_installments' => $extractedTransaction->totalInstallments,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            $count++;
+        }
     }
 
     public function importarExcel(Request $request)
