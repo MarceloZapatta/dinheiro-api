@@ -26,7 +26,13 @@ use Ramsey\Uuid\Uuid;
 
 class MovimentacaoImportacoesService
 {
-    public function __construct(private readonly OfxReaderService $ofxReaderService, private readonly IAServiceInterface $iaService, private readonly CategoriasService $categoriasService, private readonly CreditCardInvoiceService $creditCardInvoiceService) {}
+    public function __construct(
+        private readonly OfxReaderService $ofxReaderService,
+        private readonly IAServiceInterface $iaService,
+        private readonly CategoriasService $categoriasService,
+        private readonly CreditCardInvoiceService $creditCardInvoiceService,
+        private readonly CategoryResolverService $categoryResolverService
+    ) {}
 
     public function get()
     {
@@ -92,6 +98,8 @@ class MovimentacaoImportacoesService
 
                 $installmentReference = Uuid::uuid4()->toString();
 
+                $resolvedCategory = $this->categoryResolverService->resolveCategory($extractedTransaction->description, $value < 0);
+
                 $insertTransacations[] = [
                     'user_id' => Auth::id(),
                     'importacao_movimentacao_id' => $movimentacaoImportacao->id,
@@ -99,7 +107,7 @@ class MovimentacaoImportacoesService
                     'conta_id' => $request->conta_id,
                     'credit_card_invoice_id' => $request->credit_card_invoice_id ?? null,
                     'valor' => $value,
-                    'categoria_id' => $value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
+                    'categoria_id' => $resolvedCategory->id,
                     'data_transacao' => $transactionDate,
                     'refnum' => $extractedTransaction->refnum,
                     'installment_number' => $extractedTransaction->installmentNumber,
@@ -115,8 +123,7 @@ class MovimentacaoImportacoesService
                         $extractedTransaction,
                         $request,
                         $movimentacaoImportacao,
-                        $incomeOthersCategory,
-                        $expenseOthersCategory,
+                        $resolvedCategory,
                         $value,
                         $transactionDate,
                         $installmentReference
@@ -143,8 +150,7 @@ class MovimentacaoImportacoesService
         ExtractedTransactionDTO $extractedTransaction,
         ImportRequest $request,
         MovimentacaoImportacao $movimentacaoImportacao,
-        Categoria $incomeOthersCategory,
-        Categoria $expenseOthersCategory,
+        Categoria $resolvedCategory,
         float $value,
         Carbon $transactionDate,
         string $installmentReference,
@@ -181,7 +187,7 @@ class MovimentacaoImportacoesService
                 'conta_id' => $request->conta_id,
                 'credit_card_invoice_id' => $creditCardInvoice->id,
                 'valor' => $value,
-                'categoria_id' => $value < 0 ? $expenseOthersCategory->id : $incomeOthersCategory->id,
+                'categoria_id' => $resolvedCategory->id,
                 'data_transacao' => $transactionDate->copy()->addMonths($count + 1),
                 'refnum' => $extractedTransaction->refnum ? ($extractedTransaction->refnum . "-{$i}") : null,
                 'installment_number' => $i,
