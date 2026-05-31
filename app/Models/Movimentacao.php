@@ -21,6 +21,7 @@ class Movimentacao extends Model
         'credit_card_invoice_id',
         'installment_number',
         'total_installments',
+        'installments_reference',
     ];
 
     public function categoria()

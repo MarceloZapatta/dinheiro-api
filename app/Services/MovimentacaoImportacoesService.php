@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Ramsey\Uuid\Uuid;
 
 class MovimentacaoImportacoesService
 {
@@ -89,6 +90,8 @@ class MovimentacaoImportacoesService
                     }
                 }
 
+                $installmentReference = Uuid::uuid4()->toString();
+
                 $insertTransacations[] = [
                     'user_id' => Auth::id(),
                     'importacao_movimentacao_id' => $movimentacaoImportacao->id,
@@ -101,6 +104,7 @@ class MovimentacaoImportacoesService
                     'refnum' => $extractedTransaction->refnum,
                     'installment_number' => $extractedTransaction->installmentNumber,
                     'total_installments' => $extractedTransaction->totalInstallments,
+                    'installments_reference' => $installmentReference,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -114,7 +118,8 @@ class MovimentacaoImportacoesService
                         $incomeOthersCategory,
                         $expenseOthersCategory,
                         $value,
-                        $transactionDate
+                        $transactionDate,
+                        $installmentReference
                     );
                 }
             }
@@ -142,6 +147,7 @@ class MovimentacaoImportacoesService
         Categoria $expenseOthersCategory,
         float $value,
         Carbon $transactionDate,
+        string $installmentReference,
     ) {
         $count = 0;
         for ($i = $extractedTransaction->installmentNumber + 1; $i <= $extractedTransaction->totalInstallments; $i++) {
@@ -180,6 +186,7 @@ class MovimentacaoImportacoesService
                 'refnum' => $extractedTransaction->refnum ? ($extractedTransaction->refnum . "-{$i}") : null,
                 'installment_number' => $i,
                 'total_installments' => $extractedTransaction->totalInstallments,
+                'installments_reference' => $installmentReference,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
