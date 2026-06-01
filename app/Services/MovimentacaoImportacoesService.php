@@ -10,7 +10,6 @@ use App\Http\Requests\ImportRequest;
 use App\Imports\ExcelImport;
 use App\Models\Categoria;
 use App\Models\Conta;
-use App\Imports\MovimentacoesImport;
 use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
 use App\Services\IA\ExtractedTransactionDTO;

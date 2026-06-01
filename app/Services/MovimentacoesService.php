@@ -112,7 +112,7 @@ class MovimentacoesService
         return $movimentacao;
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): Movimentacao
     {
         Helpers::flushCacheMovimentacoes();
         Helpers::flushCacheWildcard('movimentacoes.saldo_previsto.' . Auth::id()  . '.%');
@@ -167,6 +167,24 @@ class MovimentacoesService
             MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
                 ->delete();
         }
+
+        if ($movimentacao->installments_reference) {
+            Movimentacao::where('user_id', Auth::id())
+                ->where('installments_reference', $movimentacao->installments_reference)
+                ->where('id', '!=', $movimentacao->id)
+                ->update($request->only([
+                    'importacao_movimentacao_id',
+                    'descricao',
+                    'observacoes',
+                    'valor',
+                    'data_transacao',
+                    'conta_id',
+                    'categoria_id',
+                    'credit_card_invoice_id'
+                ]));
+        }
+
+        return $movimentacao;
     }
 
     public function delete($id): bool
