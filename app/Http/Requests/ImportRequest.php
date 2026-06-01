@@ -27,7 +27,7 @@ class ImportRequest extends FormRequest
     {
         return [
             'files' => 'required|array',
-            'files.*' => 'file|mimes:jpg,jpeg,png,bmp,gif,svg,webp|max:2048',
+            'files.*' => 'file|mimes:ofx,jpg,jpeg,png,bmp,gif,svg,webp|max:2048',
             'conta_id' => ['required', 'integer', new Exists('contas', 'id')->where('user_id', Auth::id())],
             'account_type' => ['required', 'string', new Enum(AccountType::class)],
             'credit_card_invoice_id' => ['required_if:account_type,' . AccountType::CREDIT_CARD->value, 'integer', 'exists:credit_card_invoices,id'],
