@@ -177,10 +177,8 @@ class MovimentacoesService
                     'descricao',
                     'observacoes',
                     'valor',
-                    'data_transacao',
                     'conta_id',
                     'categoria_id',
-                    'credit_card_invoice_id'
                 ]));
         }
 
