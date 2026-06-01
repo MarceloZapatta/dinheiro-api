@@ -30,7 +30,8 @@ class CategoryResolverService
                     'supermercado',
                     'supermercados',
                     'chimar',
-                    'sao vicente'
+                    'sao vicente',
+                    '99food'
                 ]) => $categories->where('expense', 1)->firstWhere('nome', 'Alimentação'),
                 $this->containWords($description, [
                     'farmaconde',
@@ -50,7 +51,8 @@ class CategoryResolverService
                     'boliche',
                     'izaka',
                     'little paul',
-                    'gelateria'
+                    'gelateria',
+                    'jatoba'
                 ]) => $categories->where('expense', 1)->firstWhere('nome', 'Lazer'),
                 $this->containWords($description, [
                     'valet',
