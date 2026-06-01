@@ -41,16 +41,21 @@ class MovimentacaoImportacoesService
 
     public function show($id)
     {
-        return MovimentacaoImportacao::with('movimentacoes')
+        return MovimentacaoImportacao::with(['movimentacoes' => function ($query) {
+            $query->with('categoria')
+                ->with('conta')
+                ->with('creditCardInvoice')
+                ->orderBy('data_transacao', 'asc');
+        }])
+            ->where('user_id', Auth::id())
             ->findOrFail($id);
     }
 
     public function batchImport(ImportRequest $request)
     {
         $movimentacaoImportacao = null;
-        [$incomeOthersCategory, $expenseOthersCategory] = $this->categoriasService->findOthersCategories();
 
-        DB::transaction(function () use ($request, &$movimentacaoImportacao, $incomeOthersCategory, $expenseOthersCategory) {
+        DB::transaction(function () use ($request, &$movimentacaoImportacao) {
             $extractedTransactions = [];
 
             /** @var \Illuminate\Http\UploadedFile[] $files */
