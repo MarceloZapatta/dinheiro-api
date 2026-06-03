@@ -27,7 +27,14 @@ class ImportRequest extends FormRequest
     {
         return [
             'files' => 'required|array',
-            'files.*' => 'file|mimes:ofx,application/x-ofx,jpg,jpeg,png,bmp,gif,svg,webp|max:2048',
+            'files.*' => ['file', 'max:2048', function ($attribute, $value, $fail) {
+                $allowedExtensions = ['ofx', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg', 'webp'];
+                $extension = strtolower($value->getClientOriginalExtension());
+                
+                if (!in_array($extension, $allowedExtensions)) {
+                    $fail("The {$attribute} field must be a file with extension: " . implode(', ', $allowedExtensions));
+                }
+            }],
             'conta_id' => ['required', 'integer', new Exists('contas', 'id')->where('user_id', Auth::id())],
             'account_type' => ['required', 'string', new Enum(AccountType::class)],
             'credit_card_invoice_id' => ['required_if:account_type,' . AccountType::CREDIT_CARD->value, 'integer', 'exists:credit_card_invoices,id'],

@@ -66,15 +66,17 @@ class MovimentacaoImportacoesService
             ]);
 
             foreach ($files as $file) {
-                if (in_array($file->getClientMimeType(), ['application/ofx', 'application/x-ofx', '.ofx'])) {
+                $extension = strtolower($file->getClientOriginalExtension());
+                
+                if ($extension === 'ofx') {
                     $extractedTransactions = array_merge($extractedTransactions, $this->ofxReaderService->extractTransactionsOfx($file->getPathname()));
                 } elseif (str_starts_with($file->getClientMimeType(), 'image/')) {
                     Log::debug('Extracting transactions from image:', ['file' => $file->getClientOriginalName()]);
                     $extractedTransactions = array_merge($extractedTransactions, $this->iaService->extractTransactionsFromImage($file));
                     Log::debug('Extracted transactions from image:', ['transactions' => $extractedTransactions]);
                 } else {
-                    Log::warning('Unsupported file type for import:', ['file' => $file->getClientOriginalName(), 'mime_type' => $file->getClientMimeType()]);
-                    throw new \Exception('Unsupported file type: ' . $file->getClientMimeType());
+                    Log::warning('Unsupported file type for import:', ['file' => $file->getClientOriginalName(), 'extension' => $extension]);
+                    throw new \Exception('Unsupported file type: ' . $extension);
                 }
             }
 

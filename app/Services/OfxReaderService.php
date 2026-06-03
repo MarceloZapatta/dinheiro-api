@@ -71,7 +71,7 @@ class OfxReaderService
             $extractedTransactions[] = new ExtractedTransactionDTO(
                 description: $description,
                 value: $value,
-                date: $datePosted,
+                date: $datePosted?->toDateString() ?? null,
                 refnum: $refnum
             );
         }
