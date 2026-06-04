@@ -68,7 +68,8 @@ class CategoryResolverService
                     'box 15',
                     'box 015',
                     'chevrolet',
-                    'dl*99 ride'
+                    'dl*99 ride',
+                    'portseg'
                 ]) => $categories->where('expense', 1)->firstWhere('nome', 'Transporte'),
                 $this->containWords($description, [
                     'materiais',
@@ -95,8 +96,21 @@ class CategoryResolverService
         }
 
         return match (true) {
-            $this->containWords($description, ['pró-labore', 'labore', 'pro labore', 'pró labore', 'salario', 'pro-labore']) => $categories->where('expense', 0)->firstWhere('nome', 'Salário'),
-            $this->containWords($description, ['convenio', 'blablacar', 'pix recebido', 'devolução', 'estorno']) => $categories->where('expense', 0)->firstWhere('nome', 'Estorno'),
+            $this->containWords($description, [
+                'pró-labore',
+                'labore',
+                'pro labore',
+                'pró labore',
+                'salario',
+                'pro-labore'
+            ]) => $categories->where('expense', 0)->firstWhere('nome', 'Salário'),
+            $this->containWords($description, [
+                'convenio',
+                'blablacar',
+                'pix recebido',
+                'devolução',
+                'estorno'
+            ]) => $categories->where('expense', 0)->firstWhere('nome', 'Estorno'),
             default => $categories->where('expense', 0)->firstWhere('nome', 'Outros'),
         };
     }
