@@ -373,4 +373,30 @@ class MovimentacaoImportacoesService
             ->where('id', $movimentacaoImportacao->id)
             ->delete();
     }
+
+    public function confirmSingleTransaction(int $importId, int $transactionId): bool
+    {
+        $updated = Movimentacao::where('user_id', Auth::id())
+            ->where('id', $transactionId)
+            ->where('importacao_movimentacao_id', $importId)
+            ->update(['importacao_movimentacao_id' => null]);
+
+        if ($updated === 0) {
+            return false;
+        }
+
+        // Check if there are any remaining transactions linked to this import
+        $remainingCount = Movimentacao::where('user_id', Auth::id())
+            ->where('importacao_movimentacao_id', $importId)
+            ->count();
+
+        // If no transactions remain, delete the import record
+        if ($remainingCount === 0) {
+            MovimentacaoImportacao::where('user_id', Auth::id())
+                ->where('id', $importId)
+                ->delete();
+        }
+
+        return true;
+    }
 }

@@ -130,4 +130,15 @@ class MovimentacaoImportacoesController extends Controller
 
         return response()->json(Mensagem::sucesso('Todas as importações foram confirmadas com sucesso!'));
     }
+
+    public function confirmSingle(string $id, string $transactionId)
+    {
+        $confirmed = $this->movimentacaoImportacaoService->confirmSingleTransaction((int) $id, (int) $transactionId);
+
+        if (!$confirmed) {
+            return response()->json(Mensagem::erro('Transação não encontrada ou já foi confirmada.'), 404);
+        }
+
+        return response()->json(Mensagem::sucesso('Transação confirmada com sucesso!'));
+    }
 }

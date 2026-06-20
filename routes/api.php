@@ -49,6 +49,7 @@ Route::prefix('v2')->group(function () {
             Route::post('/codigo-barras', [MovimentacaoImportacoesController::class, 'importarCodigoBarras']);
             Route::post('/ofx', [MovimentacaoImportacoesController::class, 'importOfx']);
             Route::post('/{id}/confirm-all', [MovimentacaoImportacoesController::class, 'confirmAll']);
+            Route::post('/{id}/confirm/{transactionId}', [MovimentacaoImportacoesController::class, 'confirmSingle']);
             Route::get('/{id}', [MovimentacaoImportacoesController::class, 'show']);
             Route::get('/', [MovimentacaoImportacoesController::class, 'index']);
         });
