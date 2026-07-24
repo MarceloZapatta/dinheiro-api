@@ -113,7 +113,7 @@ class MovimentacoesService
         return $movimentacao;
     }
 
-    private function handleUpdateTransferTransaction(Request $request, Movimentacao $transaction, bool $expense): void
+    private function handleUpdateTransferTransaction(Request $request, Movimentacao $transaction, bool $expense): Movimentacao
     {
         // The value of the related transaction should be the negative of the main transaction's value
         $value = $request->valor * -1;
@@ -123,27 +123,27 @@ class MovimentacoesService
 
         // If the related transaction does not exist, create a new one
         if (empty($transaction->movimentacao_relacao_id)){
-            Movimentacao::create([
+            return Movimentacao::create([
                 'user_id' => Auth::id(),
                 'descricao' => $request->descricao,
                 'valor' => $value,
                 'data_transacao' => $request->data_transacao,
                 'conta_id' => $request->conta_relacao_id,
-                'categoria_id' => $categoryId
+                'categoria_id' => $categoryId,
+                'movimentacao_relacao_id' => $transaction->id
             ]);
-            return;
         } 
 
+        /** @var Movimentacao */
         $movimentacaoRelacionada = Movimentacao::findOrFail($transaction->movimentacao_relacao_id);
 
-        if ($movimentacaoRelacionada) {
-            $movimentacaoRelacionada->update([
-                'descricao' => $request->descricao,
-                'valor' => $value,
-                'data_transacao' => $request->data_transacao,
-                'categoria_id' => $categoryId
-            ]);
-        }
+        $movimentacaoRelacionada->update([
+            'descricao' => $request->descricao,
+            'valor' => $value,
+            'data_transacao' => $request->data_transacao,
+            'categoria_id' => $categoryId
+        ]);
+        return $movimentacaoRelacionada;
     }
 
     public function update(Request $request, $id): Movimentacao
@@ -199,7 +199,11 @@ class MovimentacoesService
                     ]);
                 }
     
-                $this->handleUpdateTransferTransaction($request, $movimentacao, $expense);
+                $relatedTransaction = $this->handleUpdateTransferTransaction($request, $movimentacao, $expense);
+
+                $request->merge([
+                    'movimentacao_relacao_id' => $relatedTransaction->id
+                ]);
             }
     
             $movimentacao->update($request->only([
@@ -210,7 +214,8 @@ class MovimentacoesService
                 'data_transacao',
                 'conta_id',
                 'categoria_id',
-                'credit_card_invoice_id'
+                'credit_card_invoice_id',
+                'movimentacao_relacao_id'
             ]));
     
     
