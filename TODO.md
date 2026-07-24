@@ -1,0 +1,3 @@
+[] Quando a movimentação é salva sem horário, ela não pega no filtro, se for 00:00:00 funciona, somente se for o primeiro dia do mes
+[] Como lidar com o pagamento de faturas...
+[] Retornar o saldo do mês previsto / realizado

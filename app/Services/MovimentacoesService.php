@@ -11,6 +11,7 @@ use App\Models\Movimentacao;
 use App\Models\MovimentacaoImportacao;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -112,6 +113,39 @@ class MovimentacoesService
         return $movimentacao;
     }
 
+    private function handleUpdateTransferTransaction(Request $request, Movimentacao $transaction, bool $expense): void
+    {
+        // The value of the related transaction should be the negative of the main transaction's value
+        $value = $request->valor * -1;
+
+        [$incomeTransferCategory, $outcomeTransferCategory] = $this->categoriasService->findTransferCategories();
+        $categoryId = $expense ? $incomeTransferCategory->id : $outcomeTransferCategory->id;
+
+        // If the related transaction does not exist, create a new one
+        if (empty($transaction->movimentacao_relacao_id)){
+            Movimentacao::create([
+                'user_id' => Auth::id(),
+                'descricao' => $request->descricao,
+                'valor' => $value,
+                'data_transacao' => $request->data_transacao,
+                'conta_id' => $request->conta_relacao_id,
+                'categoria_id' => $categoryId
+            ]);
+            return;
+        } 
+
+        $movimentacaoRelacionada = Movimentacao::findOrFail($transaction->movimentacao_relacao_id);
+
+        if ($movimentacaoRelacionada) {
+            $movimentacaoRelacionada->update([
+                'descricao' => $request->descricao,
+                'valor' => $value,
+                'data_transacao' => $request->data_transacao,
+                'categoria_id' => $categoryId
+            ]);
+        }
+    }
+
     public function update(Request $request, $id): Movimentacao
     {
         Helpers::flushCacheMovimentacoes();
@@ -147,42 +181,64 @@ class MovimentacoesService
                 'categoria_id' => $movimentacao->categoria_id
             ]);
         }
+        
+        return DB::transaction(function() use ($request, $movimentacao, $movimentacaoImportacaoId) {
 
-        $movimentacao->update($request->only([
-            'importacao_movimentacao_id',
-            'descricao',
-            'observacoes',
-            'valor',
-            'data_transacao',
-            'conta_id',
-            'categoria_id',
-            'credit_card_invoice_id'
-        ]));
+            if ($request->conta_relacao_id) {
+                [$incomeTransferCategory, $outcomeTransferCategory] = $this->categoriasService->findTransferCategories();
+    
+                $expense = (int) $request->despesa === 1;
+    
+                if ($expense) {
+                    $request->merge([
+                        'categoria_id' => $outcomeTransferCategory->id
+                    ]);
+                } else {
+                    $request->merge([
+                        'categoria_id' => $incomeTransferCategory->id
+                    ]);
+                }
+    
+                $this->handleUpdateTransferTransaction($request, $movimentacao, $expense);
+            }
+    
+            $movimentacao->update($request->only([
+                'importacao_movimentacao_id',
+                'descricao',
+                'observacoes',
+                'valor',
+                'data_transacao',
+                'conta_id',
+                'categoria_id',
+                'credit_card_invoice_id'
+            ]));
+    
+    
+            if (
+                $movimentacaoImportacaoId &&
+                Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
+                ->count() <= 0
+            ) {
+                MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
+                    ->delete();
+            }
+    
+            if ($movimentacao->installments_reference) {
+                Movimentacao::where('user_id', Auth::id())
+                    ->where('installments_reference', $movimentacao->installments_reference)
+                    ->where('id', '!=', $movimentacao->id)
+                    ->update($request->only([
+                        'importacao_movimentacao_id',
+                        'descricao',
+                        'observacoes',
+                        'valor',
+                        'conta_id',
+                        'categoria_id',
+                    ]));
+            }
 
-        if (
-            $movimentacaoImportacaoId &&
-            Movimentacao::where('importacao_movimentacao_id', $movimentacaoImportacaoId)
-            ->count() <= 0
-        ) {
-            MovimentacaoImportacao::where('id', $movimentacaoImportacaoId)
-                ->delete();
-        }
-
-        if ($movimentacao->installments_reference) {
-            Movimentacao::where('user_id', Auth::id())
-                ->where('installments_reference', $movimentacao->installments_reference)
-                ->where('id', '!=', $movimentacao->id)
-                ->update($request->only([
-                    'importacao_movimentacao_id',
-                    'descricao',
-                    'observacoes',
-                    'valor',
-                    'conta_id',
-                    'categoria_id',
-                ]));
-        }
-
-        return $movimentacao;
+            return $movimentacao;
+        });
     }
 
     public function delete($id): bool
